@@ -1,0 +1,14 @@
+IMPORTANT
+
+Ce ZIP est à plat.
+
+Dans GitHub, tu dois voir directement :
+- index.html
+- manifest.json
+- assets/
+- portail-licencie/
+
+Il ne faut PAS avoir un dossier parent du type :
+esbb_flat_ready_github/index.html
+
+Si tu vois un dossier parent dans GitHub, c'est ça qui crée le 404.
