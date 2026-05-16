@@ -22,12 +22,12 @@ body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,BlinkMacSyste
 h1{margin:0;color:var(--d);text-transform:uppercase;font-size:clamp(42px,7vw,76px);line-height:.96;letter-spacing:-1.5px;font-weight:1000}
 .hero p{max-width:800px;font-size:18px;line-height:1.52;font-weight:650}
 .shell{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:22px;box-shadow:0 22px 60px rgba(0,31,12,.18);overflow:hidden;padding:18px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 10px 22px rgba(0,31,12,.05)}.card.dark{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}.card h3{margin:0 0 8px;text-transform:uppercase;color:var(--d);font-weight:1000}.card.dark h3{color:#fff}.card p{color:var(--muted);font-weight:650;line-height:1.45}.card.dark p{color:rgba(255,255,255,.82)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 10px 22px rgba(0,31,12,.05)}.card.dark{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}.card h3{margin:0 0 8px;text-transform:uppercase;color:var(--d);font-weight:1000}.card.dark h3{color:#fff}.card p{color:var(--muted);font-weight:650;line-height:1.45}.card.dark p{color:rgba(255,255,255,.82)}
 .footer{text-align:center;margin-top:20px;font-weight:850;color:rgba(8,35,19,.72)}
 @media(max-width:900px){.hero{grid-template-columns:1fr;text-align:center}.logo-card{width:160px;margin:0 auto}.grid{grid-template-columns:1fr}.clubline{justify-content:center}}
 </style>
 </head>
-<body>
+<body style="overflow-y:auto;">
 <div class="page"><div class="container">
 <header class="hero">
   <div class="logo-card"><img src="../assets/logo.png" alt="ES Blanquefort Basket Ball"></div>
@@ -53,3 +53,8 @@ h1{margin:0;color:var(--d);text-transform:uppercase;font-size:clamp(42px,7vw,76p
 </div></div>
 </body>
 </html>
+<script>
+document.querySelectorAll('.card').forEach(card=>{
+card.style.cursor='pointer';
+});
+</script>

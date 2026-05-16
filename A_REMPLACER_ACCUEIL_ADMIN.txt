@@ -1,0 +1,6 @@
+Remplacer uniquement : index.html
+
+Cette page sert à toi / bureau : elle affiche les 3 interfaces et permet d’installer un accès global.
+Ne pas envoyer cette page aux familles.
+Familles : envoyer /portail-licencie/
+Coachs : envoyer /interface-coach/

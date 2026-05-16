@@ -496,6 +496,35 @@ input:focus,select:focus{
   .btn{min-height:50px;font-size:14px}
   .slogan-line{font-size:14px;padding:8px 12px}
 }
+
+@media(max-width:700px){
+nav{
+grid-template-columns:repeat(2,1fr)!important;
+gap:6px;
+padding:10px;
+position:sticky;
+z-index:50;
+}
+nav button{
+font-size:13px;
+padding:10px 6px;
+min-height:44px;
+}
+section{
+padding:12px;
+}
+.card{
+padding:14px;
+margin-bottom:10px;
+}
+.choice{
+grid-template-columns:1fr;
+}
+body{
+overflow-y:auto;
+}
+}
+
 </style>
 </head>
 

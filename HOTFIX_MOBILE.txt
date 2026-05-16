@@ -1,0 +1,13 @@
+HOTFIX MOBILE
+
+À remplacer :
+- portail-licencie/index.html
+- interface-coach/index.html
+- interface-bureau/index.html
+
+Corrections :
+- scroll mobile réactivé
+- menus plus petits
+- portail licencié en 2 colonnes mobile
+- cartes moins hautes
+- interface bureau responsive
