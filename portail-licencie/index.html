@@ -1088,6 +1088,56 @@ if(saveLicencieFeedback){
   });
 }
 
+
+const resendChildBtn = document.getElementById("resendChildBtn");
+const clearLocalChildBtn = document.getElementById("clearLocalChildBtn");
+
+async function sendActiveChildToClubESBB(){
+  const children = loadChildren();
+  const child = children[activeChildIndex];
+
+  if(!child){
+    alert("Aucun enfant sélectionné.");
+    return;
+  }
+
+  try{
+    setSyncStatusESBB("Envoi vers le club en cours...", "ok");
+
+    await sendToSheetESBB("saveIdentification", {
+      profil: "Parent / licencié",
+      nom: child.nom,
+      prenom: child.prenom,
+      dateNaissance: child.dateNaissance,
+      categorie: child.categorie,
+      email: "",
+      telephone: "",
+      source: "Portail licencié GitHub — renvoi manuel",
+      commentaire: "Renvoi manuel d’un enfant déjà enregistré sur le téléphone"
+    });
+
+    setSyncStatusESBB("Enfant renvoyé vers le club. Vérifie APP_IDENTIFICATIONS dans le Google Sheet.", "ok");
+  }catch(error){
+    console.error(error);
+    setSyncStatusESBB("Envoi impossible vers le club. Réessaie après actualisation.", "error");
+  }
+}
+
+if(resendChildBtn){
+  resendChildBtn.addEventListener("click", sendActiveChildToClubESBB);
+}
+
+if(clearLocalChildBtn){
+  clearLocalChildBtn.addEventListener("click", ()=>{
+    if(confirm("Effacer les enfants enregistrés sur ce téléphone pour repartir à zéro ?")){
+      localStorage.removeItem(identityKey);
+      activeChildIndex = 0;
+      location.reload();
+    }
+  });
+}
+
+
 const copyEssaisBtn = document.getElementById("copyEssaisBtn");
 if(copyEssaisBtn){
   copyEssaisBtn.addEventListener("click",async()=>{
