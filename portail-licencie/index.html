@@ -18,17 +18,13 @@
   --green-50:#f7fbf6;
   --ink:#082313;
   --muted:#56695c;
-  --line:rgba(0,57,20,.28);
-  --gold:#e6c66a;
-  --danger:#b42318;
+  --line:rgba(0,57,20,.26);
   --white:#ffffff;
   --shadow:0 22px 60px rgba(0,31,12,.18);
   --radius:18px;
 }
-
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-
 body{
   margin:0;
   min-height:100vh;
@@ -36,67 +32,92 @@ body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   background:linear-gradient(135deg,#ffffff 0%,#f7fbf6 58%,#eef5ed 100%);
 }
-
 a{color:inherit;text-decoration:none}
 button,input,select{font:inherit}
 
 .page{
   width:100%;
   min-height:100vh;
-  padding:34px 16px 46px;
+  padding:22px 12px 38px;
   position:relative;
   overflow:hidden;
 }
-
 .page::before{
   content:"";
   position:absolute;
-  left:-180px;
-  top:-170px;
-  width:640px;
-  height:340px;
-  background:linear-gradient(135deg,var(--green-950) 0%,var(--green-900) 70%,rgba(0,57,20,.62) 100%);
+  left:-190px;
+  top:-180px;
+  width:660px;
+  height:350px;
+  background:linear-gradient(135deg,var(--green-950) 0%,var(--green-900) 72%,rgba(0,57,20,.66) 100%);
   border-radius:0 0 86% 0;
   z-index:0;
   box-shadow:0 24px 60px rgba(0,31,12,.18);
 }
-
 .container{
   max-width:1180px;
   margin:0 auto;
   position:relative;
   z-index:1;
 }
-
 .hero{
   display:grid;
-  grid-template-columns:250px 1fr;
-  gap:32px;
+  grid-template-columns:230px 1fr;
+  gap:28px;
   align-items:center;
-  margin-bottom:22px;
+  margin-bottom:18px;
 }
-
 .logo-zone{
-  min-height:210px;
+  min-height:190px;
   display:grid;
   place-items:center;
 }
-
 .logo-card{
-  width:250px;
-  min-height:210px;
+  width:230px;
+  min-height:190px;
   display:grid;
   place-items:center;
-  background:transparent;
 }
-
 .logo-card img{
   width:100%;
   height:auto;
   display:block;
   filter:drop-shadow(0 12px 16px rgba(0,31,12,.22));
 }
-
+.clubline{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin:0 0 10px;
+  color:var(--green-950);
+  font-weight:1000;
+  font-size:clamp(15px,3.6vw,22px);
+}
+.dot{
+  width:17px;
+  height:17px;
+  min-width:17px;
+  border-radius:50%;
+  display:inline-block;
+  box-shadow:0 4px 12px rgba(0,31,12,.16);
+}
+.dot.green{background:#00551f}
+.dot.white{background:#fff;border:2px solid #00551f}
+.slogan-line{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:9px 15px;
+  margin:0 0 14px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(0,57,20,.22);
+  color:var(--green-950);
+  font-weight:1000;
+  box-shadow:0 10px 22px rgba(0,31,12,.08);
+}
 .kicker{
   display:inline-flex;
   align-items:center;
@@ -111,120 +132,65 @@ button,input,select{font:inherit}
   box-shadow:0 10px 22px rgba(0,57,20,.20);
   margin-bottom:14px;
 }
-
 h1{
   margin:0;
   color:var(--green-950);
   text-transform:uppercase;
-  font-size:clamp(44px,7vw,78px);
+  font-size:clamp(42px,7vw,76px);
   line-height:.96;
   letter-spacing:-1.5px;
   font-weight:1000;
 }
-
 .hero-text p{
-  max-width:770px;
-  margin:18px 0 0;
+  max-width:800px;
+  margin:16px 0 0;
   font-size:18px;
-  line-height:1.52;
-  font-weight:600;
-}
-
-.nav-strip{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:20px 0 22px;
-}
-
-.nav-strip a{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  padding:10px 15px;
-  border-radius:999px;
-  background:#fff;
-  color:var(--green-950);
-  border:1px solid rgba(0,57,20,.22);
-  font-weight:950;
-  box-shadow:0 8px 20px rgba(0,31,12,.05);
-}
-
-.nav-strip a.primary{
-  color:#fff;
-  background:linear-gradient(135deg,var(--green-900),var(--green-950));
-}
-
-.top-cards{
-  display:grid;
-  grid-template-columns:1fr 1fr 1.38fr;
-  gap:16px;
-  margin:20px 0 22px;
-}
-
-.info-card{
-  min-height:155px;
-  padding:24px;
-  border-radius:var(--radius);
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.84);
-  box-shadow:0 14px 34px rgba(0,31,12,.06);
-  backdrop-filter:blur(8px);
-}
-
-.info-card.dark{
-  background:linear-gradient(135deg,var(--green-900),var(--green-950));
-  color:#fff;
-}
-
-.info-title{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:0 0 16px;
-  color:inherit;
-  font-weight:1000;
-  text-transform:uppercase;
-  letter-spacing:-.02em;
-  font-size:20px;
-}
-
-.info-icon{
-  width:46px;
-  height:46px;
-  border-radius:15px;
-  display:grid;
-  place-items:center;
-  color:#fff;
-  background:var(--green-900);
-  font-size:23px;
-  flex:0 0 auto;
-}
-
-.info-card.dark .info-icon{background:rgba(255,255,255,.14)}
-
-.info-card p{
-  margin:0;
-  font-size:15px;
   line-height:1.52;
   font-weight:650;
 }
 
-.portal-shell{
-  background:rgba(255,255,255,.94);
+.app-shell{
+  background:rgba(255,255,255,.95);
   border:1px solid rgba(0,57,20,.24);
   border-radius:22px;
   box-shadow:var(--shadow);
   overflow:hidden;
 }
-
-.block{
-  padding:18px;
+.tabs{
+  display:flex;
+  gap:0;
+  overflow-x:auto;
+  background:linear-gradient(135deg,#f7fbf6,#ffffff);
   border-bottom:1px solid rgba(0,57,20,.18);
+  padding:10px;
 }
-
-.block:last-child{border-bottom:0}
+.tab-btn{
+  flex:0 0 auto;
+  min-height:44px;
+  border:1px solid rgba(0,57,20,.18);
+  background:#fff;
+  color:var(--green-950);
+  font-weight:1000;
+  border-radius:999px;
+  padding:9px 14px;
+  margin-right:8px;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(0,31,12,.05);
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+  border-color:transparent;
+}
+.tab-panel{
+  display:none;
+  padding:18px;
+}
+.tab-panel.active{
+  display:block;
+  animation:fadeIn .16s ease;
+}
+@keyframes fadeIn{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
 .section-label{
   display:inline-flex;
@@ -241,23 +207,47 @@ h1{
   letter-spacing:.01em;
   box-shadow:0 8px 18px rgba(0,57,20,.18);
 }
-
-.hint{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.35;
-  margin:0 0 10px;
-  font-weight:550;
-}
-
 .grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:14px;
 }
-
+.grid.three{grid-template-columns:repeat(3,1fr)}
+.card{
+  padding:18px;
+  border-radius:15px;
+  background:#fff;
+  border:1px solid rgba(0,57,20,.18);
+  box-shadow:0 10px 22px rgba(0,31,12,.05);
+}
+.card.dark{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+}
+.card h2,.card h3{
+  margin:0 0 8px;
+  color:var(--green-950);
+  font-size:20px;
+  text-transform:uppercase;
+  font-weight:1000;
+}
+.card.dark h2,.card.dark h3{color:#fff}
+.card p{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.45;
+  font-weight:650;
+  font-size:14px;
+}
+.card.dark p{color:rgba(255,255,255,.82)}
+.hint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+  margin:0 0 10px;
+  font-weight:600;
+}
 .field{position:relative}
-
 label.field-label{
   display:flex;
   align-items:center;
@@ -268,7 +258,6 @@ label.field-label{
   font-weight:1000;
   text-transform:uppercase;
 }
-
 input[type="text"],
 input[type="date"],
 select{
@@ -285,77 +274,10 @@ select{
   outline:0;
   transition:.18s ease;
 }
-
-input:focus,
-select:focus{
+input:focus,select:focus{
   border-color:var(--green-800);
   box-shadow:0 0 0 4px rgba(0,85,31,.10);
 }
-
-.status-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
-}
-
-.status-box{
-  min-height:120px;
-  padding:18px;
-  border-radius:15px;
-  background:linear-gradient(135deg,#f5f8f3,#ffffff);
-  border:1px solid rgba(0,57,20,.16);
-}
-
-.status-box.orange{
-  background:linear-gradient(135deg,#fff7eb,#ffffff);
-  border-color:rgba(230,198,106,.45);
-}
-
-.status-box strong{
-  display:block;
-  margin:0 0 8px;
-  color:var(--green-950);
-  font-size:18px;
-  font-weight:1000;
-}
-
-.status-box p{
-  margin:0;
-  color:var(--muted);
-  line-height:1.45;
-  font-weight:650;
-}
-
-.actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  align-items:stretch;
-}
-
-.action-card{
-  padding:16px;
-  border-radius:15px;
-  background:#fff;
-  border:1px solid rgba(0,57,20,.18);
-  box-shadow:0 10px 22px rgba(0,31,12,.05);
-}
-
-.action-card h3{
-  margin:0 0 8px;
-  color:var(--green-950);
-  font-size:18px;
-  text-transform:uppercase;
-}
-
-.action-card p{
-  margin:0 0 14px;
-  color:var(--muted);
-  line-height:1.45;
-  font-weight:650;
-  font-size:14px;
-}
-
 .btn{
   width:100%;
   min-height:52px;
@@ -375,14 +297,122 @@ select:focus{
   justify-content:center;
   text-align:center;
 }
-
 .btn.light{
   color:var(--green-950);
   background:#fff;
   border:1px solid rgba(0,57,20,.28);
   box-shadow:none;
 }
+.btn:hover{transform:translateY(-1px)}
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.children-list{
+  display:none;
+  margin-top:14px;
+  padding:14px;
+  border-radius:14px;
+  background:var(--green-50);
+  border:1px solid rgba(0,57,20,.16);
+}
+.children-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0;
+}
+.child-button{
+  border:1px solid rgba(0,57,20,.24);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  color:var(--green-950);
+  font-weight:950;
+  cursor:pointer;
+}
+.child-button.active{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+}
 
+.answer-status{
+  display:none;
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:13px;
+  background:#eaf4e9;
+  border:1px solid rgba(0,57,20,.18);
+  color:#003914;
+  font-weight:900;
+}
+.answer-status.visible{display:block}
+.link-stack{display:grid;gap:10px;margin-top:12px}
+.textarea-like{
+  width:100%;
+  min-height:92px;
+  padding:12px 14px;
+  border:1px solid rgba(0,57,20,.28);
+  border-radius:11px;
+  background:#fff;
+  color:#082313;
+  font:inherit;
+  font-size:15px;
+  font-weight:600;
+  resize:vertical;
+}
+
+.fake-list{
+  display:grid;
+  gap:10px;
+}
+.list-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:13px 14px;
+  border:1px solid rgba(0,57,20,.16);
+  border-radius:13px;
+  background:#fff;
+}
+.list-row strong{
+  color:var(--green-950);
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 10px;
+  border-radius:999px;
+  background:var(--green-100);
+  color:var(--green-950);
+  font-weight:1000;
+  font-size:12px;
+}
+.pill.orange{
+  background:#fff2df;
+}
+.choice-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.choice-row button{
+  min-height:44px;
+  border-radius:11px;
+  border:1px solid rgba(0,57,20,.24);
+  background:#fff;
+  color:var(--green-950);
+  font-weight:1000;
+  cursor:pointer;
+}
+.choice-row button.selected{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+}
 .note{
   min-height:62px;
   display:flex;
@@ -395,7 +425,6 @@ select:focus{
   font-weight:750;
   line-height:1.35;
 }
-
 .note-icon{
   width:42px;
   height:42px;
@@ -407,108 +436,65 @@ select:focus{
   font-size:24px;
   flex:0 0 auto;
 }
-
-.children-list{
-  display:none;
-  margin-top:14px;
-  padding:14px;
-  border-radius:14px;
-  background:var(--green-50);
-  border:1px solid rgba(0,57,20,.16);
-}
-
-.children-buttons{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin:10px 0;
-}
-
-.child-button{
-  border:1px solid rgba(0,57,20,.24);
-  background:#fff;
-  border-radius:999px;
-  padding:8px 12px;
-  color:var(--green-950);
-  font-weight:950;
-  cursor:pointer;
-}
-
-.child-button.active{
-  background:linear-gradient(135deg,var(--green-900),var(--green-950));
-  color:#fff;
-}
-
 .footer{
-  margin:18px 0 0;
+  margin:20px 0 0;
   text-align:center;
-  color:rgba(8,35,19,.65);
-  font-size:13px;
-  font-weight:650;
+  color:rgba(8,35,19,.72);
+  font-size:15px;
+  font-weight:850;
+  line-height:1.35;
 }
-
-.footer strong{color:var(--green-950)}
+.footer strong{
+  color:var(--green-950);
+}
+.ball-footer{
+  display:block;
+  margin-top:8px;
+  font-size:24px;
+}
 
 @media(max-width:900px){
   .hero{
     grid-template-columns:1fr;
     text-align:center;
-    gap:10px;
+    gap:8px;
   }
-
   .page::before{
     left:50%;
-    top:-170px;
-    width:520px;
-    height:290px;
+    top:-175px;
+    width:540px;
+    height:300px;
     transform:translateX(-50%);
     border-radius:0 0 70% 70%;
   }
-
   .logo-zone{min-height:auto}
-
   .logo-card{
     width:190px;
     min-height:auto;
     margin:0 auto;
   }
-
   .hero-text p{
     margin-left:auto;
     margin-right:auto;
   }
-
-  .top-cards,
-  .grid,
-  .status-grid,
-  .actions{
+  .grid,.grid.three,.actions,.choice-row{
     grid-template-columns:1fr;
   }
-
-  .nav-strip{justify-content:center}
+  .clubline,.slogan-line{
+    justify-content:center;
+  }
 }
-
 @media(max-width:620px){
-  .page{padding:18px 10px 34px}
-  .logo-card{width:148px}
+  .page{padding:12px 8px 30px}
+  .logo-card{width:150px}
   .kicker{font-size:12px;padding:7px 11px}
-  h1{font-size:34px}
-  .hero-text p{font-size:14.5px;line-height:1.42}
-  .top-cards{gap:10px;margin:14px 0}
-  .info-card{min-height:auto;padding:15px;border-radius:15px}
-  .info-title{font-size:16px;margin-bottom:8px}
-  .info-icon{width:36px;height:36px;border-radius:11px;font-size:18px}
-  .info-card p{font-size:13.5px}
-  .block{padding:12px}
-  .section-label{font-size:12px;padding:6px 10px}
-  label.field-label{font-size:13px}
-  .hint{font-size:12px}
-  input[type="text"],
-  input[type="date"],
-  select{min-height:40px;padding:10px 11px;border-radius:10px;font-size:14px}
-  .note{padding:12px;font-size:12.5px;align-items:flex-start}
-  .note-icon{width:34px;height:34px;font-size:19px}
+  h1{font-size:37px}
+  .hero-text p{font-size:15px;line-height:1.46}
+  .tab-panel{padding:12px}
+  .tab-btn{font-size:13px;min-height:40px;padding:8px 11px}
+  .card{padding:14px}
   .btn{min-height:50px;font-size:14px}
+  .slogan-line{font-size:14px;padding:8px 12px}
 }
 </style>
 </head>
@@ -525,69 +511,66 @@ select:focus{
       </div>
 
       <div class="hero-text">
+        <div class="clubline">
+          <span class="dot green"></span>
+          <span>ES Blanquefort Basket Ball</span>
+          <span class="dot white"></span>
+        </div>
+
+        <div class="slogan-line">
+          Vert et blanc un jour, Blanquefort toujours&nbsp;!
+        </div>
+
         <div class="kicker">🏀 PORTAIL LICENCIÉ</div>
         <h1>Préparer<br>la saison prochaine</h1>
         <p>
-          Le portail licencié permet de répondre au questionnaire du club, d’identifier votre enfant
-          et de retrouver progressivement les informations utiles : calendrier, sondages et lien essais.
+          Bienvenue dans l’application test dédiée au basket à Blanquefort. Ce portail permet de préparer la saison prochaine, de suivre les informations utiles, de répondre aux sondages et de faire remonter ce qui fonctionne ou non côté familles et licenciés.
         </p>
-
-        <nav class="nav-strip" aria-label="Navigation rapide">
-          <a class="primary" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
-          <a href="#identification">M’identifier</a>
-          <a href="#calendrier">Calendrier</a>
-          <a href="#sondages">Sondages</a>
-          <a href="#essais">Essais</a>
-        </nav>
       </div>
     </header>
 
-    <section class="top-cards">
-      <article class="info-card">
-        <h2 class="info-title"><span class="info-icon">◎</span> Objectif</h2>
-        <p>Préparer les groupes, les créneaux et les informations utiles pour la saison prochaine.</p>
-      </article>
+    <main class="app-shell">
+      <nav class="tabs" aria-label="Onglets du portail">
+        <button class="tab-btn active" data-tab="accueil">Accueil</button>
+        <button class="tab-btn" data-tab="parent">Parent</button><button class="tab-btn" data-tab="licencie">Licencié</button>
+        <button class="tab-btn" data-tab="calendrier">Calendrier</button>
+        <button class="tab-btn" data-tab="sondages">Sondages</button>
+        <button class="tab-btn" data-tab="essais">Essais</button>
+        <button class="tab-btn" data-tab="installer">Installer</button>
+      </nav>
 
-      <article class="info-card">
-        <h2 class="info-title"><span class="info-icon">✓</span> Important</h2>
-        <p>Le calendrier et les sondages seront ajoutés progressivement après validation par le club.</p>
-      </article>
-
-      <article class="info-card dark">
-        <h2 class="info-title"><span class="info-icon">📱</span> À installer</h2>
-        <p>Vous pourrez ajouter ce portail à l’écran d’accueil de votre téléphone pour le retrouver facilement.</p>
-      </article>
-    </section>
-
-    <main class="portal-shell">
-
-      <section class="block" id="questionnaire">
-        <div class="section-label">Questionnaire saison prochaine</div>
-        <div class="actions">
-          <article class="action-card">
-            <h3>Répondre au questionnaire</h3>
-            <p>Indiquez si votre enfant continue, arrête ou si vous hésitez encore.</p>
-            <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Ouvrir le questionnaire</a>
+      <section class="tab-panel active" id="tab-accueil">
+        <div class="section-label">Accueil</div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Indiquez vos intentions pour la saison prochaine afin d’aider le club à préparer les groupes.</p>
+            <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre</a>
           </article>
-
-          <article class="action-card">
-            <h3>Pourquoi répondre ?</h3>
-            <p>Vos réponses aident le club à anticiper les effectifs, les équipes et l’encadrement.</p>
-            <a class="btn light" href="#identification">M’identifier ensuite</a>
+          <article class="card">
+            <h3>Objectif</h3>
+            <p>Préparer les effectifs, les créneaux, l’encadrement, les essais et les informations utiles.</p>
+            <button class="btn light" type="button" data-go="parent">Espace parent</button>
+          </article>
+          <article class="card dark">
+            <h3>Test fin de saison</h3>
+            <p>Ce portail est une version bêta pour préparer l’application club de la saison prochaine.</p>
+            <button class="btn light" type="button" data-go="installer">Installer</button>
           </article>
         </div>
       </section>
 
-      <section class="block" id="identification">
-        <div class="section-label">M’identifier</div>
-        <p class="hint">Cette étape enregistre l’enfant sur ce téléphone. Le rapprochement avec la base club sera fait ensuite côté club.</p>
+      
+      <section class="tab-panel" id="tab-parent">
+        <div class="section-label">Espace parent</div>
+        <p class="hint">Pour les parents : ajoutez un ou plusieurs enfants. Chaque enfant pourra avoir sa catégorie, son calendrier et ses sondages.</p>
 
         <div id="childrenList" class="children-list">
           <strong>Enfant(s) enregistré(s)</strong>
           <div id="childrenButtons" class="children-buttons"></div>
           <p id="savedIdentityText" class="hint"></p>
           <div class="actions">
-            <button class="btn light" type="button" id="addChildBtn">Ajouter un enfant</button>
+            <button class="btn light" type="button" id="addChildBtn">Ajouter un autre enfant</button>
             <button class="btn light" type="button" id="editIdentityBtn">Modifier l’enfant sélectionné</button>
           </div>
         </div>
@@ -598,17 +581,14 @@ select:focus{
               <label class="field-label" for="childLastName">Nom de l’enfant</label>
               <input id="childLastName" type="text" placeholder="Nom">
             </div>
-
             <div class="field">
               <label class="field-label" for="childFirstName">Prénom de l’enfant</label>
               <input id="childFirstName" type="text" placeholder="Prénom">
             </div>
-
             <div class="field">
               <label class="field-label" for="childBirthDate">Date de naissance</label>
               <input id="childBirthDate" type="date">
             </div>
-
             <div class="field">
               <label class="field-label" for="childCategory">Catégorie actuelle</label>
               <select id="childCategory">
@@ -622,54 +602,125 @@ select:focus{
               </select>
             </div>
           </div>
-
           <div class="actions" style="margin-top:14px">
-            <button class="btn" type="button" id="saveIdentityBtn">Enregistrer</button>
+            <button class="btn" type="button" id="saveIdentityBtn">Enregistrer cet enfant</button>
             <button class="btn light" type="button" id="cancelIdentityBtn" style="display:none">Annuler</button>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:14px">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Le questionnaire reste accessible ici pour le parent. Quand vous avez répondu, vous pouvez le marquer comme fait sur ce téléphone.</p>
+            <div class="link-stack">
+              <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
+              <button class="btn light mark-answered" type="button">J’ai déjà répondu</button>
+            </div>
+            <div class="answer-status">Réponse marquée comme faite sur ce téléphone.</div>
+          </article>
+          <article class="card">
+            <h3>Multi-enfants</h3>
+            <p>Si une famille a deux enfants dans deux équipes différentes, elle peut ajouter chaque enfant puis sélectionner celui concerné avant de répondre aux sondages.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-licencie">
+        <div class="section-label">Espace licencié</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Pour les licenciés qui utilisent eux-mêmes leur téléphone : accès rapide au questionnaire, aux sondages et aux informations de saison.</p>
+            <div class="link-stack">
+              <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
+              <button class="btn light mark-answered" type="button">J’ai déjà répondu</button>
+            </div>
+            <div class="answer-status">Réponse marquée comme faite sur ce téléphone.</div>
+          </article>
+
+          <article class="card">
+            <h3>Mon calendrier</h3>
+            <p>Retrouver les dates utiles, entraînements, bascules ou rendez-vous publiés par le club.</p>
+            <button class="btn light" type="button" data-go="calendrier">Voir le calendrier</button>
+          </article>
+
+          <article class="card">
+            <h3>Mes sondages</h3>
+            <p>Répondre aux sondages ouverts : présence, absence, participation ou information demandée par le club.</p>
+            <button class="btn light" type="button" data-go="sondages">Voir les sondages</button>
+          </article>
+
+          <article class="card">
+            <h3>Retour licencié</h3>
+            <p>Pour tester l’application : dire ce qui est clair, ce qui manque ou ce qui ne fonctionne pas.</p>
+            <select id="licencieFeedbackType" style="margin-bottom:10px">
+              <option>Tout est clair</option>
+              <option>Je ne comprends pas une information</option>
+              <option>Il manque une information</option>
+              <option>J’ai un problème technique</option>
+              <option>J’ai une idée d’amélioration</option>
+            </select>
+            <textarea class="textarea-like" id="licencieFeedbackText" placeholder="Votre remarque..."></textarea>
+            <button class="btn" type="button" id="saveLicencieFeedback" style="margin-top:10px">Enregistrer mon retour</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-calendrier">
+        <div class="section-label">Calendrier</div>
+        <div class="fake-list">
+          <div class="list-row">
+            <div><strong>Mercredi 3 juin</strong><br><span class="hint">Créneaux essais / entraînements selon catégorie.</span></div>
+            <span class="pill">Test</span>
+          </div>
+          <div class="list-row">
+            <div><strong>Lundi 8 juin</strong><br><span class="hint">Créneau disponible selon groupe et validation club.</span></div>
+            <span class="pill orange">À vérifier</span>
+          </div>
+          <div class="list-row">
+            <div><strong>Vendredi 12 juin</strong><br><span class="hint">Affichage test avant connexion au planning du club.</span></div>
+            <span class="pill">Bêta</span>
+          </div>
+          <div class="list-row">
+            <div><strong>Samedi 27 juin</strong><br><span class="hint">Journée club / AG / auberge espagnole / animations.</span></div>
+            <span class="pill">Club</span>
           </div>
         </div>
       </section>
 
-      <section class="block" id="calendrier">
-        <div class="section-label">Mon calendrier</div>
-        <div class="status-grid">
-          <article class="status-box">
-            <strong>Calendrier personnalisé</strong>
-            <p>Cette zone affichera uniquement les créneaux concernant l’enfant identifié.</p>
-          </article>
-
-          <article class="status-box orange">
-            <strong>Dates non figées</strong>
-            <p>Les horaires et lieux restent modifiables par le club. Aucun faux calendrier n’est affiché.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="block" id="sondages">
-        <div class="section-label">Mes sondages</div>
-        <div class="status-grid">
-          <article class="status-box">
-            <strong>Aucun sondage ouvert pour le moment</strong>
-            <p>Quand un sondage sera publié, vous pourrez répondre ici : présent, absent ou à confirmer.</p>
-          </article>
-
-          <article class="status-box">
-            <strong>Réponses simples</strong>
-            <p>Les sondages seront affichés uniquement lorsqu’ils seront ouverts par le club ou par un coach.</p>
+      <section class="tab-panel" id="tab-sondages">
+        <div class="section-label">Sondages</div>
+        <div class="grid" style="margin-bottom:14px">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Le questionnaire reste accessible depuis les sondages, pour éviter de le chercher.</p>
+            <div class="link-stack">
+              <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
+              <button class="btn light mark-answered" type="button">J’ai déjà répondu</button>
+            </div>
+            <div class="answer-status">Réponse marquée comme faite sur ce téléphone.</div>
           </article>
         </div>
+        <article class="card">
+          <h3>Présence à un créneau</h3>
+          <p>Exemple bêta : quand le club publiera un sondage, les réponses apparaîtront ici.</p>
+          <div class="choice-row">
+            <button type="button">Présent</button>
+            <button type="button">Absent</button>
+            <button type="button">À confirmer</button>
+          </div>
+        </article>
       </section>
 
-      <section class="block" id="essais">
-        <div class="section-label">Faire un essai au club</div>
+      <section class="tab-panel" id="tab-essais">
+        <div class="section-label">Essais</div>
         <div class="actions">
-          <article class="action-card">
-            <h3>Lien essais 2026-2027</h3>
+          <article class="card">
+            <h3>Faire un essai</h3>
             <p>Vous connaissez quelqu’un qui souhaite essayer le basket ? Transmettez-lui le lien d’inscription.</p>
             <a class="btn" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Ouvrir le lien essais</a>
           </article>
-
-          <article class="action-card">
+          <article class="card">
             <h3>Copier le lien</h3>
             <p>Copiez le lien pour l’envoyer par SMS, WhatsApp ou mail.</p>
             <button class="btn light" type="button" id="copyEssaisBtn">Copier le lien essais</button>
@@ -677,7 +728,7 @@ select:focus{
         </div>
       </section>
 
-      <section class="block" id="install">
+      <section class="tab-panel" id="tab-installer">
         <div class="section-label">Installer le portail</div>
         <div class="note">
           <div class="note-icon">📲</div>
@@ -687,18 +738,47 @@ select:focus{
           </div>
         </div>
       </section>
-
     </main>
 
     <div class="footer">
-      <strong>Un club, deux couleurs, une passion.</strong><br>
-      ES Blanquefort Basket Ball · Vert et blanc un jour, Blanquefort toujours.
+      <strong>Un club, <span style="color:#00551f">🟢 deux couleurs ⚪</span>, une passion.</strong>
+      <span class="ball-footer">🏀</span>
     </div>
 
   </div>
 </div>
 
 <script>
+function activateTab(tabName){
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.tab === tabName);
+  });
+  document.querySelectorAll(".tab-panel").forEach(panel=>{
+    panel.classList.toggle("active", panel.id === "tab-" + tabName);
+  });
+  history.replaceState(null, "", "#" + tabName);
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>activateTab(btn.dataset.tab));
+});
+
+document.querySelectorAll("[data-go]").forEach(btn=>{
+  btn.addEventListener("click",()=>activateTab(btn.dataset.go));
+});
+
+const initialTab = location.hash ? location.hash.replace("#","") : "accueil";
+if(document.getElementById("tab-" + initialTab)){
+  activateTab(initialTab);
+}
+
+document.querySelectorAll(".choice-row button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+    btn.classList.add("selected");
+  });
+});
+
 const identityKey = "esbb_portail_licencie_children";
 let activeChildIndex = 0;
 
@@ -716,66 +796,43 @@ const childBirthDate = document.getElementById("childBirthDate");
 const childCategory = document.getElementById("childCategory");
 
 function loadChildren(){
-  try{
-    return JSON.parse(localStorage.getItem(identityKey) || "[]");
-  }catch(error){
-    return [];
-  }
+  try{return JSON.parse(localStorage.getItem(identityKey) || "[]");}
+  catch(error){return [];}
 }
-
 function saveChildren(children){
   localStorage.setItem(identityKey, JSON.stringify(children));
 }
-
 function formatChild(child){
   return `${child.prenom} ${child.nom} · né(e) le ${child.dateNaissance} · ${child.categorie || "catégorie à vérifier"}`;
 }
-
 function renderChildren(){
   const children = loadChildren();
-
-  if(!children.length){
-    showIdentityForm();
-    return;
-  }
-
-  if(activeChildIndex >= children.length){
-    activeChildIndex = 0;
-  }
-
+  if(!children.length){showIdentityForm();return;}
+  if(activeChildIndex >= children.length){activeChildIndex = 0;}
   const activeChild = children[activeChildIndex];
-
   childrenButtons.innerHTML = "";
-
   children.forEach((child,index)=>{
     const button = document.createElement("button");
     button.type = "button";
     button.className = index === activeChildIndex ? "child-button active" : "child-button";
     button.textContent = child.prenom || `Enfant ${index + 1}`;
-    button.addEventListener("click",()=>{
-      activeChildIndex = index;
-      renderChildren();
-    });
+    button.addEventListener("click",()=>{activeChildIndex = index;renderChildren();});
     childrenButtons.appendChild(button);
   });
-
   savedIdentityText.textContent = `Enfant sélectionné : ${formatChild(activeChild)}`;
   childrenList.style.display = "block";
   identityForm.style.display = "none";
   cancelIdentityBtn.style.display = "none";
 }
-
 function showIdentityForm(child){
   childLastName.value = child?.nom || "";
   childFirstName.value = child?.prenom || "";
   childBirthDate.value = child?.dateNaissance || "";
   childCategory.value = child?.categorie || "Je ne sais pas";
-
   childrenList.style.display = "none";
   identityForm.style.display = "block";
   cancelIdentityBtn.style.display = loadChildren().length ? "inline-flex" : "none";
 }
-
 function saveIdentity(){
   const child = {
     nom: childLastName.value.trim(),
@@ -783,20 +840,16 @@ function saveIdentity(){
     dateNaissance: childBirthDate.value,
     categorie: childCategory.value
   };
-
   if(!child.nom || !child.prenom || !child.dateNaissance){
     alert("Merci de renseigner le nom, le prénom et la date de naissance.");
     return;
   }
-
   const children = loadChildren();
-
   const existingIndex = children.findIndex(item =>
     item.nom.toLowerCase() === child.nom.toLowerCase()
     && item.prenom.toLowerCase() === child.prenom.toLowerCase()
     && item.dateNaissance === child.dateNaissance
   );
-
   if(existingIndex >= 0){
     children[existingIndex] = child;
     activeChildIndex = existingIndex;
@@ -804,21 +857,39 @@ function saveIdentity(){
     children.push(child);
     activeChildIndex = children.length - 1;
   }
-
   saveChildren(children);
   renderChildren();
-  document.getElementById("calendrier")?.scrollIntoView({behavior:"smooth"});
+  activateTab("calendrier");
 }
-
 renderChildren();
-
 saveIdentityBtn.addEventListener("click",saveIdentity);
 addChildBtn.addEventListener("click",()=>showIdentityForm());
 editIdentityBtn.addEventListener("click",()=>showIdentityForm(loadChildren()[activeChildIndex]));
 cancelIdentityBtn.addEventListener("click",renderChildren);
 
-const copyEssaisBtn = document.getElementById("copyEssaisBtn");
 
+document.querySelectorAll(".mark-answered").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    localStorage.setItem("esbb_questionnaire_2026_2027_done","oui");
+    document.querySelectorAll(".answer-status").forEach(box=>box.classList.add("visible"));
+  });
+});
+
+if(localStorage.getItem("esbb_questionnaire_2026_2027_done")==="oui"){
+  document.querySelectorAll(".answer-status").forEach(box=>box.classList.add("visible"));
+}
+
+const saveLicencieFeedback = document.getElementById("saveLicencieFeedback");
+if(saveLicencieFeedback){
+  saveLicencieFeedback.addEventListener("click",()=>{
+    const type = document.getElementById("licencieFeedbackType")?.value || "";
+    const text = document.getElementById("licencieFeedbackText")?.value || "";
+    localStorage.setItem("esbb_licencie_feedback", JSON.stringify({type,text,date:new Date().toISOString()}));
+    alert("Merci, ton retour est enregistré sur ce téléphone pour le test.");
+  });
+}
+
+const copyEssaisBtn = document.getElementById("copyEssaisBtn");
 if(copyEssaisBtn){
   copyEssaisBtn.addEventListener("click",async()=>{
     const link = "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
