@@ -1,10 +1,5 @@
 À remplacer dans GitHub :
-- portail-licencie/index.html
 - interface-bureau/index.html
 - interface-bureau/manifest.json
 
-Corrections :
-- bouton Renvoyer au club pour un enfant déjà créé sur le téléphone
-- bouton Effacer le test local
-- interface bureau qui s’ouvre correctement
-- rappel que calendrier/catégories ne sont pas encore connectés
+Correction : vraie vue d’ensemble bureau + onglets + pastilles vert club foncé + titre plus petit.
