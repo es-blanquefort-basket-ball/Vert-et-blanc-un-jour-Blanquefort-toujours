@@ -496,6 +496,34 @@ input:focus,select:focus{
   .btn{min-height:50px;font-size:14px}
   .slogan-line{font-size:14px;padding:8px 12px}
 }
+
+/* Correctif mobile : onglets centrés en 2 lignes */
+@media(max-width:620px){
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    overflow:visible;
+    padding:10px;
+  }
+
+  .tab-btn{
+    width:100%;
+    margin-right:0;
+    min-height:42px;
+    padding:8px 6px;
+    font-size:12px;
+    text-align:center;
+    justify-content:center;
+  }
+}
+
+@media(max-width:390px){
+  .tabs{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
 </style>
 </head>
 
