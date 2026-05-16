@@ -668,6 +668,7 @@ overflow-y:auto;
       
       <section class="tab-panel" id="tab-parent">
         <div class="section-label">Espace parent</div>
+        <div class="card" style="margin-bottom:14px;background:#eaf4e9"><h3>Test de liaison Google Sheet</h3><p>Quand tu ajoutes un enfant, une ligne doit apparaître dans <strong>APP_IDENTIFICATIONS</strong>.</p></div>
         <p class="hint">Pour les parents : ajoutez un ou plusieurs enfants. Chaque enfant pourra avoir sa catégorie, son calendrier et ses sondages.</p>
 
         <div id="childrenList" class="children-list">
@@ -887,6 +888,39 @@ overflow-y:auto;
 </div>
 
 <script>
+
+const ESBB_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
+
+async function sendToSheetESBB(action, data){
+  const payload = { action, data };
+  await fetch(ESBB_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+  return { ok:true };
+}
+
+function setSyncStatusESBB(message, type){
+  let box = document.getElementById("syncStatusESBB");
+  if(!box){
+    box = document.createElement("div");
+    box.id = "syncStatusESBB";
+    box.style.marginTop = "12px";
+    box.style.padding = "12px 14px";
+    box.style.borderRadius = "13px";
+    box.style.fontWeight = "900";
+    box.style.lineHeight = "1.35";
+    const form = document.getElementById("identityForm");
+    if(form) form.appendChild(box);
+  }
+  box.textContent = message;
+  box.style.background = type === "error" ? "#fff0ed" : "#eaf4e9";
+  box.style.color = type === "error" ? "#8a1f11" : "#003914";
+  box.style.border = type === "error" ? "1px solid rgba(180,35,24,.25)" : "1px solid rgba(0,57,20,.18)";
+}
+
 function activateTab(tabName){
   document.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.classList.toggle("active", btn.dataset.tab === tabName);
@@ -971,23 +1005,27 @@ function showIdentityForm(child){
   identityForm.style.display = "block";
   cancelIdentityBtn.style.display = loadChildren().length ? "inline-flex" : "none";
 }
-function saveIdentity(){
+async function saveIdentity(){
   const child = {
     nom: childLastName.value.trim(),
     prenom: childFirstName.value.trim(),
     dateNaissance: childBirthDate.value,
     categorie: childCategory.value
   };
+
   if(!child.nom || !child.prenom || !child.dateNaissance){
     alert("Merci de renseigner le nom, le prénom et la date de naissance.");
     return;
   }
+
   const children = loadChildren();
+
   const existingIndex = children.findIndex(item =>
     item.nom.toLowerCase() === child.nom.toLowerCase()
     && item.prenom.toLowerCase() === child.prenom.toLowerCase()
     && item.dateNaissance === child.dateNaissance
   );
+
   if(existingIndex >= 0){
     children[existingIndex] = child;
     activeChildIndex = existingIndex;
@@ -995,8 +1033,31 @@ function saveIdentity(){
     children.push(child);
     activeChildIndex = children.length - 1;
   }
+
   saveChildren(children);
   renderChildren();
+
+  try{
+    setSyncStatusESBB("Envoi vers le club en cours...", "ok");
+
+    await sendToSheetESBB("saveIdentification", {
+      profil: "Parent / licencié",
+      nom: child.nom,
+      prenom: child.prenom,
+      dateNaissance: child.dateNaissance,
+      categorie: child.categorie,
+      email: "",
+      telephone: "",
+      source: "Portail licencié GitHub",
+      commentaire: "Identification enregistrée depuis le portail licencié"
+    });
+
+    setSyncStatusESBB("Enfant envoyé vers le club. Vérifie APP_IDENTIFICATIONS dans le Google Sheet.", "ok");
+  }catch(error){
+    console.error(error);
+    setSyncStatusESBB("Enregistrement local OK, mais l’envoi vers le club a échoué.", "error");
+  }
+
   activateTab("calendrier");
 }
 renderChildren();
