@@ -595,6 +595,43 @@ overflow-y:auto;
   border:2px solid #003914;
 }
 
+
+.search-result-btn{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  text-align:left;
+  padding:13px 14px;
+  border:1px solid rgba(0,57,20,.18);
+  background:#fff;
+  border-radius:13px;
+  cursor:pointer;
+  color:#082313;
+  font-weight:700;
+}
+.search-result-btn strong{
+  display:block;
+  color:#003914;
+  font-weight:1000;
+}
+.search-result-btn span{
+  display:block;
+  color:#56695c;
+  font-size:13px;
+  margin-top:3px;
+}
+.search-result-btn em{
+  font-style:normal;
+  background:#eaf4e9;
+  color:#003914;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:12px;
+  font-weight:1000;
+}
+
 </style>
 </head>
 
@@ -668,8 +705,34 @@ overflow-y:auto;
       
       <section class="tab-panel" id="tab-parent">
         <div class="section-label">Espace parent</div>
-        <div class="card" style="margin-bottom:14px;background:#eaf4e9"><h3>Test de liaison Google Sheet</h3><p>Quand tu ajoutes un enfant, une ligne doit apparaître dans <strong>APP_IDENTIFICATIONS</strong>.</p></div>
-        <p class="hint">Pour les parents : ajoutez un ou plusieurs enfants. Chaque enfant pourra avoir sa catégorie, son calendrier et ses sondages.</p>
+        <p class="hint">Pour les parents : retrouvez d’abord l’enfant dans la base club, ou ajoutez-le manuellement si besoin.</p>
+
+        <div class="card" id="licenceSearchCard" style="margin-bottom:14px">
+          <h3>Retrouver un licencié</h3>
+          <p>Commencez par rechercher l’enfant dans la base club. Saisissez au minimum le nom, le prénom et la date de naissance.</p>
+          <div class="grid">
+            <div class="field">
+              <label class="field-label" for="searchNom">Nom</label>
+              <input id="searchNom" type="text" placeholder="Nom">
+            </div>
+            <div class="field">
+              <label class="field-label" for="searchPrenom">Prénom</label>
+              <input id="searchPrenom" type="text" placeholder="Prénom">
+            </div>
+            <div class="field">
+              <label class="field-label" for="searchDateNaissance">Date de naissance</label>
+              <input id="searchDateNaissance" type="date">
+            </div>
+            <div class="field">
+              <label class="field-label" for="searchLicence">N° licence si connu</label>
+              <input id="searchLicence" type="text" placeholder="Facultatif">
+            </div>
+          </div>
+          <button class="btn" type="button" id="searchLicencieBtn" style="margin-top:14px">Rechercher dans la base club</button>
+          <div id="searchLicencieStatus" class="hint" style="margin-top:10px"></div>
+          <div id="searchLicencieResults" class="fake-list" style="margin-top:12px"></div>
+        </div>
+
 
         <div id="childrenList" class="children-list">
           <strong>Enfant(s) enregistré(s)</strong>
@@ -1038,7 +1101,7 @@ async function saveIdentity(){
   renderChildren();
 
   try{
-    setSyncStatusESBB("Envoi vers le club en cours...", "ok");
+    setSyncStatusESBB("Enregistrement en cours...", "ok");
 
     await sendToSheetESBB("saveIdentification", {
       profil: "Parent / licencié",
@@ -1052,7 +1115,7 @@ async function saveIdentity(){
       commentaire: "Identification enregistrée depuis le portail licencié"
     });
 
-    setSyncStatusESBB("Enfant envoyé vers le club. Vérifie APP_IDENTIFICATIONS dans le Google Sheet.", "ok");
+    setSyncStatusESBB("Enfant enregistré auprès du club.", "ok");
   }catch(error){
     console.error(error);
     setSyncStatusESBB("Enregistrement local OK, mais l’envoi vers le club a échoué.", "error");
@@ -1102,7 +1165,7 @@ async function sendActiveChildToClubESBB(){
   }
 
   try{
-    setSyncStatusESBB("Envoi vers le club en cours...", "ok");
+    setSyncStatusESBB("Enregistrement en cours...", "ok");
 
     await sendToSheetESBB("saveIdentification", {
       profil: "Parent / licencié",
@@ -1116,7 +1179,7 @@ async function sendActiveChildToClubESBB(){
       commentaire: "Renvoi manuel d’un enfant déjà enregistré sur le téléphone"
     });
 
-    setSyncStatusESBB("Enfant renvoyé vers le club. Vérifie APP_IDENTIFICATIONS dans le Google Sheet.", "ok");
+    setSyncStatusESBB("Informations renvoyées au club.", "ok");
   }catch(error){
     console.error(error);
     setSyncStatusESBB("Envoi impossible vers le club. Réessaie après actualisation.", "error");
@@ -1137,6 +1200,98 @@ if(clearLocalChildBtn){
   });
 }
 
+
+
+function jsonpESBB(url){
+  return new Promise((resolve, reject)=>{
+    const callbackName = "esbbCallback_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+    window[callbackName] = function(data){
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+    const script = document.createElement("script");
+    script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + callbackName;
+    script.onerror = function(){
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("Erreur de recherche."));
+    };
+    document.body.appendChild(script);
+  });
+}
+
+async function searchLicencieESBB(){
+  const nom = document.getElementById("searchNom")?.value || "";
+  const prenom = document.getElementById("searchPrenom")?.value || "";
+  const dateNaissance = document.getElementById("searchDateNaissance")?.value || "";
+  const licence = document.getElementById("searchLicence")?.value || "";
+  const status = document.getElementById("searchLicencieStatus");
+  const resultsBox = document.getElementById("searchLicencieResults");
+
+  if(status) status.textContent = "Recherche en cours...";
+  if(resultsBox) resultsBox.innerHTML = "";
+
+  const url = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec"
+    + "?action=searchLicencie"
+    + "&nom=" + encodeURIComponent(nom)
+    + "&prenom=" + encodeURIComponent(prenom)
+    + "&dateNaissance=" + encodeURIComponent(dateNaissance)
+    + "&licence=" + encodeURIComponent(licence);
+
+  try{
+    const result = await jsonpESBB(url);
+
+    if(status) status.textContent = result.message || "";
+
+    if(!result.ok){
+      return;
+    }
+
+    if(!result.data || !result.data.length){
+      if(resultsBox) resultsBox.innerHTML = '<div class="hint">Aucun résultat. Vous pouvez ajouter l’enfant manuellement.</div>';
+      return;
+    }
+
+    result.data.forEach(item=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "search-result-btn";
+      btn.innerHTML = `
+        <div>
+          <strong>${item.prenom || ""} ${item.nom || ""}</strong>
+          <span>${item.dateNaissance || "Date inconnue"} · ${item.categorie || "Catégorie à vérifier"} · Licence ${item.licence || "non renseignée"}</span>
+        </div>
+        <em>Choisir</em>
+      `;
+      btn.addEventListener("click",()=>selectLicencieFromSearchESBB(item));
+      resultsBox.appendChild(btn);
+    });
+  }catch(error){
+    console.error(error);
+    if(status) status.textContent = "Recherche impossible. Réessayez ou ajoutez l’enfant manuellement.";
+  }
+}
+
+function selectLicencieFromSearchESBB(item){
+  childLastName.value = item.nom || "";
+  childFirstName.value = item.prenom || "";
+  childBirthDate.value = item.dateNaissance || "";
+  childCategory.value = item.categorie || "Je ne sais pas";
+  showIdentityForm({
+    nom:item.nom || "",
+    prenom:item.prenom || "",
+    dateNaissance:item.dateNaissance || "",
+    categorie:item.categorie || "Je ne sais pas"
+  });
+  const status = document.getElementById("searchLicencieStatus");
+  if(status) status.textContent = "Licencié sélectionné. Vous pouvez maintenant enregistrer.";
+}
+
+const searchLicencieBtn = document.getElementById("searchLicencieBtn");
+if(searchLicencieBtn){
+  searchLicencieBtn.addEventListener("click", searchLicencieESBB);
+}
 
 const copyEssaisBtn = document.getElementById("copyEssaisBtn");
 if(copyEssaisBtn){
