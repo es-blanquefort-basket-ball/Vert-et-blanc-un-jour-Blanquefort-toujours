@@ -1,149 +1,944 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portail licencié</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#003914" />
+<title>Portail licencié | ES Blanquefort Basket Ball</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="../assets/icon-192.png" />
+
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f5f8f3;color:#082313}
-header{
-background:#003914;
-color:white;
-padding:30px 20px;
-text-align:center;
+:root{
+  --green-950:#001f0c;
+  --green-900:#003914;
+  --green-800:#00551f;
+  --green-700:#0b6b2b;
+  --green-100:#eaf4e9;
+  --green-50:#f7fbf6;
+  --ink:#082313;
+  --muted:#56695c;
+  --line:rgba(0,57,20,.26);
+  --white:#ffffff;
+  --shadow:0 22px 60px rgba(0,31,12,.18);
+  --radius:18px;
 }
-nav{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
-padding:12px;
-background:white;
-position:sticky;
-top:0;
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:linear-gradient(135deg,#ffffff 0%,#f7fbf6 58%,#eef5ed 100%);
 }
-nav button{
-border:1px solid #d8e5d7;
-background:#fff;
-padding:12px 8px;
-border-radius:12px;
-font-weight:bold;
-cursor:pointer;
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+
+.page{
+  width:100%;
+  min-height:100vh;
+  padding:22px 12px 38px;
+  position:relative;
+  overflow:hidden;
 }
-section{padding:18px}
+.page::before{
+  content:"";
+  position:absolute;
+  left:-190px;
+  top:-180px;
+  width:660px;
+  height:350px;
+  background:linear-gradient(135deg,var(--green-950) 0%,var(--green-900) 72%,rgba(0,57,20,.66) 100%);
+  border-radius:0 0 86% 0;
+  z-index:0;
+  box-shadow:0 24px 60px rgba(0,31,12,.18);
+}
+.container{
+  max-width:1180px;
+  margin:0 auto;
+  position:relative;
+  z-index:1;
+}
+.hero{
+  display:grid;
+  grid-template-columns:230px 1fr;
+  gap:28px;
+  align-items:center;
+  margin-bottom:18px;
+}
+.logo-zone{
+  min-height:190px;
+  display:grid;
+  place-items:center;
+}
+.logo-card{
+  width:230px;
+  min-height:190px;
+  display:grid;
+  place-items:center;
+}
+.logo-card img{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 12px 16px rgba(0,31,12,.22));
+}
+.clubline{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin:0 0 10px;
+  color:var(--green-950);
+  font-weight:1000;
+  font-size:clamp(15px,3.6vw,22px);
+}
+.dot{
+  width:17px;
+  height:17px;
+  min-width:17px;
+  border-radius:50%;
+  display:inline-block;
+  box-shadow:0 4px 12px rgba(0,31,12,.16);
+}
+.dot.green{background:#00551f}
+.dot.white{background:#fff;border:2px solid #00551f}
+.slogan-line{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:9px 15px;
+  margin:0 0 14px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(0,57,20,.22);
+  color:var(--green-950);
+  font-weight:1000;
+  box-shadow:0 10px 22px rgba(0,31,12,.08);
+}
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 15px;
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--green-900),var(--green-700));
+  font-weight:950;
+  letter-spacing:.03em;
+  font-size:15px;
+  box-shadow:0 10px 22px rgba(0,57,20,.20);
+  margin-bottom:14px;
+}
+h1{
+  margin:0;
+  color:var(--green-950);
+  text-transform:uppercase;
+  font-size:clamp(42px,7vw,76px);
+  line-height:.96;
+  letter-spacing:-1.5px;
+  font-weight:1000;
+}
+.hero-text p{
+  max-width:800px;
+  margin:16px 0 0;
+  font-size:18px;
+  line-height:1.52;
+  font-weight:650;
+}
+
+.app-shell{
+  background:rgba(255,255,255,.95);
+  border:1px solid rgba(0,57,20,.24);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.tabs{
+  display:flex;
+  gap:0;
+  overflow-x:auto;
+  background:linear-gradient(135deg,#f7fbf6,#ffffff);
+  border-bottom:1px solid rgba(0,57,20,.18);
+  padding:10px;
+}
+.tab-btn{
+  flex:0 0 auto;
+  min-height:44px;
+  border:1px solid rgba(0,57,20,.18);
+  background:#fff;
+  color:var(--green-950);
+  font-weight:1000;
+  border-radius:999px;
+  padding:9px 14px;
+  margin-right:8px;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(0,31,12,.05);
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+  border-color:transparent;
+}
+.tab-panel{
+  display:none;
+  padding:18px;
+}
+.tab-panel.active{
+  display:block;
+  animation:fadeIn .16s ease;
+}
+@keyframes fadeIn{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.section-label{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin:-2px 0 12px;
+  padding:7px 14px;
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--green-950),var(--green-800));
+  font-weight:1000;
+  text-transform:uppercase;
+  font-size:15px;
+  letter-spacing:.01em;
+  box-shadow:0 8px 18px rgba(0,57,20,.18);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+.grid.three{grid-template-columns:repeat(3,1fr)}
 .card{
-background:white;
-border-radius:18px;
-padding:18px;
-margin-bottom:14px;
-border:1px solid #dce7db;
-box-shadow:0 8px 20px rgba(0,0,0,.05);
+  padding:18px;
+  border-radius:15px;
+  background:#fff;
+  border:1px solid rgba(0,57,20,.18);
+  box-shadow:0 10px 22px rgba(0,31,12,.05);
 }
-.choice{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
-margin-top:12px;
+.card.dark{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
 }
-.choice button{
-padding:10px;
-border-radius:10px;
-border:1px solid #dce7db;
-background:#fff;
-font-weight:bold;
+.card h2,.card h3{
+  margin:0 0 8px;
+  color:var(--green-950);
+  font-size:20px;
+  text-transform:uppercase;
+  font-weight:1000;
 }
-footer{
-padding:30px;
-text-align:center;
-font-weight:bold;
+.card.dark h2,.card.dark h3{color:#fff}
+.card p{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.45;
+  font-weight:650;
+  font-size:14px;
 }
-.hidden{display:none}
+.card.dark p{color:rgba(255,255,255,.82)}
+.hint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+  margin:0 0 10px;
+  font-weight:600;
+}
+.field{position:relative}
+label.field-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 8px;
+  color:var(--green-950);
+  font-size:15px;
+  font-weight:1000;
+  text-transform:uppercase;
+}
+input[type="text"],
+input[type="date"],
+select{
+  width:100%;
+  min-height:44px;
+  padding:12px 14px;
+  color:var(--ink);
+  font:inherit;
+  font-size:15px;
+  font-weight:600;
+  border:1px solid rgba(0,57,20,.28);
+  border-radius:11px;
+  background:#fff;
+  outline:0;
+  transition:.18s ease;
+}
+input:focus,select:focus{
+  border-color:var(--green-800);
+  box-shadow:0 0 0 4px rgba(0,85,31,.10);
+}
+.btn{
+  width:100%;
+  min-height:52px;
+  border:0;
+  border-radius:13px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  font-size:15px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  cursor:pointer;
+  box-shadow:0 14px 28px rgba(0,57,20,.20);
+  transition:.18s ease;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.btn.light{
+  color:var(--green-950);
+  background:#fff;
+  border:1px solid rgba(0,57,20,.28);
+  box-shadow:none;
+}
+.btn:hover{transform:translateY(-1px)}
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.children-list{
+  display:none;
+  margin-top:14px;
+  padding:14px;
+  border-radius:14px;
+  background:var(--green-50);
+  border:1px solid rgba(0,57,20,.16);
+}
+.children-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0;
+}
+.child-button{
+  border:1px solid rgba(0,57,20,.24);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  color:var(--green-950);
+  font-weight:950;
+  cursor:pointer;
+}
+.child-button.active{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+}
+
+.answer-status{
+  display:none;
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:13px;
+  background:#eaf4e9;
+  border:1px solid rgba(0,57,20,.18);
+  color:#003914;
+  font-weight:900;
+}
+.answer-status.visible{display:block}
+.link-stack{display:grid;gap:10px;margin-top:12px}
+.textarea-like{
+  width:100%;
+  min-height:92px;
+  padding:12px 14px;
+  border:1px solid rgba(0,57,20,.28);
+  border-radius:11px;
+  background:#fff;
+  color:#082313;
+  font:inherit;
+  font-size:15px;
+  font-weight:600;
+  resize:vertical;
+}
+
+.fake-list{
+  display:grid;
+  gap:10px;
+}
+.list-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:13px 14px;
+  border:1px solid rgba(0,57,20,.16);
+  border-radius:13px;
+  background:#fff;
+}
+.list-row strong{
+  color:var(--green-950);
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 10px;
+  border-radius:999px;
+  background:var(--green-100);
+  color:var(--green-950);
+  font-weight:1000;
+  font-size:12px;
+}
+.pill.orange{
+  background:#fff2df;
+}
+.choice-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.choice-row button{
+  min-height:44px;
+  border-radius:11px;
+  border:1px solid rgba(0,57,20,.24);
+  background:#fff;
+  color:var(--green-950);
+  font-weight:1000;
+  cursor:pointer;
+}
+.choice-row button.selected{
+  background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  color:#fff;
+}
+.note{
+  min-height:62px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  border-radius:13px;
+  background:linear-gradient(135deg,#f5f8f3,#ffffff);
+  border:1px solid rgba(0,57,20,.12);
+  font-weight:750;
+  line-height:1.35;
+}
+.note-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#fff;
+  color:var(--green-900);
+  font-size:24px;
+  flex:0 0 auto;
+}
+.footer{
+  margin:20px 0 0;
+  text-align:center;
+  color:rgba(8,35,19,.72);
+  font-size:15px;
+  font-weight:850;
+  line-height:1.35;
+}
+.footer strong{
+  color:var(--green-950);
+}
+.ball-footer{
+  display:block;
+  margin-top:8px;
+  font-size:24px;
+}
+
+@media(max-width:900px){
+  .hero{
+    grid-template-columns:1fr;
+    text-align:center;
+    gap:8px;
+  }
+  .page::before{
+    left:50%;
+    top:-175px;
+    width:540px;
+    height:300px;
+    transform:translateX(-50%);
+    border-radius:0 0 70% 70%;
+  }
+  .logo-zone{min-height:auto}
+  .logo-card{
+    width:190px;
+    min-height:auto;
+    margin:0 auto;
+  }
+  .hero-text p{
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .grid,.grid.three,.actions,.choice-row{
+    grid-template-columns:1fr;
+  }
+  .clubline,.slogan-line{
+    justify-content:center;
+  }
+}
+@media(max-width:620px){
+  .page{padding:12px 8px 30px}
+  .logo-card{width:150px}
+  .kicker{font-size:12px;padding:7px 11px}
+  h1{font-size:37px}
+  .hero-text p{font-size:15px;line-height:1.46}
+  .tab-panel{padding:12px}
+  .tab-btn{font-size:13px;min-height:40px;padding:8px 11px}
+  .card{padding:14px}
+  .btn{min-height:50px;font-size:14px}
+  .slogan-line{font-size:14px;padding:8px 12px}
+}
 </style>
 </head>
+
 <body>
+<div class="page">
+  <div class="container">
 
-<header>
-<h1>🟢 ES Blanquefort Basket Ball ⚪</h1>
-<p>Vert et blanc un jour, Blanquefort toujours !</p>
-</header>
+    <header class="hero">
+      <div class="logo-zone">
+        <div class="logo-card">
+          <img src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball">
+        </div>
+      </div>
 
-<nav>
-<button onclick="show('accueil')">Accueil</button>
-<button onclick="show('parent')">Parent</button>
-<button onclick="show('licencie')">Licencié</button>
-<button onclick="show('calendrier')">Calendrier</button>
-<button onclick="show('sondages')">Sondages</button>
-<button onclick="show('tournois')">Tournois</button>
-</nav>
+      <div class="hero-text">
+        <div class="clubline">
+          <span class="dot green"></span>
+          <span>ES Blanquefort Basket Ball</span>
+          <span class="dot white"></span>
+        </div>
 
-<section id="accueil">
-<div class="card">
-<h2>Saison 2026-2027</h2>
-<p>Préparer la saison prochaine, répondre aux questionnaires et suivre les informations du club.</p>
+        <div class="slogan-line">
+          Vert et blanc un jour, Blanquefort toujours&nbsp;!
+        </div>
+
+        <div class="kicker">🏀 PORTAIL LICENCIÉ</div>
+        <h1>Préparer<br>la saison prochaine</h1>
+        <p>
+          Bienvenue dans l’application test dédiée au basket à Blanquefort. Ce portail permet de préparer la saison prochaine, de suivre les informations utiles, de répondre aux sondages et de faire remonter ce qui fonctionne ou non côté familles et licenciés.
+        </p>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <nav class="tabs" aria-label="Onglets du portail">
+        <button class="tab-btn active" data-tab="accueil">Accueil</button>
+        <button class="tab-btn" data-tab="parent">Parent</button><button class="tab-btn" data-tab="licencie">Licencié</button>
+        <button class="tab-btn" data-tab="calendrier">Calendrier</button>
+        <button class="tab-btn" data-tab="sondages">Sondages</button>
+        <button class="tab-btn" data-tab="essais">Essais</button>
+        <button class="tab-btn" data-tab="tournois">Tournois</button>
+        <button class="tab-btn" data-tab="installer">Installer</button>
+      </nav>
+
+      <section class="tab-panel active" id="tab-accueil">
+        <div class="section-label">Accueil</div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Indiquez vos intentions pour la saison prochaine afin d’aider le club à préparer les groupes.</p>
+            <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre</a>
+          </article>
+          <article class="card">
+            <h3>Objectif</h3>
+            <p>Préparer les effectifs, les créneaux, l’encadrement, les essais et les informations utiles.</p>
+            <button class="btn light" type="button" data-go="parent">Espace parent</button>
+          </article>
+          <article class="card dark">
+            <h3>Test fin de saison</h3>
+            <p>Ce portail est une version bêta pour préparer l’application club de la saison prochaine.</p>
+            <button class="btn light" type="button" data-go="installer">Installer</button>
+          </article>
+          <article class="card">
+            <h3>Tournois</h3>
+            <p>Voir uniquement les tournois concernant l’enfant sélectionné.</p>
+            <button class="btn light" type="button" data-go="tournois">Voir les tournois</button>
+          </article>
+        </div>
+      </section>
+
+      
+      <section class="tab-panel" id="tab-parent">
+        <div class="section-label">Espace parent</div>
+        <p class="hint">Pour les parents : ajoutez un ou plusieurs enfants. Chaque enfant pourra avoir sa catégorie, son calendrier et ses sondages.</p>
+
+        <div id="childrenList" class="children-list">
+          <strong>Enfant(s) enregistré(s)</strong>
+          <div id="childrenButtons" class="children-buttons"></div>
+          <p id="savedIdentityText" class="hint"></p>
+          <div class="actions">
+            <button class="btn light" type="button" id="addChildBtn">Ajouter un autre enfant</button>
+            <button class="btn light" type="button" id="editIdentityBtn">Modifier l’enfant sélectionné</button>
+          </div>
+        </div>
+
+        <div id="identityForm">
+          <div class="grid">
+            <div class="field">
+              <label class="field-label" for="childLastName">Nom de l’enfant</label>
+              <input id="childLastName" type="text" placeholder="Nom">
+            </div>
+            <div class="field">
+              <label class="field-label" for="childFirstName">Prénom de l’enfant</label>
+              <input id="childFirstName" type="text" placeholder="Prénom">
+            </div>
+            <div class="field">
+              <label class="field-label" for="childBirthDate">Date de naissance</label>
+              <input id="childBirthDate" type="date">
+            </div>
+            <div class="field">
+              <label class="field-label" for="childCategory">Catégorie actuelle</label>
+              <select id="childCategory">
+                <option>Je ne sais pas</option>
+                <option>U9</option>
+                <option>U10 / U11</option>
+                <option>U13</option>
+                <option>U15</option>
+                <option>U18</option>
+                <option>Seniors</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:14px">
+            <button class="btn" type="button" id="saveIdentityBtn">Enregistrer cet enfant</button>
+            <button class="btn light" type="button" id="cancelIdentityBtn" style="display:none">Annuler</button>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:14px">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Le questionnaire reste accessible ici pour le parent. Quand vous avez répondu, vous pouvez le marquer comme fait sur ce téléphone.</p>
+            <div class="link-stack">
+              <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
+              <button class="btn light mark-answered" type="button">J’ai déjà répondu</button>
+            </div>
+            <div class="answer-status">Réponse marquée comme faite sur ce téléphone.</div>
+          </article>
+          <article class="card">
+            <h3>Multi-enfants</h3>
+            <p>Si une famille a deux enfants dans deux équipes différentes, elle peut ajouter chaque enfant puis sélectionner celui concerné avant de répondre aux sondages.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-licencie">
+        <div class="section-label">Espace licencié</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Pour les licenciés qui utilisent eux-mêmes leur téléphone : accès rapide au questionnaire, aux sondages et aux informations de saison.</p>
+            <div class="link-stack">
+              <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
+              <button class="btn light mark-answered" type="button">J’ai déjà répondu</button>
+            </div>
+            <div class="answer-status">Réponse marquée comme faite sur ce téléphone.</div>
+          </article>
+
+          <article class="card">
+            <h3>Mon calendrier</h3>
+            <p>Retrouver les dates utiles, entraînements, bascules ou rendez-vous publiés par le club.</p>
+            <button class="btn light" type="button" data-go="calendrier">Voir le calendrier</button>
+          </article>
+
+          <article class="card">
+            <h3>Mes sondages</h3>
+            <p>Répondre aux sondages ouverts : présence, absence, participation ou information demandée par le club.</p>
+            <button class="btn light" type="button" data-go="sondages">Voir les sondages</button>
+          </article>
+
+          <article class="card">
+            <h3>Retour licencié</h3>
+            <p>Pour tester l’application : dire ce qui est clair, ce qui manque ou ce qui ne fonctionne pas.</p>
+            <select id="licencieFeedbackType" style="margin-bottom:10px">
+              <option>Tout est clair</option>
+              <option>Je ne comprends pas une information</option>
+              <option>Il manque une information</option>
+              <option>J’ai un problème technique</option>
+              <option>J’ai une idée d’amélioration</option>
+            </select>
+            <textarea class="textarea-like" id="licencieFeedbackText" placeholder="Votre remarque..."></textarea>
+            <button class="btn" type="button" id="saveLicencieFeedback" style="margin-top:10px">Enregistrer mon retour</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-calendrier">
+        <div class="section-label">Calendrier</div>
+        <div class="fake-list">
+          <div class="list-row">
+            <div><strong>Mercredi 3 juin</strong><br><span class="hint">Créneaux essais / entraînements selon catégorie.</span></div>
+            <span class="pill">Test</span>
+          </div>
+          <div class="list-row">
+            <div><strong>Lundi 8 juin</strong><br><span class="hint">Créneau disponible selon groupe et validation club.</span></div>
+            <span class="pill orange">À vérifier</span>
+          </div>
+          <div class="list-row">
+            <div><strong>Vendredi 12 juin</strong><br><span class="hint">Affichage test avant connexion au planning du club.</span></div>
+            <span class="pill">Bêta</span>
+          </div>
+          <div class="list-row">
+            <div><strong>Samedi 27 juin</strong><br><span class="hint">Journée club / AG / auberge espagnole / animations.</span></div>
+            <span class="pill">Club</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-sondages">
+        <div class="section-label">Sondages</div>
+        <div class="grid" style="margin-bottom:14px">
+          <article class="card">
+            <h3>Saison 2026-2027</h3>
+            <p>Le questionnaire reste accessible depuis les sondages, pour éviter de le chercher.</p>
+            <div class="link-stack">
+              <a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre au questionnaire</a>
+              <button class="btn light mark-answered" type="button">J’ai déjà répondu</button>
+            </div>
+            <div class="answer-status">Réponse marquée comme faite sur ce téléphone.</div>
+          </article>
+        </div>
+        <article class="card">
+          <h3>Présence à un créneau</h3>
+          <p>Exemple bêta : quand le club publiera un sondage, les réponses apparaîtront ici.</p>
+          <div class="choice-row">
+            <button type="button">Présent</button>
+            <button type="button">Absent</button>
+            <button type="button">À confirmer</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel" id="tab-essais">
+        <div class="section-label">Essais</div>
+        <div class="actions">
+          <article class="card">
+            <h3>Faire un essai</h3>
+            <p>Vous connaissez quelqu’un qui souhaite essayer le basket ? Transmettez-lui le lien d’inscription.</p>
+            <a class="btn" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Ouvrir le lien essais</a>
+          </article>
+          <article class="card">
+            <h3>Copier le lien</h3>
+            <p>Copiez le lien pour l’envoyer par SMS, WhatsApp ou mail.</p>
+            <button class="btn light" type="button" id="copyEssaisBtn">Copier le lien essais</button>
+          </article>
+        </div>
+      </section>
+
+      
+      
+      <section class="tab-panel" id="tab-tournois">
+        <div class="section-label">Tournois</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Mes tournois</h3>
+            <p>Les tournois affichés ici concerneront uniquement l’enfant sélectionné.</p>
+            <div class="fake-list">
+              <div class="list-row">
+                <div><strong>Aucun tournoi ouvert pour le moment</strong><br><span class="hint">Lorsqu’un tournoi sera publié par le club, il apparaîtra ici.</span></div>
+                <span class="pill">À venir</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Répondre à un tournoi</h3>
+            <p>Quand un tournoi sera ouvert, vous pourrez indiquer la disponibilité et le transport.</p>
+            <div class="choice-row">
+              <button type="button">Je participe</button>
+              <button type="button">Je ne participe pas</button>
+              <button type="button">À confirmer</button>
+            </div>
+            <div class="choice-row">
+              <button type="button">Je peux transporter</button>
+              <button type="button">Besoin transport</button>
+              <button type="button">Parent accompagnateur</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+<section class="tab-panel" id="tab-installer">
+        <div class="section-label">Installer le portail</div>
+        <div class="note">
+          <div class="note-icon">📲</div>
+          <div>
+            <strong>Sur téléphone :</strong> sur iPhone, ouvrir dans Safari puis “Partager” → “Sur l’écran d’accueil”.
+            Sur Android, menu du navigateur → “Ajouter à l’écran d’accueil”.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">
+      <strong>Un club, <span style="color:#00551f">🟢 deux couleurs ⚪</span>, une passion.</strong>
+      <span class="ball-footer">🏀</span>
+    </div>
+
+  </div>
 </div>
-
-<div class="card">
-<h2>Essais</h2>
-<p>Connaissez-vous quelqu’un qui souhaite essayer le basket ?</p>
-<a href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/">Lien essais</a>
-</div>
-</section>
-
-<section id="parent" class="hidden">
-<div class="card">
-<h2>Mes enfants</h2>
-<p>Gestion multi-enfants et réponses famille.</p>
-</div>
-</section>
-
-<section id="licencie" class="hidden">
-<div class="card">
-<h2>Espace licencié</h2>
-<p>Informations équipe, calendrier et réponses.</p>
-</div>
-</section>
-
-<section id="calendrier" class="hidden">
-<div class="card">
-<h2>Calendrier</h2>
-<p>Créneaux, entraînements et tournois.</p>
-</div>
-</section>
-
-<section id="sondages" class="hidden">
-<div class="card">
-<h2>Sondages</h2>
-<div class="choice">
-<button>Présent</button>
-<button>Absent</button>
-<button>À confirmer</button>
-</div>
-</div>
-</section>
-
-<section id="tournois" class="hidden">
-<div class="card">
-<h2>Mes tournois</h2>
-<p>Seuls les tournois concernant l’enfant sélectionné apparaîtront ici.</p>
-</div>
-
-<div class="card">
-<h2>Réponse tournoi</h2>
-<div class="choice">
-<button>Je participe</button>
-<button>Je ne participe pas</button>
-<button>À confirmer</button>
-</div>
-</div>
-</section>
-
-<footer>
-Un club, 🟢 deux couleurs ⚪, une passion 🏀
-</footer>
 
 <script>
-function show(id){
-document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
+function activateTab(tabName){
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.tab === tabName);
+  });
+  document.querySelectorAll(".tab-panel").forEach(panel=>{
+    panel.classList.toggle("active", panel.id === "tab-" + tabName);
+  });
+  history.replaceState(null, "", "#" + tabName);
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>activateTab(btn.dataset.tab));
+});
+
+document.querySelectorAll("[data-go]").forEach(btn=>{
+  btn.addEventListener("click",()=>activateTab(btn.dataset.go));
+});
+
+const initialTab = location.hash ? location.hash.replace("#","") : "accueil";
+if(document.getElementById("tab-" + initialTab)){
+  activateTab(initialTab);
+}
+
+document.querySelectorAll(".choice-row button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+    btn.classList.add("selected");
+  });
+});
+
+const identityKey = "esbb_portail_licencie_children";
+let activeChildIndex = 0;
+
+const identityForm = document.getElementById("identityForm");
+const childrenList = document.getElementById("childrenList");
+const childrenButtons = document.getElementById("childrenButtons");
+const savedIdentityText = document.getElementById("savedIdentityText");
+const saveIdentityBtn = document.getElementById("saveIdentityBtn");
+const editIdentityBtn = document.getElementById("editIdentityBtn");
+const addChildBtn = document.getElementById("addChildBtn");
+const cancelIdentityBtn = document.getElementById("cancelIdentityBtn");
+const childLastName = document.getElementById("childLastName");
+const childFirstName = document.getElementById("childFirstName");
+const childBirthDate = document.getElementById("childBirthDate");
+const childCategory = document.getElementById("childCategory");
+
+function loadChildren(){
+  try{return JSON.parse(localStorage.getItem(identityKey) || "[]");}
+  catch(error){return [];}
+}
+function saveChildren(children){
+  localStorage.setItem(identityKey, JSON.stringify(children));
+}
+function formatChild(child){
+  return `${child.prenom} ${child.nom} · né(e) le ${child.dateNaissance} · ${child.categorie || "catégorie à vérifier"}`;
+}
+function renderChildren(){
+  const children = loadChildren();
+  if(!children.length){showIdentityForm();return;}
+  if(activeChildIndex >= children.length){activeChildIndex = 0;}
+  const activeChild = children[activeChildIndex];
+  childrenButtons.innerHTML = "";
+  children.forEach((child,index)=>{
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = index === activeChildIndex ? "child-button active" : "child-button";
+    button.textContent = child.prenom || `Enfant ${index + 1}`;
+    button.addEventListener("click",()=>{activeChildIndex = index;renderChildren();});
+    childrenButtons.appendChild(button);
+  });
+  savedIdentityText.textContent = `Enfant sélectionné : ${formatChild(activeChild)}`;
+  childrenList.style.display = "block";
+  identityForm.style.display = "none";
+  cancelIdentityBtn.style.display = "none";
+}
+function showIdentityForm(child){
+  childLastName.value = child?.nom || "";
+  childFirstName.value = child?.prenom || "";
+  childBirthDate.value = child?.dateNaissance || "";
+  childCategory.value = child?.categorie || "Je ne sais pas";
+  childrenList.style.display = "none";
+  identityForm.style.display = "block";
+  cancelIdentityBtn.style.display = loadChildren().length ? "inline-flex" : "none";
+}
+function saveIdentity(){
+  const child = {
+    nom: childLastName.value.trim(),
+    prenom: childFirstName.value.trim(),
+    dateNaissance: childBirthDate.value,
+    categorie: childCategory.value
+  };
+  if(!child.nom || !child.prenom || !child.dateNaissance){
+    alert("Merci de renseigner le nom, le prénom et la date de naissance.");
+    return;
+  }
+  const children = loadChildren();
+  const existingIndex = children.findIndex(item =>
+    item.nom.toLowerCase() === child.nom.toLowerCase()
+    && item.prenom.toLowerCase() === child.prenom.toLowerCase()
+    && item.dateNaissance === child.dateNaissance
+  );
+  if(existingIndex >= 0){
+    children[existingIndex] = child;
+    activeChildIndex = existingIndex;
+  }else{
+    children.push(child);
+    activeChildIndex = children.length - 1;
+  }
+  saveChildren(children);
+  renderChildren();
+  activateTab("calendrier");
+}
+renderChildren();
+saveIdentityBtn.addEventListener("click",saveIdentity);
+addChildBtn.addEventListener("click",()=>showIdentityForm());
+editIdentityBtn.addEventListener("click",()=>showIdentityForm(loadChildren()[activeChildIndex]));
+cancelIdentityBtn.addEventListener("click",renderChildren);
+
+
+document.querySelectorAll(".mark-answered").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    localStorage.setItem("esbb_questionnaire_2026_2027_done","oui");
+    document.querySelectorAll(".answer-status").forEach(box=>box.classList.add("visible"));
+  });
+});
+
+if(localStorage.getItem("esbb_questionnaire_2026_2027_done")==="oui"){
+  document.querySelectorAll(".answer-status").forEach(box=>box.classList.add("visible"));
+}
+
+const saveLicencieFeedback = document.getElementById("saveLicencieFeedback");
+if(saveLicencieFeedback){
+  saveLicencieFeedback.addEventListener("click",()=>{
+    const type = document.getElementById("licencieFeedbackType")?.value || "";
+    const text = document.getElementById("licencieFeedbackText")?.value || "";
+    localStorage.setItem("esbb_licencie_feedback", JSON.stringify({type,text,date:new Date().toISOString()}));
+    alert("Merci, ton retour est enregistré sur ce téléphone pour le test.");
+  });
+}
+
+const copyEssaisBtn = document.getElementById("copyEssaisBtn");
+if(copyEssaisBtn){
+  copyEssaisBtn.addEventListener("click",async()=>{
+    const link = "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
+    try{
+      await navigator.clipboard.writeText(link);
+      alert("Lien essais copié.");
+    }catch(error){
+      prompt("Copiez le lien essais :",link);
+    }
+  });
 }
 </script>
 

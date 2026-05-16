@@ -1,43 +1,385 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Interface coach</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#003914" />
+<title>Interface coach | ES Blanquefort Basket Ball</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="../assets/icon-192.png" />
+
 <style>
-body{font-family:Arial;margin:0;background:#f5f8f3;color:#082313}
-header{background:#003914;color:white;padding:30px;text-align:center}
-section{padding:18px}
+:root{
+  --green-950:#001f0c;
+  --green-900:#003914;
+  --green-800:#00551f;
+  --green-700:#0b6b2b;
+  --green-100:#eaf4e9;
+  --green-50:#f7fbf6;
+  --orange-100:#fff2df;
+  --red-100:#fff0ed;
+  --blue-100:#edf4ff;
+  --ink:#082313;
+  --muted:#56695c;
+  --line:rgba(0,57,20,.26);
+  --white:#ffffff;
+  --shadow:0 22px 60px rgba(0,31,12,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:linear-gradient(135deg,#ffffff 0%,#f7fbf6 58%,#eef5ed 100%);
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+
+.page{
+  width:100%;
+  min-height:100vh;
+  padding:22px 12px 38px;
+  position:relative;
+  overflow:hidden;
+}
+.page::before{
+  content:"";
+  position:absolute;
+  left:-190px;
+  top:-180px;
+  width:660px;
+  height:350px;
+  background:linear-gradient(135deg,var(--green-950) 0%,var(--green-900) 72%,rgba(0,57,20,.66) 100%);
+  border-radius:0 0 86% 0;
+  z-index:0;
+  box-shadow:0 24px 60px rgba(0,31,12,.18);
+}
+.container{max-width:1180px;margin:0 auto;position:relative;z-index:1}
+.hero{
+  display:grid;
+  grid-template-columns:230px 1fr;
+  gap:28px;
+  align-items:center;
+  margin-bottom:18px;
+}
+.logo-zone{min-height:190px;display:grid;place-items:center}
+.logo-card{width:230px;min-height:190px;display:grid;place-items:center}
+.logo-card img{width:100%;height:auto;display:block;filter:drop-shadow(0 12px 16px rgba(0,31,12,.22))}
+.clubline{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px;
+  color:var(--green-950);font-weight:1000;font-size:clamp(15px,3.6vw,22px)
+}
+.dot{width:17px;height:17px;min-width:17px;border-radius:50%;display:inline-block;box-shadow:0 4px 12px rgba(0,31,12,.16)}
+.dot.green{background:#00551f}
+.dot.white{background:#fff;border:2px solid #00551f}
+.slogan-line{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:9px 15px;margin:0 0 14px;
+  border-radius:999px;background:#fff;border:1px solid rgba(0,57,20,.22);color:var(--green-950);
+  font-weight:1000;box-shadow:0 10px 22px rgba(0,31,12,.08)
+}
+.kicker{
+  display:inline-flex;align-items:center;gap:9px;padding:8px 15px;border-radius:999px;color:#fff;
+  background:linear-gradient(135deg,var(--green-900),var(--green-700));font-weight:950;letter-spacing:.03em;
+  font-size:15px;box-shadow:0 10px 22px rgba(0,57,20,.20);margin-bottom:14px
+}
+h1{
+  margin:0;color:var(--green-950);text-transform:uppercase;font-size:clamp(42px,7vw,76px);
+  line-height:.96;letter-spacing:-1.5px;font-weight:1000
+}
+.hero-text p{max-width:800px;margin:16px 0 0;font-size:18px;line-height:1.52;font-weight:650}
+
+.app-shell{
+  background:rgba(255,255,255,.95);border:1px solid rgba(0,57,20,.24);
+  border-radius:22px;box-shadow:var(--shadow);overflow:hidden
+}
+.tabs{
+  display:flex;gap:0;overflow-x:auto;background:linear-gradient(135deg,#f7fbf6,#ffffff);
+  border-bottom:1px solid rgba(0,57,20,.18);padding:10px
+}
+.tab-btn{
+  flex:0 0 auto;min-height:44px;border:1px solid rgba(0,57,20,.18);background:#fff;color:var(--green-950);
+  font-weight:1000;border-radius:999px;padding:9px 14px;margin-right:8px;cursor:pointer;box-shadow:0 8px 18px rgba(0,31,12,.05)
+}
+.tab-btn.active{background:linear-gradient(135deg,var(--green-900),var(--green-950));color:#fff;border-color:transparent}
+.tab-panel{display:none;padding:18px}
+.tab-panel.active{display:block;animation:fadeIn .16s ease}
+@keyframes fadeIn{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.section-label{
+  display:inline-flex;align-items:center;gap:8px;margin:-2px 0 12px;padding:7px 14px;border-radius:999px;color:#fff;
+  background:linear-gradient(135deg,var(--green-950),var(--green-800));font-weight:1000;text-transform:uppercase;
+  font-size:15px;letter-spacing:.01em;box-shadow:0 8px 18px rgba(0,57,20,.18)
+}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid.three{grid-template-columns:repeat(3,1fr)}
 .card{
-background:white;
-padding:18px;
-border-radius:18px;
-margin-bottom:14px;
-border:1px solid #dce7db;
+  padding:18px;border-radius:15px;background:#fff;border:1px solid rgba(0,57,20,.18);box-shadow:0 10px 22px rgba(0,31,12,.05)
+}
+.card.dark{background:linear-gradient(135deg,var(--green-900),var(--green-950));color:#fff}
+.card h2,.card h3{margin:0 0 8px;color:var(--green-950);font-size:20px;text-transform:uppercase;font-weight:1000}
+.card.dark h2,.card.dark h3{color:#fff}
+.card p{margin:0 0 14px;color:var(--muted);line-height:1.45;font-weight:650;font-size:14px}
+.card.dark p{color:rgba(255,255,255,.82)}
+.hint{color:var(--muted);font-size:13px;line-height:1.35;margin:0 0 10px;font-weight:600}
+.btn{
+  width:100%;min-height:52px;border:0;border-radius:13px;color:#fff;background:linear-gradient(135deg,var(--green-900),var(--green-950));
+  font-size:15px;font-weight:1000;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 14px 28px rgba(0,57,20,.20);
+  transition:.18s ease;display:inline-flex;align-items:center;justify-content:center;text-align:center
+}
+.btn.light{color:var(--green-950);background:#fff;border:1px solid rgba(0,57,20,.28);box-shadow:none}
+.btn:hover{transform:translateY(-1px)}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+label{display:grid;gap:7px;color:var(--green-950);font-size:13px;font-weight:1000;text-transform:uppercase}
+input,select,textarea{
+  width:100%;min-height:44px;padding:12px 14px;color:var(--ink);font-size:15px;font-weight:600;
+  border:1px solid rgba(0,57,20,.28);border-radius:11px;background:#fff;outline:0
+}
+textarea{min-height:92px;resize:vertical}
+.full{grid-column:1/-1}
+.list{display:grid;gap:10px}
+.row{
+  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:13px 14px;border:1px solid rgba(0,57,20,.16);
+  border-radius:13px;background:#fff
+}
+.row strong{color:var(--green-950)}
+.pill{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:999px;background:var(--green-100);color:var(--green-950);font-weight:1000;font-size:12px}
+.pill.orange{background:var(--orange-100)}
+.pill.red{background:var(--red-100)}
+.pill.blue{background:var(--blue-100)}
+.table-wrap{overflow-x:auto}
+table{width:100%;min-width:820px;border-collapse:separate;border-spacing:0 9px}
+th{text-align:left;color:var(--muted);font-size:12px;text-transform:uppercase;padding:0 10px}
+td{background:#fff;padding:12px 10px;border-top:1px solid rgba(0,57,20,.16);border-bottom:1px solid rgba(0,57,20,.16);font-weight:700}
+td:first-child{border-left:1px solid rgba(0,57,20,.16);border-radius:12px 0 0 12px;color:var(--green-950);font-weight:1000}
+td:last-child{border-right:1px solid rgba(0,57,20,.16);border-radius:0 12px 12px 0}
+.choice-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.choice-row button{min-height:44px;border-radius:11px;border:1px solid rgba(0,57,20,.24);background:#fff;color:var(--green-950);font-weight:1000;cursor:pointer}
+.choice-row button.selected{background:linear-gradient(135deg,var(--green-900),var(--green-950));color:#fff}
+.footer{margin:20px 0 0;text-align:center;color:rgba(8,35,19,.72);font-size:15px;font-weight:850;line-height:1.35}
+.footer strong{color:var(--green-950)}
+.ball-footer{display:block;margin-top:8px;font-size:24px}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;text-align:center;gap:8px}
+  .page::before{left:50%;top:-175px;width:540px;height:300px;transform:translateX(-50%);border-radius:0 0 70% 70%}
+  .logo-zone{min-height:auto}.logo-card{width:190px;min-height:auto;margin:0 auto}
+  .hero-text p{margin-left:auto;margin-right:auto}
+  .grid,.grid.three,.form,.choice-row{grid-template-columns:1fr}
+  .clubline,.slogan-line{justify-content:center}
+}
+@media(max-width:620px){
+  .page{padding:12px 8px 30px}.logo-card{width:150px}.kicker{font-size:12px;padding:7px 11px}
+  h1{font-size:37px}.hero-text p{font-size:15px;line-height:1.46}.tab-panel{padding:12px}
+  .tab-btn{font-size:13px;min-height:40px;padding:8px 11px}.card{padding:14px}.btn{min-height:50px;font-size:14px}
+  .slogan-line{font-size:14px;padding:8px 12px}
 }
 </style>
 </head>
+
 <body>
-<header>
-<h1>🏀 Interface coach</h1>
-<p>Présences, créneaux, essais et tournois</p>
-</header>
+<div class="page">
+  <div class="container">
+    <header class="hero">
+      <div class="logo-zone">
+        <div class="logo-card">
+          <img src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball">
+        </div>
+      </div>
 
-<section>
-<div class="card">
-<h2>Présences</h2>
-<p>Suivi des réponses joueurs et parents.</p>
+      <div class="hero-text">
+        <div class="clubline">
+          <span class="dot green"></span>
+          <span>ES Blanquefort Basket Ball</span>
+          <span class="dot white"></span>
+        </div>
+        <div class="slogan-line">Vert et blanc un jour, Blanquefort toujours&nbsp;!</div>
+        <div class="kicker">🏀 INTERFACE COACH</div>
+        <h1>Suivre<br>mon équipe</h1>
+        <p>
+          Interface test dédiée aux coachs : entraînements, sondages, présences,
+          essais attendus et messages utiles aux familles.
+        </p>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <nav class="tabs" aria-label="Onglets interface coach">
+        <button class="tab-btn active" data-tab="accueil">Accueil</button>
+        <button class="tab-btn" data-tab="creneaux">Créneaux</button>
+        <button class="tab-btn" data-tab="presences">Présences</button>
+        <button class="tab-btn" data-tab="sondages">Sondages</button>
+        <button class="tab-btn" data-tab="essais">Essais</button>
+        <button class="tab-btn" data-tab="messages">Messages</button>
+      </nav>
+
+      <section class="tab-panel active" id="tab-accueil">
+        <div class="section-label">Tableau de bord coach</div>
+        <div class="grid three">
+          <article class="card">
+            <h3>Mes créneaux</h3>
+            <p>Voir et modifier les créneaux visibles pour les familles, si besoin.</p>
+            <button class="btn light" type="button" data-go="creneaux">Voir</button>
+          </article>
+          <article class="card">
+            <h3>Présences</h3>
+            <p>Suivre les réponses aux sondages : présent, absent, à confirmer.</p>
+            <button class="btn light" type="button" data-go="presences">Suivre</button>
+          </article>
+          <article class="card dark">
+            <h3>Essais attendus</h3>
+            <p>Voir les nouveaux joueurs attendus avec téléphone et mail parent.</p>
+            <button class="btn light" type="button" data-go="essais">Voir essais</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-creneaux">
+        <div class="section-label">Créneaux équipe</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Créneaux de travail</h3>
+            <div class="list">
+              <div class="row"><div><strong>U11G → U13G</strong><br><span class="hint">Mercredi / Vendredi</span></div><span class="pill">Brouillon</span></div>
+              <div class="row"><div><strong>U13 → U15</strong><br><span class="hint">Lundi / Vendredi</span></div><span class="pill orange">À confirmer</span></div>
+              <div class="row"><div><strong>U15 → U18</strong><br><span class="hint">Lundi / Vendredi</span></div><span class="pill orange">À confirmer</span></div>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Modifier un créneau</h3>
+            <div class="form">
+              <label>Groupe<select><option>U11G → U13G</option><option>U13 → U15</option><option>U15 → U18</option><option>Essais</option></select></label>
+              <label>Date<input type="date"></label>
+              <label>Début<input type="time"></label>
+              <label>Fin<input type="time"></label>
+              <label class="full">Lieu<input type="text" placeholder="Gymnase"></label>
+              <label class="full">Message famille<textarea placeholder="Ex : créneau confirmé / changement de lieu / annulation..."></textarea></label>
+            </div>
+            <button class="btn" type="button" style="margin-top:12px">Enregistrer la modification</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-presences">
+        <div class="section-label">Présences</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Joueur</th><th>Groupe</th><th>Créneau</th><th>Réponse</th><th>Parent</th><th>Contact</th></tr></thead>
+            <tbody>
+              <tr><td>Exemple joueur</td><td>U13</td><td>Mer. 03/06</td><td><span class="pill">Présent</span></td><td>Parent</td><td>06...</td></tr>
+              <tr><td>Exemple joueur</td><td>U15</td><td>Ven. 12/06</td><td><span class="pill orange">À confirmer</span></td><td>Parent</td><td>mail@email.fr</td></tr>
+              <tr><td>Exemple joueur</td><td>U18</td><td>Lun. 08/06</td><td><span class="pill red">Absent</span></td><td>Parent</td><td>06...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-sondages">
+        <div class="section-label">Créer un sondage</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Nouveau sondage</h3>
+            <div class="form">
+              <label>Groupe<select><option>Mon équipe</option><option>U11G → U13G</option><option>U13 → U15</option><option>U15 → U18</option><option>Essais</option></select></label>
+              <label>Date<input type="date"></label>
+              <label class="full">Question<input type="text" placeholder="Serez-vous présent à l’entraînement ?"></label>
+            </div>
+            <button class="btn" type="button" style="margin-top:12px">Créer le sondage</button>
+          </article>
+          <article class="card">
+            <h3>Exemple réponse</h3>
+            <p>Les familles pourront répondre simplement. Les réponses remonteront ensuite dans le Sheet.</p>
+            <div class="choice-row">
+              <button type="button">Présent</button>
+              <button type="button">Absent</button>
+              <button type="button">À confirmer</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-essais">
+        <div class="section-label">Essais attendus</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Lien essais</h3>
+            <p>À envoyer rapidement à une famille qui souhaite tester le basket.</p>
+            <a class="btn" target="_blank" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/">Ouvrir le lien essais</a>
+            <button class="btn light" type="button" id="copyEssaisBtn" style="margin-top:10px">Copier le lien essais</button>
+          </article>
+          <article class="card">
+            <h3>Demandes reçues</h3>
+            <div class="list">
+              <div class="row"><div><strong>Nouvel essai</strong><br><span class="hint">U11 · Parent : 06... · mail@email.fr</span></div><span class="pill blue">À prévenir</span></div>
+              <div class="row"><div><strong>Nouvel essai</strong><br><span class="hint">U13 · Parent : 06... · mail@email.fr</span></div><span class="pill">Confirmé</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-messages">
+        <div class="section-label">Messages familles</div>
+        <div class="grid">
+          <article class="card">
+            <h3>Message rapide</h3>
+            <div class="form">
+              <label>Destinataires<select><option>Mon équipe</option><option>Présents</option><option>Absents</option><option>Sans réponse</option><option>Essais attendus</option></select></label>
+              <label>Canal<select><option>À copier pour WhatsApp / SMS</option><option>Email plus tard</option></select></label>
+              <label class="full">Message<textarea id="coachMessage">Bonjour, merci de confirmer la présence de votre enfant au prochain créneau.</textarea></label>
+            </div>
+            <button class="btn" type="button" id="copyCoachMessage" style="margin-top:12px">Copier le message</button>
+          </article>
+          <article class="card dark">
+            <h3>Test fin de saison</h3>
+            <p>Cette interface sert à tester les usages coachs avant la saison prochaine : ce qui est utile, ce qui manque, ce qui doit être simplifié.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">
+      <strong>Un club, <span style="color:#00551f">🟢 deux couleurs ⚪</span>, une passion.</strong>
+      <span class="ball-footer">🏀</span>
+    </div>
+  </div>
 </div>
 
-<div class="card">
-<h2>Tournois reçus</h2>
-<p>Organisation des équipes, transports et réponses.</p>
-</div>
+<script>
+function activateTab(tabName){
+  document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.toggle("active", btn.dataset.tab === tabName));
+  document.querySelectorAll(".tab-panel").forEach(panel=>panel.classList.toggle("active", panel.id === "tab-" + tabName));
+  history.replaceState(null, "", "#" + tabName);
+}
+document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>activateTab(btn.dataset.tab)));
+document.querySelectorAll("[data-go]").forEach(btn=>btn.addEventListener("click",()=>activateTab(btn.dataset.go)));
+const initialTab = location.hash ? location.hash.replace("#","") : "accueil";
+if(document.getElementById("tab-" + initialTab)) activateTab(initialTab);
 
-<div class="card">
-<h2>Essais attendus</h2>
-<p>Coordonnées parents et nouveaux joueurs.</p>
-</div>
-</section>
+document.querySelectorAll(".choice-row button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+    btn.classList.add("selected");
+  });
+});
+
+const copyEssaisBtn = document.getElementById("copyEssaisBtn");
+if(copyEssaisBtn){
+  copyEssaisBtn.addEventListener("click",async()=>{
+    const link = "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
+    try{await navigator.clipboard.writeText(link);alert("Lien essais copié.");}
+    catch(error){prompt("Copiez le lien essais :",link);}
+  });
+}
+
+const copyCoachMessage = document.getElementById("copyCoachMessage");
+if(copyCoachMessage){
+  copyCoachMessage.addEventListener("click",async()=>{
+    const msg = document.getElementById("coachMessage").value;
+    try{await navigator.clipboard.writeText(msg);alert("Message copié.");}
+    catch(error){prompt("Copiez le message :",msg);}
+  });
+}
+</script>
 </body>
 </html>

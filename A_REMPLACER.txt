@@ -1,0 +1,5 @@
+Ajouter/remplacer dans GitHub :
+- interface-coach/index.html
+- interface-coach/manifest.json
+
+Interface coach V1 : vrais onglets, créneaux, présences, sondages, essais, messages.
