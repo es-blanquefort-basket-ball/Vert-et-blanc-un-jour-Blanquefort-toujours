@@ -300,6 +300,44 @@ h1{
   .card{padding:14px}
   .btn{min-height:48px}
 }
+
+.club-dot{
+  width:15px;
+  height:15px;
+  min-width:15px;
+  border-radius:50%;
+  display:inline-block;
+  vertical-align:-2px;
+  margin:0 3px;
+  box-shadow:0 3px 8px rgba(0,31,12,.14);
+}
+
+.club-dot.green{
+  background:#003914;
+}
+
+.club-dot.white{
+  background:#ffffff;
+  border:2px solid #003914;
+}
+
+
+/* POLISH_HOME_SCROLL_ESBB */
+html,body{
+  min-height:100%;
+  overflow-y:auto !important;
+}
+
+.grid{
+  align-items:stretch;
+}
+
+@media(max-width:760px){
+  .grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
 </head>
 
@@ -358,7 +396,7 @@ h1{
     </main>
 
     <div class="footer">
-      <strong>Un club, <span style="color:#00551f">🟢 deux couleurs ⚪</span>, une passion.</strong>
+      <strong>Un club, <span class="club-dot green"></span> deux couleurs <span class="club-dot white"></span>, une passion.</strong>
       <span class="ball-footer">🏀</span>
     </div>
 

@@ -525,6 +525,76 @@ overflow-y:auto;
 }
 }
 
+
+/* POLISH_TABS_GRID_ESBB — menus stables, sans défilement horizontal */
+.tabs{
+  display:grid !important;
+  grid-template-columns:repeat(4, minmax(0,1fr)) !important;
+  gap:8px !important;
+  overflow:visible !important;
+  padding:10px !important;
+}
+
+.tab-btn{
+  width:100% !important;
+  min-width:0 !important;
+  margin-right:0 !important;
+  white-space:normal !important;
+  text-align:center !important;
+  justify-content:center !important;
+  line-height:1.12 !important;
+}
+
+@media(max-width:760px){
+  .tabs{
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .tab-btn{
+    min-height:42px !important;
+    padding:8px 6px !important;
+    font-size:12px !important;
+  }
+}
+
+@media(max-width:360px){
+  .tabs{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* Pastilles couleur club */
+.dot.green,
+.club-dot-green{
+  background:#003914 !important;
+}
+
+.footer-green,
+.footer .green-text{
+  color:#003914 !important;
+}
+
+
+.club-dot{
+  width:15px;
+  height:15px;
+  min-width:15px;
+  border-radius:50%;
+  display:inline-block;
+  vertical-align:-2px;
+  margin:0 3px;
+  box-shadow:0 3px 8px rgba(0,31,12,.14);
+}
+
+.club-dot.green{
+  background:#003914;
+}
+
+.club-dot.white{
+  background:#ffffff;
+  border:2px solid #003914;
+}
+
 </style>
 </head>
 
@@ -809,7 +879,7 @@ overflow-y:auto;
     </main>
 
     <div class="footer">
-      <strong>Un club, <span style="color:#00551f">🟢 deux couleurs ⚪</span>, une passion.</strong>
+      <strong>Un club, <span class="club-dot green"></span> deux couleurs <span class="club-dot white"></span>, une passion.</strong>
       <span class="ball-footer">🏀</span>
     </div>
 
