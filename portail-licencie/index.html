@@ -130,7 +130,7 @@ textarea{min-height:84px;resize:vertical}
 <div class="page">
 <div class="container">
 <header class="hero">
-<img class="logo" src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball">
+<img class="logo" src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball" onclick="esbbReturnHome()" style="cursor:pointer">
 <div class="clubline"><span class="dot green"></span><span>ES Blanquefort Basket Ball</span><span class="dot white"></span></div>
 <div class="slogan">Vert et blanc un jour, Blanquefort toujours&nbsp;!</div><br>
 <div class="kicker">🏀 PORTAIL LICENCIÉS</div>
@@ -200,7 +200,7 @@ textarea{min-height:84px;resize:vertical}
 <a href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Questionnaire</a>
 <button data-open="installer">Installer</button>
 <button data-open="accueil">Accueil</button>
-</div>
+<button data-open="communication">Communication <span class="comm-dot"></span></button></div>
 <div class="label">Espace licencié</div>
 <div class="welcome-card"><h2 id="playerHello">Bonjour</h2><p>Si tu es, cet espace te permet de gérer ton calendrier, tes présences et tes informations de fin de saison.</p></div>
 <div class="grid">
@@ -233,7 +233,7 @@ textarea{min-height:84px;resize:vertical}
 <button data-open="fin">Calendrier <span class="notif-dot" aria-hidden="true"></span></button>
 <a href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Questionnaire</a>
 <button data-open="accueil">Accueil</button>
-</div>
+<button data-open="communication">Communication <span class="comm-dot"></span></button></div>
 <div class="label">Espace enfant</div>
 <div class="welcome-card"><h2 id="activeChildTitle">Aucun enfant sélectionné</h2><p id="activeChildText">Ajoutez ou sélectionnez un enfant depuis l’espace parent.</p></div>
 <div class="grid">
@@ -249,7 +249,7 @@ textarea{min-height:84px;resize:vertical}
 <button class="active" data-open="fin">Calendrier <span class="notif-dot" aria-hidden="true"></span></button>
 <a href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Questionnaire</a>
 <button data-open="accueil">Accueil</button>
-</div>
+<button data-open="communication">Communication <span class="comm-dot"></span></button></div>
 <div class="label">Calendrier fin de saison</div>
 <div class="welcome-card">
 <h2>Entraînements, bascules et tournois</h2>
@@ -275,7 +275,7 @@ textarea{min-height:84px;resize:vertical}
 <button data-open="accueil">Accueil</button>
 <a href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" class="active">Essais</a>
 <button data-open="installer">Installer</button>
-</div>
+<button data-open="communication">Communication <span class="comm-dot"></span></button></div>
 <div class="label">Essais</div>
 <div class="grid">
 <article class="card"><h3>Faire un essai</h3><p>Vous connaissez quelqu’un qui souhaite essayer le basket ? Envoyez-lui le lien.</p><a class="btn" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Ouvrir le lien essais</a></article>
@@ -288,7 +288,7 @@ textarea{min-height:84px;resize:vertical}
 <button data-open="parent">Parent</button>
 <button data-open="joueur">Licencié</button>
 <button data-open="accueil">Accueil</button>
-</div>
+<button data-open="communication">Communication <span class="comm-dot"></span></button></div>
 <div class="label">Installer</div>
 <article class="card"><h3>Ajouter à l’écran d’accueil</h3><p>Sur iPhone : Safari → Partager → Sur l’écran d’accueil. Sur Android : menu navigateur → Ajouter à l’écran d’accueil.</p><span class="pill">Accès rapide</span></article>
 </section>
@@ -300,6 +300,7 @@ textarea{min-height:84px;resize:vertical}
 <p>Retrouvez ici les messages importants publiés par le club.</p><div class="install-hint"><strong>Astuce</strong> Vous pouvez installer ce portail sur l’écran d’accueil du téléphone pour l’ouvrir comme une application.</div>
 </div>
 <div class="tools">
+<button class="btn" id="communicationBackHome" type="button" onclick="esbbReturnHome()">Retour accueil</button>
 <button class="btn light" type="button" onclick="esbbLoadCommunications('Licencies')">Actualiser</button>
 <button class="btn" type="button" onclick="esbbMarkCommunicationsRead('Licencies')">Marquer comme lu</button>
 </div>
@@ -583,6 +584,40 @@ async function copyEssaisLinkFamilleESBB(){
   }catch(e){
     prompt("Copiez le lien essais :", link);
   }
+}
+
+
+document.addEventListener("click", function(e){
+  const btn = e.target.closest && e.target.closest("[data-open]");
+  if(!btn) return;
+  const tab = btn.dataset.open;
+  if(tab && typeof openPanel === "function"){
+    openPanel(tab);
+  }
+});
+
+
+function esbbReturnHome(){
+  const preferred = ["accueil","home","choix","parent","dashboard"];
+  for(const tab of preferred){
+    const panel = document.getElementById("panel-" + tab);
+    if(panel && typeof openPanel === "function"){
+      openPanel(tab);
+      return;
+    }
+  }
+
+  // Fallback : masquer communication et afficher le premier panneau disponible
+  const comm = document.getElementById("panel-communication");
+  if(comm) comm.classList.remove("active");
+
+  const panels = [...document.querySelectorAll(".panel")].filter(p => p.id !== "panel-communication");
+  if(panels.length){
+    panels.forEach(p=>p.classList.remove("active"));
+    panels[0].classList.add("active");
+  }
+
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 </script>
