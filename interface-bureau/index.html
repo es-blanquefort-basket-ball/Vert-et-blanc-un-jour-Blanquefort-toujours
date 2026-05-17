@@ -138,6 +138,11 @@ tr:hover td{background:#f7fbf6}
 <div class="tools">
 <select id="globalCategory">
 <option value="ALL">Toutes les catégories</option>
+<option value="U5">U5</option>
+<option value="U7">U7</option>
+<option value="U9">U9</option>
+<option value="U11">U11</option>
+
 <option value="U13M">U13M</option>
 <option value="U13F">U13F</option>
 <option value="U15M">U15M</option>
@@ -149,7 +154,7 @@ tr:hover td{background:#f7fbf6}
 <button class="btn" type="button" onclick="loadBureauData()">Actualiser</button>
 <button class="btn light" type="button" onclick="copyDashboard()">Copier résumé</button>
 </div>
-<div id="loadStatus" class="status visible">Chargement des données...</div>
+<div id="loadStatus" class="status visible">Chargement des données...</div><div class="notice" id="miniNoteBureau">Vue bureau : les catégories U5 à U11 sont visibles ici pour le suivi interne, mais ne sont pas ouvertes côté portail familles / petits licenciés.</div>
 <div class="grid-4">
 <article class="card dark"><h3>Licenciés</h3><div class="big-number" id="countLicencies">0</div><p>joueurs affichés</p></article>
 <article class="card"><h3>Essais</h3><div class="big-number" id="countEssais">0</div><p>demandes essais</p></article>
@@ -179,6 +184,11 @@ tr:hover td{background:#f7fbf6}
 <div class="tools">
 <select id="licencieCategory">
 <option value="ALL">Toutes les catégories</option>
+<option value="U5">U5</option>
+<option value="U7">U7</option>
+<option value="U9">U9</option>
+<option value="U11">U11</option>
+
 <option value="U13M">U13M</option>
 <option value="U13F">U13F</option>
 <option value="U15M">U15M</option>
@@ -230,6 +240,11 @@ tr:hover td{background:#f7fbf6}
 <div class="tools">
 <select id="creneauCategory">
 <option value="ALL">Toutes les catégories</option>
+<option value="U5">U5</option>
+<option value="U7">U7</option>
+<option value="U9">U9</option>
+<option value="U11">U11</option>
+
 <option value="U13M">U13M</option>
 <option value="U13F">U13F</option>
 <option value="U15M">U15M</option>
@@ -343,7 +358,7 @@ tr:hover td{background:#f7fbf6}
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
 
-const GROUPS = ["U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];
+const GROUPS = ["U5","U7","U9","U11","U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];
 const ESSAIS_GROUPS = ["U5","U7","U9","U11","U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];
 
 const LINKS = {
