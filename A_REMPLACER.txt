@@ -1,5 +1,14 @@
-À remplacer dans GitHub :
-- interface-bureau/index.html
-- interface-bureau/manifest.json
+VERSION BÊTA ENVOI SOIR
 
-Correction : vraie vue d’ensemble bureau + onglets + pastilles vert club foncé + titre plus petit.
+À remplacer dans GitHub :
+- portail-licencie/index.html
+- portail-licencie/manifest.json
+
+Objectif : envoi ce soir.
+- navigation compacte
+- pas de recherche licence obligatoire
+- parent + enfant + téléphone + mail
+- envoi vers APP_IDENTIFICATIONS
+- retour utilisateur vers APP_RETOURS_UTILISATEURS
+- lien essais
+- questionnaire saison
