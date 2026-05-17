@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -77,6 +78,24 @@ tr:hover td{background:#f7fbf6}
   .nav{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tools select,.tools input,.btn{width:100%}
 }
+
+.comm-dot{display:none;width:10px;height:10px;background:#d71920;border-radius:50%;margin-left:6px;box-shadow:0 0 0 3px rgba(215,25,32,.12)}
+.comm-dot.visible{display:inline-block}
+.comm-list{display:grid;gap:10px;margin-top:10px}
+.comm-card{border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#fff;padding:12px}
+.comm-card strong{display:block;color:var(--d);font-weight:1000;font-size:16px}
+.comm-card span{display:block;color:var(--muted);font-size:12px;font-weight:800;margin:3px 0 8px}
+.comm-card p{margin:0;color:#183726;font-weight:700;line-height:1.4}
+
+.comm-form{display:grid;gap:10px}
+.comm-form input,.comm-form select,.comm-form textarea{width:100%;border:1px solid rgba(0,57,20,.24);border-radius:12px;padding:11px;font-weight:800;background:#fff}
+.comm-form textarea{min-height:150px;resize:vertical}
+
+.install-hint{border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#f7fbf6;padding:12px;margin:10px 0;color:var(--d);font-weight:800;line-height:1.35}
+.install-hint strong{display:block;font-weight:1000;margin-bottom:4px}
+.comm-card img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin:8px 0;border:1px solid rgba(0,57,20,.12)}
+.comm-card a.comm-link{display:inline-flex;margin-top:10px;padding:10px 12px;border-radius:12px;background:linear-gradient(135deg,var(--g),var(--d));color:#fff;font-weight:1000;text-transform:uppercase;font-size:12px;text-decoration:none}
+
 </style>
 </head>
 <body>
@@ -98,7 +117,7 @@ tr:hover td{background:#f7fbf6}
 <button data-open="essais">Essais</button>
 <button data-open="creneaux">Créneaux</button>
 <button data-open="liens">Liens</button>
-</div>
+<button data-open="communication">Communication <span id="communicationDot" class="comm-dot"></span></button></div>
 
 <section id="panel-dashboard" class="panel active">
 <div class="label">Vue globale</div>
@@ -226,6 +245,53 @@ tr:hover td{background:#f7fbf6}
 <article class="card"><h3>Réinscription</h3><p>À diffuser aux licenciés actuels.</p><button class="btn light" onclick="copyLink('REINSCRIPTION')">Copier le lien</button></article>
 </div>
 </section>
+
+<section id="panel-communication" class="panel">
+<div class="label">Communication club</div>
+<div class="welcome-card">
+<h2>Publier une information</h2>
+<p>Créez un message pour les licenciés, les coachs ou tout le monde. Une pastille rouge apparaîtra sur les portails tant que le message n’a pas été lu sur l’appareil.</p>
+</div>
+<div class="grid">
+<article class="card">
+<h3>Nouveau message</h3>
+<div class="comm-form">
+<input id="commTitre" placeholder="Titre">
+<select id="commCible">
+<option value="Tous">Tous</option>
+<option value="Licencies">Licenciés / parents</option>
+<option value="Coachs">Coachs</option>
+<option value="Bureau">Bureau</option>
+</select>
+<select id="commPriorite">
+<option value="Normale">Priorité normale</option>
+<option value="Importante">Important</option>
+<option value="Urgente">Urgent</option>
+</select>
+<select id="commType">
+<option value="Info">Info club</option>
+<option value="Newsletter">Newsletter</option>
+<option value="Événement">Événement</option>
+<option value="Urgent">Urgent</option>
+</select>
+<input id="commLien" placeholder="Lien optionnel : newsletter, page, document...">
+<input id="commBouton" placeholder="Texte du bouton : Lire la newsletter, Voir le document...">
+<input id="commImage" placeholder="Image optionnelle : URL du visuel">
+<textarea id="commMessage" placeholder="Message à publier..."></textarea>
+<button class="btn" type="button" onclick="saveCommunicationBureau()">Publier</button>
+</div>
+<div class="status" id="commSaveStatus">Communication publiée.</div>
+</article>
+<article class="card">
+<h3>Messages publiés</h3>
+<div class="tools">
+<button class="btn light" type="button" onclick="esbbLoadCommunications('Bureau')">Actualiser</button>
+</div>
+<div id="communicationList" class="comm-list"></div>
+</article>
+</div>
+</section>
+
 </main>
 
 <div class="status" id="toast"></div>
@@ -260,10 +326,12 @@ function openPanel(tab){
     licencies:["Licenciés","Vue de contrôle par groupe."],
     essais:["Essais","Demandes d’essais reçues."],
     creneaux:["Créneaux","Entraînements affichés aux coachs."],
-    liens:["Liens utiles","Liens à diffuser selon les publics."]
+    liens:["Liens utiles","Liens à diffuser selon les publics."],
+    communication:["Communication","Publier et suivre les informations club."]
   };
   heroTitle.textContent=(map[tab]||map.dashboard)[0];
   heroSubtitle.textContent=(map[tab]||map.dashboard)[1];
+  if(tab==="communication") esbbLoadCommunications("Bureau");
 }
 document.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openPanel(el.dataset.open)));
 
@@ -286,18 +354,27 @@ async function fetchGroup(cat){
 async function loadBureauData(){
   loadStatus.classList.add("visible");
   loadStatus.textContent="Chargement des données...";
-  const selected = globalCategory.value;
-  const groups = selected === "ALL" ? GROUPS : [selected];
 
-  const results = [];
-  for(const g of groups){
-    try{ results.push(await fetchGroup(g)); }
-    catch(e){ results.push({licencies:[], essais:[], creneaux:[]}); }
+  const selected = globalCategory.value;
+
+  const groupsForLicencies = selected === "ALL" ? GROUPS : [selected];
+  const groupsForEssais = selected === "ALL" ? ESSAIS_GROUPS : [selected];
+
+  const licResults = [];
+  for(const g of groupsForLicencies){
+    try{ licResults.push(await fetchGroup(g)); }
+    catch(e){ licResults.push({licencies:[], essais:[], creneaux:[]}); }
   }
 
-  DATA.licencies = uniqueBy(results.flatMap(r=>r.licencies), x => (x.licence || "") + "|" + (x.nom || "") + "|" + (x.prenom || ""));
-  DATA.essais = uniqueBy(results.flatMap(r=>r.essais), x => (x.id || "") + "|" + (x.nom || "") + "|" + (x.prenom || "") + "|" + (x.creneau || ""));
-  DATA.creneaux = uniqueBy(results.flatMap(r=>r.creneaux), x => (x.id || "") + "|" + (x.categorieAffichee || ""));
+  const essaiResults = [];
+  for(const g of groupsForEssais){
+    try{ essaiResults.push(await fetchGroup(g)); }
+    catch(e){ essaiResults.push({licencies:[], essais:[], creneaux:[]}); }
+  }
+
+  DATA.licencies = uniqueBy(licResults.flatMap(r=>r.licencies), x => (x.licence || "") + "|" + (x.nom || "") + "|" + (x.prenom || ""));
+  DATA.creneaux = uniqueBy(licResults.flatMap(r=>r.creneaux), x => (x.id || "") + "|" + (x.categorieAffichee || ""));
+  DATA.essais = uniqueBy(essaiResults.flatMap(r=>r.essais), x => (x.id || "") + "|" + (x.nom || "") + "|" + (x.prenom || "") + "|" + (x.creneau || ""));
 
   loadStatus.textContent = "Données chargées : " + DATA.licencies.length + " licencié(s), " + DATA.essais.length + " essai(s), " + DATA.creneaux.length + " créneau(x).";
   renderAll();
