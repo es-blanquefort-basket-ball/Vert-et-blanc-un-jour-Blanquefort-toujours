@@ -96,6 +96,16 @@ tr:hover td{background:#f7fbf6}
 .comm-card img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin:8px 0;border:1px solid rgba(0,57,20,.12)}
 .comm-card a.comm-link{display:inline-flex;margin-top:10px;padding:10px 12px;border-radius:12px;background:linear-gradient(135deg,var(--g),var(--d));color:#fff;font-weight:1000;text-transform:uppercase;font-size:12px;text-decoration:none}
 
+
+.alert-badge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:1000}
+.alert-badge.red{background:#fff0ed;color:#8a1f11}
+.alert-badge.orange{background:#fff7e6;color:#8a5a05}
+.alert-badge.green{background:#eaf4e9;color:#003914}
+.alert-list{display:grid;gap:8px;margin-top:10px}
+.alert-item{border:1px solid rgba(0,57,20,.14);border-radius:12px;padding:10px;background:#fff}
+.alert-item strong{display:block;color:var(--d);font-weight:1000}
+.alert-item span{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-top:3px}
+
 </style>
 </head>
 <body>
@@ -117,7 +127,7 @@ tr:hover td{background:#f7fbf6}
 <button data-open="essais">Essais</button>
 <button data-open="creneaux">Créneaux</button>
 <button data-open="liens">Liens</button>
-<button data-open="communication">Communication <span id="communicationDot" class="comm-dot"></span></button></div>
+<button data-open="communication">Communication <span id="communicationDot" class="comm-dot"></span></button><button data-open="saison">Saison 26-27</button></div>
 
 <section id="panel-dashboard" class="panel active">
 <div class="label">Vue globale</div>
@@ -145,6 +155,8 @@ tr:hover td{background:#f7fbf6}
 <article class="card"><h3>Essais</h3><div class="big-number" id="countEssais">0</div><p>demandes essais</p></article>
 <article class="card"><h3>Créneaux</h3><div class="big-number" id="countCreneaux">0</div><p>entraînements / groupes</p></article>
 <article class="card"><h3>Groupes</h3><div class="big-number" id="countGroupes">0</div><p>catégories suivies</p></article>
+<article class="card"><h3>Départs</h3><div class="big-number" id="countDepart">0</div><p>à surveiller</p></article>
+<article class="card"><h3>Pas répondu</h3><div class="big-number" id="countPasRepondu">0</div><p>à relancer</p></article>
 </div>
 <div class="grid" style="margin-top:12px">
 <article class="card">
@@ -292,6 +304,35 @@ tr:hover td{background:#f7fbf6}
 </div>
 </section>
 
+
+<section id="panel-saison" class="panel">
+<div class="label">Suivi saison 2026-2027</div>
+<div class="welcome-card">
+<h2>Questionnaire retour / saison prochaine</h2>
+<p>Suivi des réponses : continue, arrête, ne sait pas encore, pas répondu. Les départs et relances ressortent automatiquement.</p>
+</div>
+<div class="grid-4">
+<article class="card dark"><h3>Réponses</h3><div class="big-number" id="seasonReponses">0</div><p>questionnaires reçus</p></article>
+<article class="card"><h3>Continue</h3><div class="big-number" id="seasonContinue">0</div><p>reste au club</p></article>
+<article class="card"><h3>Départs</h3><div class="big-number" id="seasonArrete">0</div><p>à surveiller</p></article>
+<article class="card"><h3>À relancer</h3><div class="big-number" id="seasonRelance">0</div><p>incertains / sans réponse</p></article>
+</div>
+<div class="tools">
+<select id="seasonFilter">
+<option value="ALL">Toutes les réponses</option>
+<option value="continue">Je continue</option>
+<option value="arrete">J’arrête</option>
+<option value="ne-sait-pas">Je ne sais pas encore</option>
+<option value="pas-repondu">Pas répondu</option>
+<option value="alerte">Alertes</option>
+</select>
+<input id="seasonSearch" placeholder="Rechercher nom, prénom, catégorie">
+<button class="btn light" onclick="copySeasonTable()">Copier suivi</button>
+<button class="btn" onclick="loadSeasonData()">Actualiser</button>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Alerte</th><th>Catégorie</th><th>Nom</th><th>Prénom</th><th>Décision</th><th>Pratique</th><th>Participation</th><th>Remarque</th></tr></thead><tbody id="seasonBody"></tbody></table></div>
+</section>
+
 </main>
 
 <div class="status" id="toast"></div>
@@ -327,11 +368,13 @@ function openPanel(tab){
     essais:["Essais","Demandes d’essais reçues."],
     creneaux:["Créneaux","Entraînements affichés aux coachs."],
     liens:["Liens utiles","Liens à diffuser selon les publics."],
-    communication:["Communication","Publier et suivre les informations club."]
+    communication:["Communication","Publier et suivre les informations club."],
+    saison:["Saison 26-27","Suivi des réponses et alertes départs / relances."]
   };
   heroTitle.textContent=(map[tab]||map.dashboard)[0];
   heroSubtitle.textContent=(map[tab]||map.dashboard)[1];
   if(tab==="communication") esbbLoadCommunications("Bureau");
+  if(tab==="saison") loadSeasonData();
 }
 document.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openPanel(el.dataset.open)));
 
