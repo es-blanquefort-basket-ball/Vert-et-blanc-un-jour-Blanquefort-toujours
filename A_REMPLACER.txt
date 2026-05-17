@@ -1,14 +1,28 @@
-PORTAIL ROLES PARENT / LICENCIE V3
+PORTAIL LICENCIÉS — VERSION DÉFINITIVE
 
 À remplacer dans GitHub :
 - portail-licencie/index.html
 - portail-licencie/manifest.json
 
-Logique :
-- Parent / responsable légal : plusieurs enfants
-- Espace enfant : accessible depuis parent
-- Licencié autonome : espace joueur dédié
-- Fin de saison : présences + tournois + questionnaire
-- Essais : lien vers formulaire essais
-- Retour : secondaire
-- Tout remonte vers le même Sheet via le routeur Apps Script
+Version figée côté interface :
+- Accueil : Parent / Licencié / Essais / Questionnaire
+- Aucun coach
+- Aucun bureau
+- Aucun retour
+- Parent peut gérer plusieurs enfants
+- Licencié autonome séparé
+- Catégorie calculée automatiquement par date de naissance
+- Date de naissance obligatoire
+- Calendrier fin de saison avec réponses directement sous chaque créneau
+- Point rouge dans l’interface si action à traiter
+- Badge “À répondre” sur chaque créneau
+- Badge “Répondu” après clic Présent / Absent / À confirmer
+- Bascules visibles en 2e année
+- Tournois intégrés dans le calendrier
+- Les réponses sont visuelles pour l’interface, branchement Apps Script à faire ensuite
+
+À analyser ensuite pour construire le bon Google Sheet :
+- quelles données sont affichées
+- quelles réponses doivent remonter
+- quels onglets existent déjà
+- quels onglets sont vraiment nécessaires
