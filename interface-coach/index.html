@@ -103,6 +103,14 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
   .tools select,.tools input{width:100%}
   .actions{justify-content:flex-start}
 }
+
+.favorite-bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.favorite-bar button{border:1px solid rgba(0,57,20,.22);background:#fff;border-radius:999px;padding:8px 11px;font-weight:1000;color:var(--d);cursor:pointer}
+.favorite-bar button.active{background:linear-gradient(135deg,var(--g),var(--d));color:#fff;border-color:transparent}
+.counter-line{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.counter-line .pill{font-size:12px}
+.compact-time{font-weight:1000;color:var(--d)}
+
 </style>
 </head>
 <body>
@@ -132,6 +140,7 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <h2>Choisir un entraînement</h2>
 <p>Choisissez un groupe, puis un entraînement. Les données affichées sont lues depuis la base club quand elle est disponible.</p><div class="status visible" id="remoteStatus">Chargement des données...</div>
 </div>
+<div class="favorite-bar" id="favoriteBar"></div>
 <div class="tools">
 <select id="calendarCategory">
 <option value="U13M">U13M</option>
@@ -143,6 +152,7 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <option value="Loisirs">Loisirs</option>
 </select>
 <button class="btn light" type="button" onclick="renderSessions()">Afficher</button>
+<button class="btn light" type="button" onclick="toggleFavoriteTeam(calendarCategory.value)">Favori</button>
 <button class="btn" type="button" onclick="openPanel('licencies')">Voir licenciés</button>
 </div>
 <div id="sessionList" class="session-list"></div>
@@ -197,7 +207,7 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <button class="btn light" type="button" onclick="clearPlayers()">Tout décocher</button>
 <button class="btn" type="button" onclick="copySelectedPlayers()">Copier la sélection</button>
 </div>
-<div id="playerList" class="player-list"></div>
+<div class="counter-line"><span class="pill" id="playerTotal">0 joueur</span><span class="pill blue" id="playerChecked">0 sélectionné</span></div><div id="playerList" class="player-list"></div>
 </section>
 
 <section id="panel-essais" class="panel">
@@ -213,7 +223,7 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <article class="card">
 <h3>Inscrits aux essais</h3>
 <p>Retrouvez les joueurs extérieurs inscrits aux essais, y compris l’école de basket.</p>
-<div class="tools"><select id="essaisCategory"><option value="U5">U5</option><option value="U7">U7</option><option value="U9">U9</option><option value="U11">U11</option><option value="U13M">U13M</option><option value="U13F">U13F</option><option value="U15M">U15M</option><option value="U18M">U18M</option><option value="U21">U21</option><option value="Seniors">Seniors</option><option value="Loisirs">Loisirs</option></select><button class="btn light" type="button" onclick="renderEssais()">Afficher</button></div><div id="essaisList" class="player-list"></div>
+<div class="tools"><select id="essaisCategory"><option value="U5">U5</option><option value="U7">U7</option><option value="U9">U9</option><option value="U11">U11</option><option value="U13M">U13M</option><option value="U13F">U13F</option><option value="U15M">U15M</option><option value="U18M">U18M</option><option value="U21">U21</option><option value="Seniors">Seniors</option><option value="Loisirs">Loisirs</option></select><button class="btn light" type="button" onclick="renderEssais()">Afficher</button></div><div class="counter-line"><span class="pill" id="essaisTotal">0 essai</span></div><div id="essaisList" class="player-list"></div>
 </article>
 </div>
 </section>
@@ -513,8 +523,8 @@ function renderPlayers(){
 }
 coachCategory.addEventListener("change",renderPlayers);
 playerSearch.addEventListener("input",renderPlayers);
-function selectAllPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=true);}
-function clearPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=false);}
+function selectAllPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=true);updatePlayerCounters();}
+function clearPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=false);updatePlayerCounters();}
 function copySelectedPlayers(){
   const names=[...document.querySelectorAll("#playerList input:checked")].map(i=>i.value);
   copyText(names.length?names.join("\n"):"Aucun joueur sélectionné.","Sélection copiée");
@@ -560,32 +570,124 @@ function copyFreeMessage(){
 }
 
 
+
+/* ===== CONFORT COACH : FAVORIS, TRI, COMPTEURS ===== */
+const DAY_ORDER = { "Lundi":1, "Mardi":2, "Mercredi":3, "Jeudi":4, "Vendredi":5, "Samedi":6, "Dimanche":7 };
+const FAVORITE_KEY = "ESBB_COACH_FAVORITES";
+
+function getFavorites(){
+  try { return JSON.parse(localStorage.getItem(FAVORITE_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+function setFavorites(list){
+  localStorage.setItem(FAVORITE_KEY, JSON.stringify([...new Set(list)]));
+}
+function toggleFavoriteTeam(team){
+  if(!team) return;
+  const favs = getFavorites();
+  const idx = favs.indexOf(team);
+  if(idx >= 0) favs.splice(idx,1); else favs.push(team);
+  setFavorites(favs);
+  renderFavoriteBar();
+}
+function applyTeam(team){
+  if(document.getElementById("calendarCategory") && [...calendarCategory.options].some(o=>o.value===team)) calendarCategory.value = team;
+  if(document.getElementById("coachCategory") && [...coachCategory.options].some(o=>o.value===team)) coachCategory.value = team;
+  if(document.getElementById("essaisCategory") && [...essaisCategory.options].some(o=>o.value===team)) essaisCategory.value = team;
+  refreshConnectedCoach();
+}
+function renderFavoriteBar(){
+  const box = document.getElementById("favoriteBar");
+  if(!box) return;
+  const favs = getFavorites();
+  const current = document.getElementById("calendarCategory") ? calendarCategory.value : "";
+  box.innerHTML = "";
+  if(!favs.length){
+    box.innerHTML = '<button type="button" onclick="toggleFavoriteTeam(calendarCategory.value)">Ajouter ce groupe en favori</button>';
+    return;
+  }
+  favs.forEach(team=>{
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "⭐ " + team;
+    btn.className = team === current ? "active" : "";
+    btn.onclick = () => applyTeam(team);
+    box.appendChild(btn);
+  });
+  const add = document.createElement("button");
+  add.type = "button";
+  add.textContent = favs.includes(current) ? "Retirer favori" : "Ajouter favori";
+  add.onclick = () => toggleFavoriteTeam(current);
+  box.appendChild(add);
+}
+function sortCreneauxCoach(list){
+  return [...(list || [])].sort((a,b)=>{
+    const da = DAY_ORDER[a.jour] || 99;
+    const db = DAY_ORDER[b.jour] || 99;
+    const ta = String(a.debut || "").replace("h",":");
+    const tb = String(b.debut || "").replace("h",":");
+    return da - db || ta.localeCompare(tb);
+  });
+}
+function compactCreneauLabel(s){
+  const jour = s.jour || "";
+  const horaire = [s.debut, s.fin].filter(Boolean).join("–");
+  const lieu = s.lieu || "";
+  return [jour, horaire, lieu].filter(Boolean).join(" · ");
+}
+function updatePlayerCounters(){
+  const total = document.querySelectorAll("#playerList input[type='checkbox']").length;
+  const checked = document.querySelectorAll("#playerList input[type='checkbox']:checked").length;
+  if(document.getElementById("playerTotal")) playerTotal.textContent = total + (total > 1 ? " joueurs" : " joueur");
+  if(document.getElementById("playerChecked")) playerChecked.textContent = checked + " sélectionné" + (checked > 1 ? "s" : "");
+}
+document.addEventListener("change", e=>{
+  if(e.target && e.target.closest && e.target.closest("#playerList")) updatePlayerCounters();
+});
+
 /* ===== CONNEXION GOOGLE SHEET — LECTURE SEULE ===== */
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
 let REMOTE = {licencies:[], essais:[], creneaux:[]};
 
 async function loadCoachRemoteData(){
-  const cat = (document.getElementById("calendarCategory") && calendarCategory.value) ||
-              (document.getElementById("coachCategory") && coachCategory.value) ||
-              "U13M";
+  let cat = "U13M";
+
+  const essaisPanelActive = document.getElementById("panel-essais") && document.getElementById("panel-essais").classList.contains("active");
+
+  if (essaisPanelActive && document.getElementById("essaisCategory")) {
+    cat = essaisCategory.value || "U9";
+  } else if (document.getElementById("calendarCategory") && calendarCategory.value) {
+    cat = calendarCategory.value;
+  } else if (document.getElementById("coachCategory") && coachCategory.value) {
+    cat = coachCategory.value;
+  }
+
   const status = document.getElementById("remoteStatus");
   if(status) status.textContent = "Chargement des données " + cat + "...";
+
   try{
     const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
     const json = await res.json();
+
     if(json && json.ok){
       REMOTE = {
         licencies: Array.isArray(json.licencies) ? json.licencies : [],
         essais: Array.isArray(json.essais) ? json.essais : [],
         creneaux: Array.isArray(json.creneaux) ? json.creneaux : []
       };
-      if(status) status.textContent = "Données chargées : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x).";
+
+      if(status) {
+        status.textContent = "Données chargées " + cat + " : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x).";
+      }
+
       return true;
     }
+
     if(status) status.textContent = "Connexion active, mais aucune donnée reçue.";
   }catch(e){
     if(status) status.textContent = "Impossible de charger les données. Vérifier le déploiement Apps Script.";
   }
+
   REMOTE = {licencies:[], essais:[], creneaux:[]};
   return false;
 }
@@ -602,6 +704,7 @@ function renderConnectedPlayers(){
   const list = REMOTE.licencies.filter(p => coachPlayerName(p).toLowerCase().includes(search));
   if(!list.length){
     box.innerHTML = '<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
+    updatePlayerCounters();
     return;
   }
   list.forEach(p=>{
@@ -611,13 +714,14 @@ function renderConnectedPlayers(){
     row.innerHTML = `<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""} · ${p.dateNaissance || ""}</span></div><input type="checkbox" value="${name}">`;
     box.appendChild(row);
   });
+  updatePlayerCounters();
 }
 
 function renderConnectedSessions(){
   const box=document.getElementById("sessionList");
   if(!box) return;
   box.innerHTML="";
-  const list = REMOTE.creneaux;
+  const list = sortCreneauxCoach(REMOTE.creneaux);
   if(!list.length){
     box.innerHTML = '<div class="notice">Aucun entraînement affiché pour ce groupe.</div>';
     return;
@@ -625,12 +729,12 @@ function renderConnectedSessions(){
   list.forEach(s=>{
     const div=document.createElement("div");
     div.className="session-card";
-    const info = [s.jour, s.date].filter(Boolean).join(" ");
-    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${info || "Créneau"}</span></div>
-      <span>${s.debut || ""}${s.fin ? " – " + s.fin : ""} · ${s.lieu || ""}</span>
+    const info = compactCreneauLabel(s);
+    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
+      <span class="compact-time">${info}</span>
       <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span></div>`;
     div.onclick=()=>{
-      currentSession={cat:s.categorie || (calendarCategory && calendarCategory.value), id:s.id, title:s.titre || "Entraînement", day:info, time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu || ""};
+      currentSession={cat:s.categorie || (calendarCategory && calendarCategory.value), id:s.id, title:s.titre || "Entraînement", day:s.jour || "", time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu || ""};
       sessionDetail.style.display="block";
       sessionTitle.textContent=currentSession.title;
       sessionInfo.textContent=[currentSession.day,currentSession.time,currentSession.place].filter(Boolean).join(" · ");
@@ -679,6 +783,7 @@ function renderConnectedEssais(){
   const box=document.getElementById("essaisList");
   if(!box) return;
   box.innerHTML="";
+  if(document.getElementById("essaisTotal")) essaisTotal.textContent = REMOTE.essais.length + " essai" + (REMOTE.essais.length > 1 ? "s" : "");
   if(!REMOTE.essais.length){
     box.innerHTML='<div class="notice">Aucun inscrit aux essais affiché pour ce groupe.</div>';
     return;
@@ -697,6 +802,7 @@ async function refreshConnectedCoach(){
   renderConnectedSessions();
   renderConnectedPlayers();
   renderConnectedEssais();
+  renderFavoriteBar();
 }
 
 /* surcharge légère des rendus visuels */
@@ -707,11 +813,24 @@ openPanel = function(tab){
 };
 
 document.addEventListener("change", e=>{
-  if(e.target && (e.target.id==="calendarCategory" || e.target.id==="coachCategory" || e.target.id==="essaisCategory")){
+  if(!e.target) return;
+
+  if(e.target.id === "essaisCategory"){
+    refreshConnectedCoach();
+    return;
+  }
+
+  if(e.target.id === "calendarCategory" || e.target.id === "coachCategory"){
     const source = e.target.value;
-    if(document.getElementById("calendarCategory")) calendarCategory.value = source;
-    if(document.getElementById("coachCategory")) coachCategory.value = source;
-    if(document.getElementById("essaisCategory") && [...essaisCategory.options].some(o=>o.value===source)) essaisCategory.value = source;
+
+    if(document.getElementById("calendarCategory") && [...calendarCategory.options].some(o=>o.value===source)) {
+      calendarCategory.value = source;
+    }
+
+    if(document.getElementById("coachCategory") && [...coachCategory.options].some(o=>o.value===source)) {
+      coachCategory.value = source;
+    }
+
     refreshConnectedCoach();
   }
 });
