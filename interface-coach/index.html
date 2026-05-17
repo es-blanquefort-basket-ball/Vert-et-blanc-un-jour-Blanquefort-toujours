@@ -1,475 +1,723 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#003914" />
-<title>Interface coach | ES Blanquefort Basket Ball</title>
-<link rel="manifest" href="manifest.json" />
-<link rel="apple-touch-icon" href="../assets/icon-192.png" />
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#003914">
+<title>Portail coachs | ES Blanquefort Basket Ball</title>
 <style>
 :root{
-  --green-950:#001f0c;
-  --green-900:#003914;
-  --green-800:#00551f;
-  --green-700:#0b6b2b;
-  --green-100:#eaf4e9;
-  --green-50:#f7fbf6;
-  --orange-100:#fff2df;
-  --red-100:#fff0ed;
-  --blue-100:#edf4ff;
-  --ink:#082313;
-  --muted:#56695c;
-  --line:rgba(0,57,20,.26);
-  --white:#ffffff;
-  --shadow:0 22px 60px rgba(0,31,12,.18);
+  --g:#003914;--d:#001f0c;--l:#0b6b2b;--muted:#56695c;--line:rgba(0,57,20,.20);
+  --soft:#f7fbf6;--white:#fff;--warn:#fff7e6;--ok:#eaf4e9;--ko:#fff0ed;--blue:#edf4ff;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html,body{margin:0;min-height:100%;overflow-y:auto}
 body{
-  margin:0;
-  min-height:100vh;
-  color:var(--ink);
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:linear-gradient(135deg,#ffffff 0%,#f7fbf6 58%,#eef5ed 100%);
+  background:linear-gradient(135deg,#fff 0%,#f7fbf6 58%,#eef5ed 100%);
+  color:#082313;
 }
-a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit}
+a{color:inherit;text-decoration:none}
+.page{min-height:100vh;padding:14px 8px 32px;position:relative;overflow:hidden}
+.page:before{
+  content:"";position:absolute;left:50%;top:-180px;width:560px;height:292px;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--d),var(--g));border-radius:0 0 70% 70%;z-index:0;
+  box-shadow:0 24px 60px rgba(0,31,12,.18)
+}
+.container{width:100%;max-width:1120px;margin:0 auto;position:relative;z-index:1}
+.hero{text-align:center;padding-top:4px;margin-bottom:12px}
+.logo{width:128px;max-width:44vw;height:auto;filter:drop-shadow(0 12px 16px rgba(0,31,12,.22))}
+.clubline{display:flex;align-items:center;justify-content:center;gap:7px;margin:4px 0 8px;color:var(--d);font-weight:1000;font-size:clamp(14px,3.8vw,18px);line-height:1.15}
+.dot{width:14px;height:14px;min-width:14px;border-radius:50%;display:inline-block}
+.dot.green{background:#003914}.dot.white{background:#fff;border:2px solid #003914}
+.slogan{display:inline-flex;margin:0 auto 10px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--d);font-weight:1000;font-size:13px;box-shadow:0 8px 18px rgba(0,31,12,.08)}
+.kicker{display:inline-flex;padding:7px 12px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--g),var(--l));font-weight:950;font-size:12px;box-shadow:0 8px 18px rgba(0,57,20,.18)}
+h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32px,9vw,54px);line-height:.96;letter-spacing:-.8px;font-weight:1000}
+.hero p{max-width:780px;margin:0 auto;font-size:14.5px;line-height:1.45;font-weight:700;color:#244232}
 
-.page{
-  width:100%;
-  min-height:100vh;
-  padding:22px 12px 38px;
-  position:relative;
-  overflow:hidden;
-}
-.page::before{
-  content:"";
-  position:absolute;
-  left:-190px;
-  top:-180px;
-  width:660px;
-  height:350px;
-  background:linear-gradient(135deg,var(--green-950) 0%,var(--green-900) 72%,rgba(0,57,20,.66) 100%);
-  border-radius:0 0 86% 0;
-  z-index:0;
-  box-shadow:0 24px 60px rgba(0,31,12,.18);
-}
-.container{max-width:1180px;margin:0 auto;position:relative;z-index:1}
-.hero{
-  display:grid;
-  grid-template-columns:230px 1fr;
-  gap:28px;
-  align-items:center;
-  margin-bottom:18px;
-}
-.logo-zone{min-height:190px;display:grid;place-items:center}
-.logo-card{width:230px;min-height:190px;display:grid;place-items:center}
-.logo-card img{width:100%;height:auto;display:block;filter:drop-shadow(0 12px 16px rgba(0,31,12,.22))}
-.clubline{
-  display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px;
-  color:var(--green-950);font-weight:1000;font-size:clamp(15px,3.6vw,22px)
-}
-.dot{width:17px;height:17px;min-width:17px;border-radius:50%;display:inline-block;box-shadow:0 4px 12px rgba(0,31,12,.16)}
-.dot.green{background:#00551f}
-.dot.white{background:#fff;border:2px solid #00551f}
-.slogan-line{
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:9px 15px;margin:0 0 14px;
-  border-radius:999px;background:#fff;border:1px solid rgba(0,57,20,.22);color:var(--green-950);
-  font-weight:1000;box-shadow:0 10px 22px rgba(0,31,12,.08)
-}
-.kicker{
-  display:inline-flex;align-items:center;gap:9px;padding:8px 15px;border-radius:999px;color:#fff;
-  background:linear-gradient(135deg,var(--green-900),var(--green-700));font-weight:950;letter-spacing:.03em;
-  font-size:15px;box-shadow:0 10px 22px rgba(0,57,20,.20);margin-bottom:14px
-}
-h1{
-  margin:0;color:var(--green-950);text-transform:uppercase;font-size:clamp(42px,7vw,76px);
-  line-height:.96;letter-spacing:-1.5px;font-weight:1000
-}
-.hero-text p{max-width:800px;margin:16px 0 0;font-size:18px;line-height:1.52;font-weight:650}
+.shell{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 46px rgba(0,31,12,.16);padding:13px}
+.panel{display:none}.panel.active{display:block}
+.label{display:inline-flex;margin:0 0 11px;padding:7px 12px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--d),#00551f);font-weight:1000;text-transform:uppercase;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{padding:15px;border-radius:15px;background:#fff;border:1px solid rgba(0,57,20,.16);box-shadow:0 8px 18px rgba(0,31,12,.05)}
+.card.dark{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}
+.card h3{margin:0 0 7px;color:var(--d);font-size:18px;text-transform:uppercase;font-weight:1000}
+.card.dark h3{color:#fff}
+.card p{margin:0 0 12px;color:var(--muted);line-height:1.42;font-weight:650;font-size:14px}
+.card.dark p{color:rgba(255,255,255,.84)}
+.welcome-card{padding:18px;border-radius:18px;background:linear-gradient(135deg,#fff,#f7fbf6);border:1px solid rgba(0,57,20,.16);box-shadow:0 10px 22px rgba(0,31,12,.06);margin-bottom:12px}
+.welcome-card h2{margin:0 0 8px;color:var(--d);font-size:24px;line-height:1.1;text-transform:uppercase}
+.welcome-card p{margin:0;color:var(--muted);font-weight:700;line-height:1.45}
 
-.app-shell{
-  background:rgba(255,255,255,.95);border:1px solid rgba(0,57,20,.24);
-  border-radius:22px;box-shadow:var(--shadow);overflow:hidden
-}
-.tabs{
-  display:flex;gap:0;overflow-x:auto;background:linear-gradient(135deg,#f7fbf6,#ffffff);
-  border-bottom:1px solid rgba(0,57,20,.18);padding:10px
-}
-.tab-btn{
-  flex:0 0 auto;min-height:44px;border:1px solid rgba(0,57,20,.18);background:#fff;color:var(--green-950);
-  font-weight:1000;border-radius:999px;padding:9px 14px;margin-right:8px;cursor:pointer;box-shadow:0 8px 18px rgba(0,31,12,.05)
-}
-.tab-btn.active{background:linear-gradient(135deg,var(--green-900),var(--green-950));color:#fff;border-color:transparent}
-.tab-panel{display:none;padding:18px}
-.tab-panel.active{display:block;animation:fadeIn .16s ease}
-@keyframes fadeIn{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.nav button{min-height:38px;border:1px solid rgba(0,57,20,.16);background:#fff;color:var(--d);font-weight:1000;border-radius:12px;padding:7px 5px;font-size:11.5px;line-height:1.05;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
+.nav .active{background:linear-gradient(135deg,var(--g),var(--d));color:#fff;border-color:transparent}
 
-.section-label{
-  display:inline-flex;align-items:center;gap:8px;margin:-2px 0 12px;padding:7px 14px;border-radius:999px;color:#fff;
-  background:linear-gradient(135deg,var(--green-950),var(--green-800));font-weight:1000;text-transform:uppercase;
-  font-size:15px;letter-spacing:.01em;box-shadow:0 8px 18px rgba(0,57,20,.18)
-}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.grid.three{grid-template-columns:repeat(3,1fr)}
-.card{
-  padding:18px;border-radius:15px;background:#fff;border:1px solid rgba(0,57,20,.18);box-shadow:0 10px 22px rgba(0,31,12,.05)
-}
-.card.dark{background:linear-gradient(135deg,var(--green-900),var(--green-950));color:#fff}
-.card h2,.card h3{margin:0 0 8px;color:var(--green-950);font-size:20px;text-transform:uppercase;font-weight:1000}
-.card.dark h2,.card.dark h3{color:#fff}
-.card p{margin:0 0 14px;color:var(--muted);line-height:1.45;font-weight:650;font-size:14px}
-.card.dark p{color:rgba(255,255,255,.82)}
-.hint{color:var(--muted);font-size:13px;line-height:1.35;margin:0 0 10px;font-weight:600}
-.btn{
-  width:100%;min-height:52px;border:0;border-radius:13px;color:#fff;background:linear-gradient(135deg,var(--green-900),var(--green-950));
-  font-size:15px;font-weight:1000;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 14px 28px rgba(0,57,20,.20);
-  transition:.18s ease;display:inline-flex;align-items:center;justify-content:center;text-align:center
-}
-.btn.light{color:var(--green-950);background:#fff;border:1px solid rgba(0,57,20,.28);box-shadow:none}
-.btn:hover{transform:translateY(-1px)}
-.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-label{display:grid;gap:7px;color:var(--green-950);font-size:13px;font-weight:1000;text-transform:uppercase}
-input,select,textarea{
-  width:100%;min-height:44px;padding:12px 14px;color:var(--ink);font-size:15px;font-weight:600;
-  border:1px solid rgba(0,57,20,.28);border-radius:11px;background:#fff;outline:0
-}
-textarea{min-height:92px;resize:vertical}
-.full{grid-column:1/-1}
-.list{display:grid;gap:10px}
-.row{
-  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:13px 14px;border:1px solid rgba(0,57,20,.16);
-  border-radius:13px;background:#fff
-}
-.row strong{color:var(--green-950)}
-.pill{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:999px;background:var(--green-100);color:var(--green-950);font-weight:1000;font-size:12px}
-.pill.orange{background:var(--orange-100)}
-.pill.red{background:var(--red-100)}
-.pill.blue{background:var(--blue-100)}
-.table-wrap{overflow-x:auto}
-table{width:100%;min-width:820px;border-collapse:separate;border-spacing:0 9px}
-th{text-align:left;color:var(--muted);font-size:12px;text-transform:uppercase;padding:0 10px}
-td{background:#fff;padding:12px 10px;border-top:1px solid rgba(0,57,20,.16);border-bottom:1px solid rgba(0,57,20,.16);font-weight:700}
-td:first-child{border-left:1px solid rgba(0,57,20,.16);border-radius:12px 0 0 12px;color:var(--green-950);font-weight:1000}
-td:last-child{border-right:1px solid rgba(0,57,20,.16);border-radius:0 12px 12px 0}
-.choice-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.choice-row button{min-height:44px;border-radius:11px;border:1px solid rgba(0,57,20,.24);background:#fff;color:var(--green-950);font-weight:1000;cursor:pointer}
-.choice-row button.selected{background:linear-gradient(135deg,var(--green-900),var(--green-950));color:#fff}
-.footer{margin:20px 0 0;text-align:center;color:rgba(8,35,19,.72);font-size:15px;font-weight:850;line-height:1.35}
-.footer strong{color:var(--green-950)}
-.ball-footer{display:block;margin-top:8px;font-size:24px}
+.btn{min-height:44px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--g),var(--d));font-size:13px;font-weight:1000;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 12px 24px rgba(0,57,20,.18);display:inline-flex;align-items:center;justify-content:center;text-align:center;margin-top:10px;padding:10px 14px}
+.btn.full{width:100%}
+.btn.light{color:var(--d);background:#fff;border:1px solid rgba(0,57,20,.24);box-shadow:none}
+.btn.warn{background:#9a6700;color:#fff}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tools select,.tools input{border:1px solid rgba(0,57,20,.24);border-radius:12px;padding:10px;font-weight:800;min-height:42px;background:#fff}
+.tools select{min-width:160px}
+.pill{display:inline-flex;padding:6px 9px;border-radius:999px;background:#eaf4e9;color:var(--d);font-weight:1000;font-size:11px;white-space:nowrap}
+.pill.warn{background:#fff7e6;color:#8a5a05}.pill.ko{background:#fff0ed;color:#8a1f11}.pill.blue{background:#edf4ff;color:#123b78}
+.status{display:none;margin-top:10px;padding:11px 12px;border-radius:13px;background:#eaf4e9;border:1px solid rgba(0,57,20,.16);color:var(--d);font-weight:900;line-height:1.35;font-size:13px}
+.status.visible{display:block}
 
-@media(max-width:900px){
-  .hero{grid-template-columns:1fr;text-align:center;gap:8px}
-  .page::before{left:50%;top:-175px;width:540px;height:300px;transform:translateX(-50%);border-radius:0 0 70% 70%}
-  .logo-zone{min-height:auto}.logo-card{width:190px;min-height:auto;margin:0 auto}
-  .hero-text p{margin-left:auto;margin-right:auto}
-  .grid,.grid.three,.form,.choice-row{grid-template-columns:1fr}
-  .clubline,.slogan-line{justify-content:center}
-}
-@media(max-width:620px){
-  .page{padding:12px 8px 30px}.logo-card{width:150px}.kicker{font-size:12px;padding:7px 11px}
-  h1{font-size:37px}.hero-text p{font-size:15px;line-height:1.46}.tab-panel{padding:12px}
-  .tab-btn{font-size:13px;min-height:40px;padding:8px 11px}.card{padding:14px}.btn{min-height:50px;font-size:14px}
-  .slogan-line{font-size:14px;padding:8px 12px}
-}
+.session-list{display:grid;gap:10px;margin-top:10px}
+.session-card{border:1px solid rgba(0,57,20,.14);border-radius:16px;background:#fff;padding:13px;display:grid;gap:8px;cursor:pointer}
+.session-card.active{border-color:#003914;box-shadow:0 0 0 3px rgba(0,57,20,.08)}
+.session-card .top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.session-card strong{color:var(--d);font-size:17px}
+.session-card span{color:var(--muted);font-size:13px;font-weight:750}
+.session-card .metrics{display:flex;gap:6px;flex-wrap:wrap}
 
-nav{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:8px;
-padding:10px;
-}
-@media(max-width:700px){
-body{
-overflow-y:auto;
-}
-section{
-padding:12px;
-}
-.card{
-padding:14px;
-margin-bottom:10px;
-}
-}
+.presence-board{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;margin-top:12px}
+.player-list{display:grid;gap:8px;margin-top:10px}
+.player-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid rgba(0,57,20,.14);border-radius:13px;padding:10px;background:#fff}
+.player-row strong{display:block;color:var(--d);font-weight:1000}
+.player-row span{display:block;color:var(--muted);font-size:13px;font-weight:700;margin-top:2px}
+.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.actions button{border:1px solid rgba(0,57,20,.18);background:#fff;border-radius:999px;padding:7px 9px;font-size:11px;font-weight:1000;cursor:pointer;color:var(--d)}
+.actions button.selected.ok{background:var(--ok);border-color:#8bbf8c}
+.actions button.selected.ko{background:var(--ko);border-color:#e19b91}
+.actions button.selected.wait{background:var(--warn);border-color:#dfbd76}
 
+.summary-box{display:grid;gap:8px}
+.summary-row{display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(0,57,20,.14);border-radius:12px;padding:10px;background:#fff}
+.summary-row strong{font-size:24px;color:var(--d)}
+.summary-row span{font-size:13px;color:var(--muted);font-weight:800}
+.message-box textarea{width:100%;min-height:130px;border:1px solid rgba(0,57,20,.24);border-radius:12px;padding:12px;font-weight:700}
+.tournament-link{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#fff;padding:12px;margin-top:8px}
+.tournament-link strong{display:block;color:var(--d);font-weight:1000}
+.tournament-link span{display:block;color:var(--muted);font-size:13px;font-weight:700}
+.notice{padding:12px;border-radius:14px;background:#fff7e6;border-left:5px solid #f0a500;color:#4d3510;font-weight:800;line-height:1.4;margin:10px 0}
+.footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}
 
-/* POLISH_TABS_GRID_ESBB — menus stables, sans défilement horizontal */
-.tabs{
-  display:grid !important;
-  grid-template-columns:repeat(4, minmax(0,1fr)) !important;
-  gap:8px !important;
-  overflow:visible !important;
-  padding:10px !important;
+@media(max-width:860px){
+  .grid,.grid-3,.presence-board{grid-template-columns:1fr}
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tools select,.tools input{width:100%}
+  .actions{justify-content:flex-start}
 }
-
-.tab-btn{
-  width:100% !important;
-  min-width:0 !important;
-  margin-right:0 !important;
-  white-space:normal !important;
-  text-align:center !important;
-  justify-content:center !important;
-  line-height:1.12 !important;
-}
-
-@media(max-width:760px){
-  .tabs{
-    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
-  }
-
-  .tab-btn{
-    min-height:42px !important;
-    padding:8px 6px !important;
-    font-size:12px !important;
-  }
-}
-
-@media(max-width:360px){
-  .tabs{
-    grid-template-columns:1fr !important;
-  }
-}
-
-/* Pastilles couleur club */
-.dot.green,
-.club-dot-green{
-  background:#003914 !important;
-}
-
-.footer-green,
-.footer .green-text{
-  color:#003914 !important;
-}
-
-
-.club-dot{
-  width:15px;
-  height:15px;
-  min-width:15px;
-  border-radius:50%;
-  display:inline-block;
-  vertical-align:-2px;
-  margin:0 3px;
-  box-shadow:0 3px 8px rgba(0,31,12,.14);
-}
-
-.club-dot.green{
-  background:#003914;
-}
-
-.club-dot.white{
-  background:#ffffff;
-  border:2px solid #003914;
-}
-
 </style>
 </head>
-
 <body>
 <div class="page">
-  <div class="container">
-    <header class="hero">
-      <div class="logo-zone">
-        <div class="logo-card">
-          <img src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball">
-        </div>
-      </div>
+<div class="container">
+<header class="hero">
+<img class="logo" src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball" onerror="this.src='logo.png';this.onerror=null;">
+<div class="clubline"><span class="dot green"></span><span>ES Blanquefort Basket Ball</span><span class="dot white"></span></div>
+<div class="slogan">Vert et blanc un jour, Blanquefort toujours&nbsp;!</div><br>
+<div class="kicker">🏀 PORTAIL COACHS</div>
+<h1 id="heroTitle">Calendrier équipe</h1>
+<p id="heroSubtitle">Choisissez un groupe test pour suivre les entraînements, les présences, les essais, les tournois et les messages.</p>
+</header>
 
-      <div class="hero-text">
-        <div class="clubline">
-          <span class="dot green"></span>
-          <span>ES Blanquefort Basket Ball</span>
-          <span class="dot white"></span>
-        </div>
-        <div class="slogan-line">Vert et blanc un jour, Blanquefort toujours&nbsp;!</div>
-        <div class="kicker">🏀 INTERFACE COACH</div>
-        <h1>Suivre<br>mon équipe</h1>
-        <p>
-          Interface test dédiée aux coachs : entraînements, sondages, présences,
-          essais attendus et messages utiles aux familles.
-        </p>
-      </div>
-    </header>
+<main class="shell">
+<div class="nav">
+<button class="active" data-open="calendrier">Calendrier</button>
+<button data-open="licencies">Licenciés</button>
+<button data-open="essais">Essais</button>
+<button data-open="tournois">Tournois</button>
+<button data-open="messages">Messages</button>
+</div>
 
-    <main class="app-shell">
-      <nav class="tabs" aria-label="Onglets interface coach">
-        <button class="tab-btn active" data-tab="accueil">Accueil</button>
-        <button class="tab-btn" data-tab="creneaux">Créneaux</button>
-        <button class="tab-btn" data-tab="presences">Présences</button>
-        <button class="tab-btn" data-tab="sondages">Sondages</button>
-        <button class="tab-btn" data-tab="essais">Essais</button>
-        <button class="tab-btn" data-tab="messages">Messages</button>
-      </nav>
+<section id="panel-calendrier" class="panel active">
+<div class="label">Calendrier entraînements</div>
+<div class="welcome-card">
+<h2>Choisir un entraînement</h2>
+<p>Choisissez un groupe test, puis un entraînement. Vous pouvez ensuite suivre les présences, voir les essais et préparer un rappel.</p>
+</div>
+<div class="tools">
+<select id="calendarCategory">
+<option value="U13M">U13M</option>
+<option value="U13F">U13F</option>
+<option value="U15M">U15M</option>
+<option value="U18M">U18M</option>
+<option value="U21">U21</option>
+<option value="Seniors">Seniors</option>
+<option value="Loisirs">Loisirs</option>
+</select>
+<button class="btn light" type="button" onclick="renderSessions()">Afficher</button>
+<button class="btn" type="button" onclick="openPanel('licencies')">Voir licenciés</button>
+</div>
+<div id="sessionList" class="session-list"></div>
 
-      <section class="tab-panel active" id="tab-accueil">
-        <div class="section-label">Tableau de bord coach</div>
-        <div class="grid three">
-          <article class="card">
-            <h3>Mes créneaux</h3>
-            <p>Voir et modifier les créneaux visibles pour les familles, si besoin.</p>
-            <button class="btn light" type="button" data-go="creneaux">Voir</button>
-          </article>
-          <article class="card">
-            <h3>Présences</h3>
-            <p>Suivre les réponses aux sondages : présent, absent, à confirmer.</p>
-            <button class="btn light" type="button" data-go="presences">Suivre</button>
-          </article>
-          <article class="card dark">
-            <h3>Essais attendus</h3>
-            <p>Voir les nouveaux joueurs attendus avec téléphone et mail parent.</p>
-            <button class="btn light" type="button" data-go="essais">Voir essais</button>
-          </article>
-        </div>
-      </section>
+<div id="sessionDetail" class="card" style="display:none;margin-top:14px">
+<h3 id="sessionTitle">Entraînement</h3>
+<p id="sessionInfo"></p>
+<div class="tools">
+<button class="btn" type="button" onclick="createPresenceRequest()">Créer / ouvrir les présences</button>
+<button class="btn light" type="button" onclick="copyReminder()">Copier rappel</button>
+<button class="btn light" type="button" onclick="copyNonResponders()">Relancer non-répondants</button>
+</div>
 
-      <section class="tab-panel" id="tab-creneaux">
-        <div class="section-label">Créneaux équipe</div>
-        <div class="grid">
-          <article class="card">
-            <h3>Créneaux de travail</h3>
-            <div class="list">
-              <div class="row"><div><strong>U11G → U13G</strong><br><span class="hint">Mercredi / Vendredi</span></div><span class="pill">Brouillon</span></div>
-              <div class="row"><div><strong>U13 → U15</strong><br><span class="hint">Lundi / Vendredi</span></div><span class="pill orange">À confirmer</span></div>
-              <div class="row"><div><strong>U15 → U18</strong><br><span class="hint">Lundi / Vendredi</span></div><span class="pill orange">À confirmer</span></div>
-            </div>
-          </article>
-          <article class="card">
-            <h3>Modifier un créneau</h3>
-            <div class="form">
-              <label>Groupe<select><option>U11G → U13G</option><option>U13 → U15</option><option>U15 → U18</option><option>Essais</option></select></label>
-              <label>Date<input type="date"></label>
-              <label>Début<input type="time"></label>
-              <label>Fin<input type="time"></label>
-              <label class="full">Lieu<input type="text" placeholder="Gymnase"></label>
-              <label class="full">Message famille<textarea placeholder="Ex : créneau confirmé / changement de lieu / annulation..."></textarea></label>
-            </div>
-            <button class="btn" type="button" style="margin-top:12px">Enregistrer la modification</button>
-          </article>
-        </div>
-      </section>
+<div class="presence-board">
+<div class="card">
+<h3>Présences du groupe</h3>
+<p>Marquez les réponses connues ou préparez une relance.</p>
+<div id="presencePlayers" class="player-list"></div>
+</div>
+<div class="card">
+<h3>Résumé</h3>
+<div class="summary-box">
+<div class="summary-row"><span>Présents</span><strong id="countPresent">0</strong></div>
+<div class="summary-row"><span>Absents</span><strong id="countAbsent">0</strong></div>
+<div class="summary-row"><span>À confirmer</span><strong id="countWait">0</strong></div>
+<div class="summary-row"><span>Pas répondu</span><strong id="countNone">0</strong></div>
+</div>
+<div class="notice" id="essaisForSession">Aucun essai affiché sur ce créneau.</div>
+</div>
+</div>
+</div>
+</section>
 
-      <section class="tab-panel" id="tab-presences">
-        <div class="section-label">Présences</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Joueur</th><th>Groupe</th><th>Créneau</th><th>Réponse</th><th>Parent</th><th>Contact</th></tr></thead>
-            <tbody>
-              <tr><td>Exemple joueur</td><td>U13</td><td>Mer. 03/06</td><td><span class="pill">Présent</span></td><td>Parent</td><td>06...</td></tr>
-              <tr><td>Exemple joueur</td><td>U15</td><td>Ven. 12/06</td><td><span class="pill orange">À confirmer</span></td><td>Parent</td><td>mail@email.fr</td></tr>
-              <tr><td>Exemple joueur</td><td>U18</td><td>Lun. 08/06</td><td><span class="pill red">Absent</span></td><td>Parent</td><td>06...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+<section id="panel-licencies" class="panel">
+<div class="label">Mes licenciés</div>
+<div class="welcome-card">
+<h2>Liste de l’équipe</h2>
+<p>Choisissez votre catégorie, sélectionnez les joueurs utiles, puis copiez la sélection si besoin.</p>
+</div>
+<div class="tools">
+<select id="coachCategory">
+<option value="U13M">U13M</option>
+<option value="U13F">U13F</option>
+<option value="U15M">U15M</option>
+<option value="U18M">U18M</option>
+<option value="U21">U21</option>
+<option value="Seniors">Seniors</option>
+<option value="Loisirs">Loisirs</option>
+</select>
+<input id="playerSearch" placeholder="Rechercher un joueur">
+<button class="btn light" type="button" onclick="selectAllPlayers()">Tout sélectionner</button>
+<button class="btn light" type="button" onclick="clearPlayers()">Tout décocher</button>
+<button class="btn" type="button" onclick="copySelectedPlayers()">Copier la sélection</button>
+</div>
+<div id="playerList" class="player-list"></div>
+</section>
 
-      <section class="tab-panel" id="tab-sondages">
-        <div class="section-label">Créer un sondage</div>
-        <div class="grid">
-          <article class="card">
-            <h3>Nouveau sondage</h3>
-            <div class="form">
-              <label>Groupe<select><option>Mon équipe</option><option>U11G → U13G</option><option>U13 → U15</option><option>U15 → U18</option><option>Essais</option></select></label>
-              <label>Date<input type="date"></label>
-              <label class="full">Question<input type="text" placeholder="Serez-vous présent à l’entraînement ?"></label>
-            </div>
-            <button class="btn" type="button" style="margin-top:12px">Créer le sondage</button>
-          </article>
-          <article class="card">
-            <h3>Exemple réponse</h3>
-            <p>Les familles pourront répondre simplement. Les réponses remonteront ensuite dans le Sheet.</p>
-            <div class="choice-row">
-              <button type="button">Présent</button>
-              <button type="button">Absent</button>
-              <button type="button">À confirmer</button>
-            </div>
-          </article>
-        </div>
-      </section>
+<section id="panel-essais" class="panel">
+<div class="label">Essais</div>
+<div class="grid">
+<article class="card">
+<h3>Formulaire essais</h3>
+<p><strong>Vous connaissez un enfant, un jeune ou un adulte qui souhaite essayer le basket ?</strong></p>
+<p>Merci d’utiliser le formulaire officiel afin que la demande soit enregistrée dans la bonne catégorie et sur le bon créneau.</p>
+<a class="btn full" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Accéder au formulaire essais</a>
+<button class="btn light full" type="button" onclick="copyEssaisLink()">Copier le lien essais</button>
+</article>
+<article class="card">
+<h3>Inscrits aux essais</h3>
+<p>Retrouvez les joueurs extérieurs inscrits aux essais, y compris l’école de basket.</p>
+<div class="tools"><select id="essaisCategory"><option value="U5">U5</option><option value="U7">U7</option><option value="U9">U9</option><option value="U11">U11</option><option value="U13M">U13M</option><option value="U13F">U13F</option><option value="U15M">U15M</option><option value="U18M">U18M</option><option value="U21">U21</option><option value="Seniors">Seniors</option><option value="Loisirs">Loisirs</option></select><button class="btn light" type="button" onclick="renderEssais()">Afficher</button></div><div id="essaisList" class="player-list"></div>
+</article>
+</div>
+</section>
 
-      <section class="tab-panel" id="tab-essais">
-        <div class="section-label">Essais attendus</div>
-        <div class="grid">
-          <article class="card">
-            <h3>Lien essais</h3>
-            <p>À envoyer rapidement à une famille qui souhaite tester le basket.</p>
-            <a class="btn" target="_blank" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/">Ouvrir le lien essais</a>
-            <button class="btn light" type="button" id="copyEssaisBtn" style="margin-top:10px">Copier le lien essais</button>
-          </article>
-          <article class="card">
-            <h3>Demandes reçues</h3>
-            <div class="list">
-              <div class="row"><div><strong>Nouvel essai</strong><br><span class="hint">U11 · Parent : 06... · mail@email.fr</span></div><span class="pill blue">À prévenir</span></div>
-              <div class="row"><div><strong>Nouvel essai</strong><br><span class="hint">U13 · Parent : 06... · mail@email.fr</span></div><span class="pill">Confirmé</span></div>
-            </div>
-          </article>
-        </div>
-      </section>
+<section id="panel-tournois" class="panel">
+<div class="label">Tournois</div>
+<div class="welcome-card">
+<h2>Tournois transmis par le club</h2>
+<p>Consultez les liens et préparez une demande de participation aux familles.</p>
+</div>
+<div class="grid">
+<article class="card">
+<h3>Liens tournois</h3>
+<div id="tournamentList"></div>
+</article>
+<article class="card message-box">
+<h3>Message tournoi</h3>
+<textarea id="tournamentMessage" placeholder="Bonjour, merci d’indiquer si votre enfant participe au tournoi..."></textarea>
+<button class="btn full" type="button" onclick="copyTournamentMessage()">Copier le message tournoi</button>
+</article>
+</div>
+</section>
 
-      <section class="tab-panel" id="tab-messages">
-        <div class="section-label">Messages familles</div>
-        <div class="grid">
-          <article class="card">
-            <h3>Message rapide</h3>
-            <div class="form">
-              <label>Destinataires<select><option>Mon équipe</option><option>Présents</option><option>Absents</option><option>Sans réponse</option><option>Essais attendus</option></select></label>
-              <label>Canal<select><option>À copier pour WhatsApp / SMS</option><option>Email plus tard</option></select></label>
-              <label class="full">Message<textarea id="coachMessage">Bonjour, merci de confirmer la présence de votre enfant au prochain créneau.</textarea></label>
-            </div>
-            <button class="btn" type="button" id="copyCoachMessage" style="margin-top:12px">Copier le message</button>
-          </article>
-          <article class="card dark">
-            <h3>Test fin de saison</h3>
-            <p>Cette interface sert à tester les usages coachs avant la saison prochaine : ce qui est utile, ce qui manque, ce qui doit être simplifié.</p>
-          </article>
-        </div>
-      </section>
-    </main>
+<section id="panel-messages" class="panel">
+<div class="label">Messages groupe</div>
+<div class="welcome-card">
+<h2>Préparer un message</h2>
+<p>Écrivez un message clair à envoyer au groupe : entraînement, tournoi, rappel horaire ou information importante.</p>
+</div>
+<div class="grid">
+<article class="card message-box">
+<h3>Message libre</h3>
+<textarea id="freeMessage" placeholder="Message aux familles..."></textarea>
+<button class="btn full" type="button" onclick="copyFreeMessage()">Copier le message</button>
+</article>
+<article class="card">
+<h3>Modèles rapides</h3>
+<button class="btn light full" type="button" onclick="setTemplate('training')">Rappel entraînement</button>
+<button class="btn light full" type="button" onclick="setTemplate('answer')">Relance réponse</button>
+<button class="btn light full" type="button" onclick="setTemplate('tournament')">Tournoi</button>
+</article>
+</div>
+</section>
+</main>
 
-    <div class="footer">
-      <strong>Un club, <span class="club-dot green"></span> deux couleurs <span class="club-dot white"></span>, une passion.</strong>
-      <span class="ball-footer">🏀</span>
-    </div>
-  </div>
+<div class="status" id="toast"></div>
+<div class="footer">ES Blanquefort Basket Ball · Portail coachs</div>
+</div>
 </div>
 
 <script>
-function activateTab(tabName){
-  document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.toggle("active", btn.dataset.tab === tabName));
-  document.querySelectorAll(".tab-panel").forEach(panel=>panel.classList.toggle("active", panel.id === "tab-" + tabName));
-  history.replaceState(null, "", "#" + tabName);
-}
-document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>activateTab(btn.dataset.tab)));
-document.querySelectorAll("[data-go]").forEach(btn=>btn.addEventListener("click",()=>activateTab(btn.dataset.go)));
-const initialTab = location.hash ? location.hash.replace("#","") : "accueil";
-if(document.getElementById("tab-" + initialTab)) activateTab(initialTab);
+const ESSAIS_LINK="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
 
-document.querySelectorAll(".choice-row button").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
-    btn.classList.add("selected");
+const PLAYERS = {
+  
+  U13M:[
+    {name:"Joueur U13M 1", info:"2014 · contact famille"},
+    {name:"Joueur U13M 2", info:"2015 · contact famille"},
+    {name:"Joueur U13M 3", info:"2014 · contact famille"},
+    {name:"Joueur U13M 4", info:"2015 · contact famille"}
+  ],
+  U13F:[
+    {name:"Joueuse U13F 1", info:"2014 · contact famille"},
+    {name:"Joueuse U13F 2", info:"2015 · contact famille"},
+    {name:"Joueuse U13F 3", info:"2014 · contact famille"}
+  ],
+  U15M:[
+    {name:"Joueur U15M 1", info:"2012 · contact famille"},
+    {name:"Joueur U15M 2", info:"2013 · contact famille"},
+    {name:"Joueur U15M 3", info:"2012 · contact famille"}
+  ],
+  U18M:[
+    {name:"Joueur U18M 1", info:"2009 · contact"},
+    {name:"Joueur U18M 2", info:"2010 · contact"},
+    {name:"Joueur U18M 3", info:"2011 · contact"}
+  ],
+  U21:[
+    {name:"Joueur U21 1", info:"2006 · contact joueur"},
+    {name:"Joueur U21 2", info:"2007 · contact joueur"}
+  ],
+  Seniors:[
+    {name:"Senior 1", info:"contact joueur"},
+    {name:"Senior 2", info:"contact joueur"}
+  ],
+  Loisirs:[
+    {name:"Loisir 1", info:"contact joueur"},
+    {name:"Loisir 2", info:"contact joueur"}
+  ]
+};
+
+const SESSIONS = {
+  
+  U13M:[
+    {id:"ENT-U13M-MER", day:"Mercredi", time:"15h00 – 16h30", place:"Fongravey", title:"Entraînement U13M"},
+    {id:"ENT-U13M-VEN", day:"Vendredi", time:"18h00 – 19h30", place:"Lycée agricole", title:"Entraînement U13M"}
+  ],
+  U13F:[
+    {id:"ENT-U13F-MAR", day:"Mardi", time:"18h30 – 20h00", place:"Lycée agricole", title:"Collectif U13F"},
+    {id:"ENT-U13F-JEU", day:"Jeudi", time:"18h30 – 20h00", place:"Lycée agricole", title:"Entraînement U13F"}
+  ],
+  U15M:[
+    {id:"ENT-U15M-LUN", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey", title:"U15 / U18"},
+    {id:"ENT-U15M-MER", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy", title:"U15 / U18"},
+    {id:"ENT-U15M-VEN", day:"Vendredi", time:"19h30 – 21h00", place:"Lycée agricole", title:"Entraînement U15M"}
+  ],
+  U18M:[
+    {id:"ENT-U18M-LUN", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey", title:"U15 / U18"},
+    {id:"ENT-U18M-MER", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy", title:"U15 / U18"},
+    {id:"ENT-U18M-JEU", day:"Jeudi", time:"20h00 – 21h30", place:"Lycée agricole", title:"Entraînement U18M"}
+  ],
+  U21:[
+    {id:"ENT-U21-LUN", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy", title:"U21 / Seniors"}
+  ],
+  Seniors:[
+    {id:"ENT-SEN-LUN", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy", title:"U21 / Seniors"},
+    {id:"ENT-SEN-MER", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy", title:"Seniors M 1 + Seniors M 2"}
+  ],
+  Loisirs:[
+    {id:"ENT-LOISIRS-VEN", day:"Vendredi", time:"21h00 – 23h00", place:"Lycée agricole", title:"Loisirs"}
+  ]
+};
+
+const ESSAIS = {
+  U5:[
+    {name:"Essai U5", info:"Mercredi · Fongravey"},
+    {name:"Essai U5 samedi", info:"Samedi 06/06 · Fongravey"}
+  ],
+  U7:[
+    {name:"Essai U7", info:"Mercredi · Fongravey"},
+    {name:"Essai U7 samedi", info:"Samedi 06/06 · Fongravey"}
+  ],
+  U9:[
+    {name:"Essai U9", info:"Mercredi · Fongravey"},
+    {name:"Essai U9 samedi", info:"Samedi 06/06 · Fongravey"}
+  ],
+  U11:[
+    {name:"Essai U11", info:"Mercredi · Fongravey"},
+    {name:"Essai U11 samedi", info:"Samedi 06/06 · Fongravey"}
+  ],
+  U13M:[
+    {name:"Essai U13M 1", info:"Samedi 06/06 · 10h00 · Port du Roy"},
+    {name:"Essai U13M 2", info:"Vendredi · 18h00 · Lycée agricole"}
+  ],
+  U13F:[
+    {name:"Essai U13F 1", info:"Samedi 06/06 · 10h00 · Port du Roy"}
+  ],
+  U15M:[
+    {name:"Essai U15M 1", info:"Samedi 06/06 · 10h00 · Port du Roy"}
+  ],
+  U18M:[], U21:[], Seniors:[], Loisirs:[]
+};
+
+const TOURNOIS = [
+  {title:"Tournoi U13 — lien à ajouter", info:"Catégories concernées : U13M / U13F", url:"#"},
+  {title:"Tournoi U15 — lien à ajouter", info:"Catégorie concernée : U15M", url:"#"},
+  {title:"Tournoi U18 — lien à ajouter", info:"Catégorie concernée : U18M", url:"#"}
+];
+
+let currentSession = null;
+let presence = {};
+
+function openPanel(tab){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active", p.id==="panel-"+tab));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active", b.dataset.open===tab));
+  const map={
+    calendrier:["Calendrier équipe","Suivi des entraînements, présences et rappels des groupes."],
+    licencies:["Mes licenciés","Consultez votre groupe et préparez une sélection."],
+    essais:["Essais","Lien officiel et inscrits aux essais."],
+    tournois:["Tournois","Liens tournois et demandes aux familles."],
+    messages:["Messages","Préparez un message pour votre groupe."]
+  };
+  heroTitle.textContent=(map[tab]||map.calendrier)[0];
+  heroSubtitle.textContent=(map[tab]||map.calendrier)[1];
+  if(tab==="licencies") renderPlayers();
+  if(tab==="calendrier") renderSessions();
+  if(tab==="essais") renderEssais();
+  if(tab==="tournois") renderTournois();
+}
+document.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openPanel(el.dataset.open)));
+
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("visible");
+  setTimeout(()=>t.classList.remove("visible"),1800);
+}
+async function copyText(text, label){
+  try{await navigator.clipboard.writeText(text);toast(label||"Copié");}
+  catch(e){prompt("Copiez le texte :", text);}
+}
+
+function renderSessions(){
+  const cat=calendarCategory.value;
+  const box=sessionList;
+  box.innerHTML="";
+  (SESSIONS[cat]||[]).forEach(s=>{
+    const metrics=getSessionMetrics(cat, s.id);
+    const div=document.createElement("div");
+    div.className="session-card"+(currentSession&&currentSession.id===s.id?" active":"");
+    div.innerHTML=`<div class="top"><strong>${s.title}</strong><span class="pill blue">${s.day}</span></div>
+      <span>${s.time} · ${s.place}</span>
+      <div class="metrics">
+        <span class="pill">${metrics.present} présents</span>
+        <span class="pill ko">${metrics.absent} absents</span>
+        <span class="pill warn">${metrics.none} sans réponse</span>
+      </div>`;
+    div.onclick=()=>selectSession(cat,s);
+    box.appendChild(div);
   });
+}
+calendarCategory.addEventListener("change",()=>{currentSession=null;sessionDetail.style.display="none";renderSessions();});
+
+function selectSession(cat, session){
+  currentSession={cat,...session};
+  renderSessions();
+  sessionDetail.style.display="block";
+  sessionTitle.textContent=session.title;
+  sessionInfo.textContent=`${session.day} · ${session.time} · ${session.place}`;
+  renderPresenceBoard();
+}
+function createPresenceRequest(){
+  if(!currentSession){toast("Choisissez un entraînement");return;}
+  renderPresenceBoard();
+  toast("Présences ouvertes");
+}
+function playerKey(sessionId, name){return sessionId+"::"+name;}
+function setPresence(name, value){
+  if(!currentSession) return;
+  presence[playerKey(currentSession.id,name)]=value;
+  renderPresenceBoard();
+}
+function getPresence(name){
+  if(!currentSession) return "";
+  return presence[playerKey(currentSession.id,name)] || "";
+}
+function getSessionMetrics(cat, sessionId){
+  const players=PLAYERS[cat]||[];
+  let present=0, absent=0, wait=0;
+  players.forEach(p=>{
+    const v=presence[playerKey(sessionId,p.name)] || "";
+    if(v==="present") present++;
+    if(v==="absent") absent++;
+    if(v==="wait") wait++;
+  });
+  return {present, absent, wait, none:Math.max(players.length-present-absent-wait,0)};
+}
+function renderPresenceBoard(){
+  if(!currentSession) return;
+  const players=PLAYERS[currentSession.cat]||[];
+  presencePlayers.innerHTML="";
+  players.forEach(p=>{
+    const v=getPresence(p.name);
+    const row=document.createElement("div");
+    row.className="player-row";
+    row.innerHTML=`<div><strong>${p.name}</strong><span>${p.info}</span></div>
+      <div class="actions">
+        <button class="${v==='present'?'selected ok':''}" onclick="setPresence('${p.name}','present')">Présent</button>
+        <button class="${v==='absent'?'selected ko':''}" onclick="setPresence('${p.name}','absent')">Absent</button>
+        <button class="${v==='wait'?'selected wait':''}" onclick="setPresence('${p.name}','wait')">À confirmer</button>
+      </div>`;
+    presencePlayers.appendChild(row);
+  });
+  const m=getSessionMetrics(currentSession.cat,currentSession.id);
+  countPresent.textContent=m.present;
+  countAbsent.textContent=m.absent;
+  countWait.textContent=m.wait;
+  countNone.textContent=m.none;
+  const essais=ESSAIS[currentSession.cat]||[];
+  essaisForSession.innerHTML=essais.length
+    ? "<strong>Essais liés à la catégorie</strong><br>"+essais.map(e=>e.name+" · "+e.info).join("<br>")
+    : "Aucun essai affiché sur ce créneau.";
+}
+function nonResponders(){
+  if(!currentSession) return [];
+  return (PLAYERS[currentSession.cat]||[]).filter(p=>!getPresence(p.name)).map(p=>p.name);
+}
+function copyReminder(){
+  if(!currentSession){toast("Choisissez un entraînement");return;}
+  copyText(`Bonjour, rappel entraînement ${currentSession.title} : ${currentSession.day} ${currentSession.time} à ${currentSession.place}. Merci d’indiquer présent ou absent.`, "Rappel copié");
+}
+function copyNonResponders(){
+  const names=nonResponders();
+  const msg=names.length ? "Relance réponses :\n"+names.join("\n") : "Tout le monde a répondu.";
+  copyText(msg,"Relance copiée");
+}
+
+function renderPlayers(){
+  const cat=coachCategory.value;
+  const search=(playerSearch.value||"").toLowerCase();
+  playerList.innerHTML="";
+  (PLAYERS[cat]||[]).filter(p=>p.name.toLowerCase().includes(search)).forEach(p=>{
+    const row=document.createElement("label");
+    row.className="player-row";
+    row.innerHTML=`<div><strong>${p.name}</strong><span>${cat} · ${p.info}</span></div><input type="checkbox" value="${p.name}">`;
+    playerList.appendChild(row);
+  });
+}
+coachCategory.addEventListener("change",renderPlayers);
+playerSearch.addEventListener("input",renderPlayers);
+function selectAllPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=true);}
+function clearPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=false);}
+function copySelectedPlayers(){
+  const names=[...document.querySelectorAll("#playerList input:checked")].map(i=>i.value);
+  copyText(names.length?names.join("\n"):"Aucun joueur sélectionné.","Sélection copiée");
+}
+
+function renderEssais(){
+  const cat=(document.getElementById("essaisCategory") ? essaisCategory.value : calendarCategory.value) || "U13M";
+  essaisList.innerHTML="";
+  const data=ESSAIS[cat]||[];
+  if(!data.length){essaisList.innerHTML='<div class="notice">Aucun inscrit aux essais affiché pour cette catégorie.</div>';return;}
+  data.forEach(e=>{
+    const row=document.createElement("div");
+    row.className="player-row";
+    row.innerHTML=`<div><strong>${e.name}</strong><span>${e.info}</span></div><span class="pill">Essai</span>`;
+    essaisList.appendChild(row);
+  });
+}
+function copyEssaisLink(){copyText(ESSAIS_LINK,"Lien essais copié");}
+
+function renderTournois(){
+  tournamentList.innerHTML="";
+  TOURNOIS.forEach(t=>{
+    const div=document.createElement("div");
+    div.className="tournament-link";
+    div.innerHTML=`<div><strong>${t.title}</strong><span>${t.info}</span></div><a class="btn light" href="${t.url}" target="_blank" rel="noopener">Ouvrir</a>`;
+    tournamentList.appendChild(div);
+  });
+}
+function copyTournamentMessage(){
+  const msg=tournamentMessage.value || "Bonjour, merci d’indiquer si votre enfant participe au tournoi. Réponse souhaitée rapidement.";
+  copyText(msg,"Message tournoi copié");
+}
+function setTemplate(type){
+  const templates={
+    training:"Bonjour, rappel entraînement cette semaine. Merci d’indiquer présent ou absent.",
+    answer:"Bonjour, merci de répondre pour la présence à l’entraînement afin que nous puissions organiser la séance.",
+    tournament:"Bonjour, merci d’indiquer si votre enfant participe au tournoi. Réponse souhaitée rapidement."
+  };
+  freeMessage.value=templates[type]||"";
+}
+function copyFreeMessage(){
+  copyText(freeMessage.value || "Message vide.", "Message copié");
+}
+
+
+/* ===== CONNEXION GOOGLE SHEET — LECTURE SEULE ===== */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
+let REMOTE = {licencies:[], essais:[], creneaux:[]};
+
+async function loadCoachRemoteData(){
+  const cat = (document.getElementById("calendarCategory") && calendarCategory.value) ||
+              (document.getElementById("coachCategory") && coachCategory.value) ||
+              "U13M";
+  try{
+    const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
+    const json = await res.json();
+    if(json && json.ok){
+      REMOTE = {
+        licencies: Array.isArray(json.licencies) ? json.licencies : [],
+        essais: Array.isArray(json.essais) ? json.essais : [],
+        creneaux: Array.isArray(json.creneaux) ? json.creneaux : []
+      };
+      return true;
+    }
+  }catch(e){}
+  REMOTE = {licencies:[], essais:[], creneaux:[]};
+  return false;
+}
+
+function coachPlayerName(p){
+  return [p.prenom, p.nom].filter(Boolean).join(" ").trim() || p.name || "Licencié";
+}
+
+function renderConnectedPlayers(){
+  const box = document.getElementById("playerList");
+  if(!box) return;
+  box.innerHTML = "";
+  const search = ((document.getElementById("playerSearch") && playerSearch.value) || "").toLowerCase();
+  const list = REMOTE.licencies.filter(p => coachPlayerName(p).toLowerCase().includes(search));
+  if(!list.length){
+    box.innerHTML = '<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
+    return;
+  }
+  list.forEach(p=>{
+    const row=document.createElement("label");
+    row.className="player-row";
+    const name = coachPlayerName(p);
+    row.innerHTML = `<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""} · ${p.dateNaissance || ""}</span></div><input type="checkbox" value="${name}">`;
+    box.appendChild(row);
+  });
+}
+
+function renderConnectedSessions(){
+  const box=document.getElementById("sessionList");
+  if(!box) return;
+  box.innerHTML="";
+  const list = REMOTE.creneaux;
+  if(!list.length){
+    box.innerHTML = '<div class="notice">Aucun entraînement affiché pour ce groupe.</div>';
+    return;
+  }
+  list.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="session-card";
+    const info = [s.jour, s.date].filter(Boolean).join(" ");
+    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${info || "Créneau"}</span></div>
+      <span>${s.debut || ""}${s.fin ? " – " + s.fin : ""} · ${s.lieu || ""}</span>
+      <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span></div>`;
+    div.onclick=()=>{
+      currentSession={cat:s.categorie || (calendarCategory && calendarCategory.value), id:s.id, title:s.titre || "Entraînement", day:info, time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu || ""};
+      sessionDetail.style.display="block";
+      sessionTitle.textContent=currentSession.title;
+      sessionInfo.textContent=[currentSession.day,currentSession.time,currentSession.place].filter(Boolean).join(" · ");
+      renderConnectedPresenceBoard();
+    };
+    box.appendChild(div);
+  });
+}
+
+function renderConnectedPresenceBoard(){
+  const players = REMOTE.licencies;
+  presencePlayers.innerHTML="";
+  if(!players.length){
+    presencePlayers.innerHTML='<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
+  }
+  players.forEach(p=>{
+    const name = coachPlayerName(p);
+    const v = getPresence(name);
+    const row=document.createElement("div");
+    row.className="player-row";
+    row.innerHTML=`<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""}</span></div>
+      <div class="actions">
+        <button class="${v==='present'?'selected ok':''}" onclick="setPresence('${name}','present')">Présent</button>
+        <button class="${v==='absent'?'selected ko':''}" onclick="setPresence('${name}','absent')">Absent</button>
+        <button class="${v==='wait'?'selected wait':''}" onclick="setPresence('${name}','wait')">À confirmer</button>
+      </div>`;
+    presencePlayers.appendChild(row);
+  });
+  let present=0, absent=0, wait=0;
+  players.forEach(p=>{
+    const v=getPresence(coachPlayerName(p));
+    if(v==="present") present++;
+    if(v==="absent") absent++;
+    if(v==="wait") wait++;
+  });
+  countPresent.textContent=present;
+  countAbsent.textContent=absent;
+  countWait.textContent=wait;
+  countNone.textContent=Math.max(players.length-present-absent-wait,0);
+  essaisForSession.innerHTML = REMOTE.essais.length
+    ? "<strong>Essais du groupe</strong><br>" + REMOTE.essais.map(e => [e.prenom, e.nom].filter(Boolean).join(" ") + " · " + (e.creneau || "")).join("<br>")
+    : "Aucun essai affiché sur ce groupe.";
+}
+
+function renderConnectedEssais(){
+  const box=document.getElementById("essaisList");
+  if(!box) return;
+  box.innerHTML="";
+  if(!REMOTE.essais.length){
+    box.innerHTML='<div class="notice">Aucun inscrit aux essais affiché pour ce groupe.</div>';
+    return;
+  }
+  REMOTE.essais.forEach(e=>{
+    const row=document.createElement("div");
+    row.className="player-row";
+    const name=[e.prenom,e.nom].filter(Boolean).join(" ");
+    row.innerHTML=`<div><strong>${name}</strong><span>${e.categorie || ""} · ${e.creneau || ""}</span></div><span class="pill">Essai</span>`;
+    box.appendChild(row);
+  });
+}
+
+async function refreshConnectedCoach(){
+  await loadCoachRemoteData();
+  renderConnectedSessions();
+  renderConnectedPlayers();
+  renderConnectedEssais();
+}
+
+/* surcharge légère des rendus visuels */
+const originalOpenPanel = openPanel;
+openPanel = function(tab){
+  originalOpenPanel(tab);
+  refreshConnectedCoach();
+};
+
+document.addEventListener("change", e=>{
+  if(e.target && (e.target.id==="calendarCategory" || e.target.id==="coachCategory" || e.target.id==="essaisCategory")){
+    const source = e.target.value;
+    if(document.getElementById("calendarCategory")) calendarCategory.value = source;
+    if(document.getElementById("coachCategory")) coachCategory.value = source;
+    if(document.getElementById("essaisCategory") && [...essaisCategory.options].some(o=>o.value===source)) essaisCategory.value = source;
+    refreshConnectedCoach();
+  }
+});
+document.addEventListener("input", e=>{
+  if(e.target && e.target.id==="playerSearch") renderConnectedPlayers();
 });
 
-const copyEssaisBtn = document.getElementById("copyEssaisBtn");
-if(copyEssaisBtn){
-  copyEssaisBtn.addEventListener("click",async()=>{
-    const link = "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
-    try{await navigator.clipboard.writeText(link);alert("Lien essais copié.");}
-    catch(error){prompt("Copiez le lien essais :",link);}
-  });
-}
-
-const copyCoachMessage = document.getElementById("copyCoachMessage");
-if(copyCoachMessage){
-  copyCoachMessage.addEventListener("click",async()=>{
-    const msg = document.getElementById("coachMessage").value;
-    try{await navigator.clipboard.writeText(msg);alert("Message copié.");}
-    catch(error){prompt("Copiez le message :",msg);}
-  });
-}
+refreshConnectedCoach();
+renderSessions();
+renderPlayers();
+renderEssais();
+renderTournois();
 </script>
 </body>
 </html>
