@@ -1,14 +1,13 @@
-VERSION BÊTA ENVOI SOIR
+PORTAIL BÊTA FIN DE SAISON V2
 
 À remplacer dans GitHub :
 - portail-licencie/index.html
 - portail-licencie/manifest.json
 
-Objectif : envoi ce soir.
-- navigation compacte
-- pas de recherche licence obligatoire
-- parent + enfant + téléphone + mail
-- envoi vers APP_IDENTIFICATIONS
-- retour utilisateur vers APP_RETOURS_UTILISATEURS
-- lien essais
-- questionnaire saison
+Modifs :
+- Sondages devient Présences
+- Saison devient Fin de saison
+- Ajout Tournois dans Fin de saison / Présences
+- Accueil présente les espaces : Parent, Licencié, Fin de saison, Essais, Retour
+- Parent devient Parent / enfant
+- Navigation compacte conservée
