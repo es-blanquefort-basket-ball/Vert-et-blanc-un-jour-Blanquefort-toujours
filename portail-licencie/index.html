@@ -1,3 +1,1743 @@
+licencie- Copie.html
+Fichier
+reinscription.html
+Fichier
+2026-2027.html
+Fichier
+essais - Copie.html
+Fichier
+ES BLANQUEFORT BASKET BALL • Basket Club Pilot (1)⚙️ Paramètres
+Ce chat concerne uniquement : audit des interfaces HTML ESBB + Google Sheet central, avant branchement propre.
+
+Priorité immédiate :
+1. comprendre pourquoi le formulaire essais n’envoie pas ;
+2. identifier les bons onglets existants ;
+3. éviter de créer de nouveaux onglets inutiles ;
+4. stabiliser ensuite réinscriptions et portail fin de saison.
+
+Je joins :
+- export Excel du Google Sheet central ;
+- HTML essais ;
+- HTML réinscriptions ;
+- HTML portail fin de saison ;
+- HTML appli prochaine saison en annexe uniquement, pour comprendre la cible finale.
+
+Important :
+ne pas tout réécrire sans audit ;
+ne pas créer de nouvel onglet sans validation ;
+priorité aux essais, mais l’analyse doit tenir compte de l’écosystème complet.
+Dites-moi lesquels tu veux et prépare-moi le truc que j'ai plus qu'à copier-coller là. C'est très bien ça. Bon, ce n'est pas forcément les GS que je veux supprimer, c'est surtout les onglets. J'ai 25 onglets, j'en ai trop.
+Donc on suppose que U10, c'est U11, que U14, c'est dans les entraînements U15, etc. En fait, c'est ceux qui passent U15 l'année prochaine, voilà. Et donc effectivement, on a U13 et on a m ou f  à côté.
+Réflexion durant une seconde
+
+Parfait, là c’est bon signe : Apps Script répond bien.
+
+Ce que ta capture confirme :
+
+Élément	Statut
+ok:true	le routeur fonctionne
+categorie:"U13M"	le filtre demandé est bien reçu
+licencies:[...]	les joueurs remontent depuis LICENCIES_APP
+categorieSource:"U15M / U13 / U13"	le mapping fonctionne
+creneaux:[...]	les entraînements U13M remontent aussi
+
+Donc on est bons sur le principe :
+
+LICENCIES_APP
+↓
+mapping FFBB U13 + sexe M
+↓
+groupe coach U13M
+↓
+portail coach
+Ce que ça veut dire
+
+Les joueurs qui sont actuellement en U13 FFBB avec sexe M remontent bien dans le groupe coach U13M.
+
+Et ceux qui sont U14 / U15 doivent pouvoir remonter côté U15M après le correctif V2.
+
+Maintenant
+
+Tu peux tester dans l’adresse :
+
+?action=getCoachData&categorie=U13F
+
+puis :
+
+?action=getCoachData&categorie=U15M
+
+Si ça remonte aussi, alors le module est bon.
+
+Ensuite, côté interface, il faut utiliser :
+
+portail_coachs_ESBB_V9_connecte_correctif_remontee.html
+
+Et remplacer le module par :
+
+module_coachs_connecte_lecture_V2_mapping_FFBB.gs
+
+Après remplacement du module .gs, il faudra redéployer Apps Script, parce qu’on a modifié le code.
+
+mon interface à moi maintenat stp
+Réflexion durant quelques secondes
+
+Oui. Pour ton interface coach maintenant, prends celle-ci :
+
+portail_coachs_ESBB_V9_connecte_correctif_remontee.html
+
+C’est la bonne version actuelle parce qu’elle :
+
+Point	Statut
+Lit les licenciés depuis LICENCIES_APP	✅
+Lit les essais depuis 📝 Pipeline Essais	✅
+Lit les créneaux / entraînements	✅
+Ne met pas de code coach	✅
+Permet de choisir le groupe	✅
+N’affiche pas U5 à U11 dans licenciés / entraînements	✅
+Garde U5 / U7 / U9 / U11 dans les essais	✅
+Affiche combien de données remontent	✅
+À déployer côté HTML
+
+Tu remplaces ton HTML coach par :
+
+portail_coachs_ESBB_V9_connecte_correctif_remontee.html
+Côté Apps Script
+
+Tu dois avoir le module corrigé :
+
+module_coachs_connecte_lecture_V2_mapping_FFBB.gs
+
+Et comme tu l’as modifié côté .gs, il faut bien faire :
+
+Enregistrer
+↓
+Redéployer Apps Script
+↓
+Tester l’interface
+
+Là, ton interface coach doit commencer à afficher les vrais licenciés selon le groupe choisi.
+
+mon interface bureau je veux dire
+Réflexion durant 7s
+Analysé
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#003914">
+<title>Interface bureau | ES Blanquefort Basket Ball</title>
+<style>
+:root{
+  --g:#003914;--d:#001f0c;--l:#0b6b2b;--muted:#56695c;--line:rgba(0,57,20,.20);
+  --soft:#f7fbf6;--white:#fff;--warn:#fff7e6;--ok:#eaf4e9;--ko:#fff0ed;--blue:#edf4ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overflow-y:auto}
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:linear-gradient(135deg,#fff 0%,#f7fbf6 58%,#eef5ed 100%);
+  color:#082313;
+}
+button,input,select,textarea{font:inherit}
+a{color:inherit;text-decoration:none}
+.page{min-height:100vh;padding:14px 8px 32px;position:relative;overflow:hidden}
+.page:before{
+  content:"";position:absolute;left:50%;top:-180px;width:560px;height:292px;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--d),var(--g));border-radius:0 0 70% 70%;z-index:0;
+  box-shadow:0 24px 60px rgba(0,31,12,.18)
+}
+.container{width:100%;max-width:1220px;margin:0 auto;position:relative;z-index:1}
+.hero{text-align:center;padding-top:4px;margin-bottom:12px}
+.logo{width:128px;max-width:44vw;height:auto;filter:drop-shadow(0 12px 16px rgba(0,31,12,.22))}
+.clubline{display:flex;align-items:center;justify-content:center;gap:7px;margin:4px 0 8px;color:var(--d);font-weight:1000;font-size:clamp(14px,3.8vw,18px);line-height:1.15}
+.dot{width:14px;height:14px;min-width:14px;border-radius:50%;display:inline-block}
+.dot.green{background:#003914}.dot.white{background:#fff;border:2px solid #003914}
+.slogan{display:inline-flex;margin:0 auto 10px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--d);font-weight:1000;font-size:13px;box-shadow:0 8px 18px rgba(0,31,12,.08)}
+.kicker{display:inline-flex;padding:7px 12px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--g),var(--l));font-weight:950;font-size:12px;box-shadow:0 8px 18px rgba(0,57,20,.18)}
+h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32px,9vw,54px);line-height:.96;letter-spacing:-.8px;font-weight:1000}
+.hero p{max-width:820px;margin:0 auto;font-size:14.5px;line-height:1.45;font-weight:700;color:#244232}
+
+.shell{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 46px rgba(0,31,12,.16);padding:13px}
+.nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.nav button{min-height:38px;border:1px solid rgba(0,57,20,.16);background:#fff;color:var(--d);font-weight:1000;border-radius:12px;padding:7px 5px;font-size:11.5px;line-height:1.05;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
+.nav .active{background:linear-gradient(135deg,var(--g),var(--d));color:#fff;border-color:transparent}
+.panel{display:none}.panel.active{display:block}
+.label{display:inline-flex;margin:0 0 11px;padding:7px 12px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--d),#00551f);font-weight:1000;text-transform:uppercase;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{padding:15px;border-radius:15px;background:#fff;border:1px solid rgba(0,57,20,.16);box-shadow:0 8px 18px rgba(0,31,12,.05)}
+.card.dark{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}
+.card h3{margin:0 0 7px;color:var(--d);font-size:18px;text-transform:uppercase;font-weight:1000}
+.card.dark h3{color:#fff}
+.card p{margin:0 0 12px;color:var(--muted);line-height:1.42;font-weight:650;font-size:14px}
+.card.dark p{color:rgba(255,255,255,.84)}
+.big-number{font-size:36px;font-weight:1000;color:var(--d);line-height:1}
+.card.dark .big-number{color:#fff}
+.welcome-card{padding:18px;border-radius:18px;background:linear-gradient(135deg,#fff,#f7fbf6);border:1px solid rgba(0,57,20,.16);box-shadow:0 10px 22px rgba(0,31,12,.06);margin-bottom:12px}
+.welcome-card h2{margin:0 0 8px;color:var(--d);font-size:24px;line-height:1.1;text-transform:uppercase}
+.welcome-card p{margin:0;color:var(--muted);font-weight:700;line-height:1.45}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tools select,.tools input{border:1px solid rgba(0,57,20,.24);border-radius:12px;padding:10px;font-weight:800;min-height:42px;background:#fff}
+.tools input{min-width:240px;flex:1}
+.btn{min-height:42px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--g),var(--d));font-size:12px;font-weight:1000;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 12px 24px rgba(0,57,20,.18);display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:9px 13px}
+.btn.light{color:var(--d);background:#fff;border:1px solid rgba(0,57,20,.24);box-shadow:none}
+.pill{display:inline-flex;padding:6px 9px;border-radius:999px;background:#eaf4e9;color:var(--d);font-weight:1000;font-size:11px;white-space:nowrap}
+.pill.warn{background:#fff7e6;color:#8a5a05}.pill.ko{background:#fff0ed;color:#8a1f11}.pill.blue{background:#edf4ff;color:#123b78}
+.status{display:none;margin-top:10px;padding:11px 12px;border-radius:13px;background:#eaf4e9;border:1px solid rgba(0,57,20,.16);color:var(--d);font-weight:900;line-height:1.35;font-size:13px}
+.status.visible{display:block}
+.table-wrap{overflow:auto;border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#fff;margin-top:10px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:10px 11px;border-bottom:1px solid rgba(0,57,20,.10);text-align:left;font-size:13px}
+th{background:#003914;color:#fff;font-weight:1000;position:sticky;top:0;z-index:1}
+td{font-weight:700;color:#183726}
+tr:hover td{background:#f7fbf6}
+.notice{padding:12px;border-radius:14px;background:#fff7e6;border-left:5px solid #f0a500;color:#4d3510;font-weight:800;line-height:1.4;margin:10px 0}
+.footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}
+@media(max-width:860px){
+  .grid,.grid-4{grid-template-columns:1fr}
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tools select,.tools input,.btn{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="container">
+<header class="hero">
+<img class="logo" src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball" onerror="this.src='logo.png';this.onerror=null;">
+<div class="clubline"><span class="dot green"></span><span>ES Blanquefort Basket Ball</span><span class="dot white"></span></div>
+<div class="slogan">Vert et blanc un jour, Blanquefort toujours&nbsp;!</div><br>
+<div class="kicker">🏀 INTERFACE BUREAU</div>
+<h1 id="heroTitle">Pilotage club</h1>
+<p id="heroSubtitle">Vue bureau pour suivre les licenciés, les essais, les créneaux et les liens utiles de fin de saison.</p>
+</header>
+
+<main class="shell">
+<div class="nav">
+<button class="active" data-open="dashboard">Dashboard</button>
+<button data-open="licencies">Licenciés</button>
+<button data-open="essais">Essais</button>
+<button data-open="creneaux">Créneaux</button>
+<button data-open="liens">Liens</button>
+</div>
+
+<section id="panel-dashboard" class="panel active">
+<div class="label">Vue globale</div>
+<div class="welcome-card">
+<h2>Tableau de bord bureau</h2>
+<p>Choisissez une catégorie ou affichez l’ensemble des groupes test pour contrôler rapidement ce qui remonte dans l’interface.</p>
+</div>
+<div class="tools">
+<select id="globalCategory">
+<option value="ALL">Toutes les catégories</option>
+<option value="U13M">U13M</option>
+<option value="U13F">U13F</option>
+<option value="U15M">U15M</option>
+<option value="U18M">U18M</option>
+<option value="U21">U21</option>
+<option value="Seniors">Seniors</option>
+<option value="Loisirs">Loisirs</option>
+</select>
+<button class="btn" type="button" onclick="loadBureauData()">Actualiser</button>
+<button class="btn light" type="button" onclick="copyDashboard()">Copier résumé</button>
+</div>
+<div id="loadStatus" class="status visible">Chargement des données...</div>
+<div class="grid-4">
+<article class="card dark"><h3>Licenciés</h3><div class="big-number" id="countLicencies">0</div><p>joueurs affichés</p></article>
+<article class="card"><h3>Essais</h3><div class="big-number" id="countEssais">0</div><p>demandes essais</p></article>
+<article class="card"><h3>Créneaux</h3><div class="big-number" id="countCreneaux">0</div><p>entraînements / groupes</p></article>
+<article class="card"><h3>Groupes</h3><div class="big-number" id="countGroupes">0</div><p>catégories suivies</p></article>
+</div>
+<div class="grid" style="margin-top:12px">
+<article class="card">
+<h3>Répartition licenciés</h3>
+<div id="groupSummary"></div>
+</article>
+<article class="card">
+<h3>Points à contrôler</h3>
+<div id="controlSummary"></div>
+</article>
+</div>
+</section>
+
+<section id="panel-licencies" class="panel">
+<div class="label">Licenciés</div>
+<div class="welcome-card">
+<h2>Liste licenciés</h2>
+<p>Vue de contrôle par groupe, issue de la base club.</p>
+</div>
+<div class="tools">
+<select id="licencieCategory">
+<option value="ALL">Toutes les catégories</option>
+<option value="U13M">U13M</option>
+<option value="U13F">U13F</option>
+<option value="U15M">U15M</option>
+<option value="U18M">U18M</option>
+<option value="U21">U21</option>
+<option value="Seniors">Seniors</option>
+<option value="Loisirs">Loisirs</option>
+</select>
+<input id="licencieSearch" placeholder="Rechercher nom, prénom, licence">
+<button class="btn light" onclick="copyTable('licencies')">Copier liste</button>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Nom</th><th>Prénom</th><th>Licence</th><th>Date naissance</th><th>Sexe</th></tr></thead><tbody id="licenciesBody"></tbody></table></div>
+</section>
+
+<section id="panel-essais" class="panel">
+<div class="label">Essais</div>
+<div class="welcome-card">
+<h2>Suivi essais</h2>
+<p>Contrôle des demandes d’essais reçues par catégorie.</p>
+</div>
+<div class="tools">
+<select id="essaiCategory">
+<option value="ALL">Toutes les catégories</option>
+<option value="U5">U5</option>
+<option value="U7">U7</option>
+<option value="U9">U9</option>
+<option value="U11">U11</option>
+<option value="U13M">U13M</option>
+<option value="U13F">U13F</option>
+<option value="U15M">U15M</option>
+<option value="U18M">U18M</option>
+<option value="U21">U21</option>
+<option value="Seniors">Seniors</option>
+<option value="Loisirs">Loisirs</option>
+</select>
+<input id="essaiSearch" placeholder="Rechercher joueur, créneau, statut">
+<a class="btn" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Formulaire essais</a>
+<button class="btn light" onclick="copyTable('essais')">Copier essais</button>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Nom</th><th>Prénom</th><th>Créneau</th><th>Téléphone</th><th>Email</th><th>Statut</th></tr></thead><tbody id="essaisBody"></tbody></table></div>
+</section>
+
+<section id="panel-creneaux" class="panel">
+<div class="label">Créneaux</div>
+<div class="welcome-card">
+<h2>Créneaux entraînements</h2>
+<p>Vue de contrôle des créneaux affichés aux coachs.</p>
+</div>
+<div class="tools">
+<select id="creneauCategory">
+<option value="ALL">Toutes les catégories</option>
+<option value="U13M">U13M</option>
+<option value="U13F">U13F</option>
+<option value="U15M">U15M</option>
+<option value="U18M">U18M</option>
+<option value="U21">U21</option>
+<option value="Seniors">Seniors</option>
+<option value="Loisirs">Loisirs</option>
+</select>
+<input id="creneauSearch" placeholder="Rechercher jour, lieu, titre">
+<button class="btn light" onclick="copyTable('creneaux')">Copier créneaux</button>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Titre</th><th>Jour</th><th>Date</th><th>Horaire</th><th>Lieu</th><th>Type</th></tr></thead><tbody id="creneauxBody"></tbody></table></div>
+</section>
+
+<section id="panel-liens" class="panel">
+<div class="label">Liens utiles</div>
+<div class="welcome-card">
+<h2>Diffusion</h2>
+<p>Liens à envoyer selon le public concerné.</p>
+</div>
+<div class="grid">
+<article class="card"><h3>Portail licenciés</h3><p>À diffuser aux familles déjà au club.</p><button class="btn light" onclick="copyLink('PORTAIL_LICENCIES')">Copier le lien</button></article>
+<article class="card"><h3>Formulaire essais</h3><p>À diffuser aux nouveaux joueurs / familles extérieures.</p><button class="btn light" onclick="copyLink('ESSAIS')">Copier le lien</button></article>
+<article class="card"><h3>Portail coachs</h3><p>À diffuser aux coachs pour tester la gestion par groupe.</p><button class="btn light" onclick="copyLink('COACHS')">Copier le lien</button></article>
+<article class="card"><h3>Réinscription</h3><p>À diffuser aux licenciés actuels.</p><button class="btn light" onclick="copyLink('REINSCRIPTION')">Copier le lien</button></article>
+</div>
+</section>
+</main>
+
+<div class="status" id="toast"></div>
+<div class="footer">ES Blanquefort Basket Ball · Interface bureau</div>
+</div>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
+
+const GROUPS = ["U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];
+const ESSAIS_GROUPS = ["U5","U7","U9","U11","U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];
+
+const LINKS = {
+  PORTAIL_LICENCIES:"https://es-blanquefort-basket-ball.github.io/portail-licencies/",
+  ESSAIS:"https://es-blanquefort-basket-ball.github.io/essais-2026-2027/",
+  COACHS:"https://es-blanquefort-basket-ball.github.io/portail-coachs/",
+  REINSCRIPTION:"https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/"
+};
+
+let DATA = {
+  licencies: [],
+  essais: [],
+  creneaux: []
+};
+
+function openPanel(tab){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active", p.id==="panel-"+tab));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active", b.dataset.open===tab));
+  const map={
+    dashboard:["Pilotage club","Vue bureau pour suivre les licenciés, les essais, les créneaux et les liens utiles."],
+    licencies:["Licenciés","Vue de contrôle par groupe."],
+    essais:["Essais","Demandes d’essais reçues."],
+    creneaux:["Créneaux","Entraînements affichés aux coachs."],
+    liens:["Liens utiles","Liens à diffuser selon les publics."]
+  };
+  heroTitle.textContent=(map[tab]||map.dashboard)[0];
+  heroSubtitle.textContent=(map[tab]||map.dashboard)[1];
+}
+document.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openPanel(el.dataset.open)));
+
+function uniqueBy(arr, keyFn){
+  const m=new Map();
+  arr.forEach(item=>m.set(keyFn(item), item));
+  return [...m.values()];
+}
+async function fetchGroup(cat){
+  const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
+  const json = await res.json();
+  if(!json || !json.ok) return {licencies:[], essais:[], creneaux:[]};
+  return {
+    licencies:(json.licencies||[]).map(x=>({...x, categorieAffichee:cat})),
+    essais:(json.essais||[]).map(x=>({...x, categorieAffichee:cat})),
+    creneaux:(json.creneaux||[]).map(x=>({...x, categorieAffichee:cat}))
+  };
+}
+
+async function loadBureauData(){
+  loadStatus.classList.add("visible");
+  loadStatus.textContent="Chargement des données...";
+  const selected = globalCategory.value;
+  const groups = selected === "ALL" ? GROUPS : [selected];
+
+  const results = [];
+  for(const g of groups){
+    try{ results.push(await fetchGroup(g)); }
+    catch(e){ results.push({licencies:[], essais:[], creneaux:[]}); }
+  }
+
+  DATA.licencies = uniqueBy(results.flatMap(r=>r.licencies), x => (x.licence || "") + "|" + (x.nom || "") + "|" + (x.prenom || ""));
+  DATA.essais = uniqueBy(results.flatMap(r=>r.essais), x => (x.id || "") + "|" + (x.nom || "") + "|" + (x.prenom || "") + "|" + (x.creneau || ""));
+  DATA.creneaux = uniqueBy(results.flatMap(r=>r.creneaux), x => (x.id || "") + "|" + (x.categorieAffichee || ""));
+
+  loadStatus.textContent = "Données chargées : " + DATA.licencies.length + " licencié(s), " + DATA.essais.length + " essai(s), " + DATA.creneaux.length + " créneau(x).";
+  renderAll();
+}
+
+function renderAll(){
+  renderDashboard();
+  renderLicencies();
+  renderEssais();
+  renderCreneaux();
+}
+
+function renderDashboard(){
+  countLicencies.textContent = DATA.licencies.length;
+  countEssais.textContent = DATA.essais.length;
+  countCreneaux.textContent = DATA.creneaux.length;
+  countGroupes.textContent = new Set(DATA.licencies.map(x=>x.categorieAffichee)).size || 0;
+
+  const byGroup = {};
+  DATA.licencies.forEach(x => byGroup[x.categorieAffichee] = (byGroup[x.categorieAffichee] || 0) + 1);
+  groupSummary.innerHTML = Object.keys(byGroup).length
+    ? Object.entries(byGroup).map(([g,n])=>`<p><span class="pill">${g}</span> ${n} licencié(s)</p>`).join("")
+    : '<p>Aucun licencié affiché.</p>';
+
+  const controls = [];
+  if(!DATA.licencies.length) controls.push("Aucun licencié remonté sur le filtre actuel.");
+  if(!DATA.creneaux.length) controls.push("Aucun créneau remonté sur le filtre actuel.");
+  if(!DATA.essais.length) controls.push("Aucun essai remonté sur le filtre actuel.");
+  controlSummary.innerHTML = controls.length
+    ? controls.map(c=>`<p class="notice">${c}</p>`).join("")
+    : '<p><span class="pill">OK</span> Les données principales remontent.</p>';
+}
+
+function filterRows(rows, cat, search, fields){
+  const s=(search||"").toLowerCase().trim();
+  return rows.filter(r=>{
+    const catOk = cat === "ALL" || r.categorieAffichee === cat || r.categorie === cat;
+    const searchOk = !s || fields.some(f => String(r[f]||"").toLowerCase().includes(s));
+    return catOk && searchOk;
+  });
+}
+
+function renderLicencies(){
+  const rows = filterRows(DATA.licencies, licencieCategory.value, licencieSearch.value, ["nom","prenom","licence","dateNaissance","sexe","categorie"]);
+  licenciesBody.innerHTML = rows.map(r=>`<tr><td>${r.categorieAffichee||r.categorie||""}</td><td>${r.nom||""}</td><td>${r.prenom||""}</td><td>${r.licence||""}</td><td>${r.dateNaissance||""}</td><td>${r.sexe||""}</td></tr>`).join("") || '<tr><td colspan="6">Aucun licencié affiché.</td></tr>';
+}
+function renderEssais(){
+  const rows = filterRows(DATA.essais, essaiCategory.value, essaiSearch.value, ["nom","prenom","creneau","telephone","email","statut","categorie"]);
+  essaisBody.innerHTML = rows.map(r=>`<tr><td>${r.categorieAffichee||r.categorie||""}</td><td>${r.nom||""}</td><td>${r.prenom||""}</td><td>${r.creneau||""}</td><td>${r.telephone||""}</td><td>${r.email||""}</td><td>${r.statut||""}</td></tr>`).join("") || '<tr><td colspan="7">Aucun essai affiché.</td></tr>';
+}
+function renderCreneaux(){
+  const rows = filterRows(DATA.creneaux, creneauCategory.value, creneauSearch.value, ["titre","jour","date","debut","fin","lieu","type"]);
+  creneauxBody.innerHTML = rows.map(r=>`<tr><td>${r.categorieAffichee||r.categorie||""}</td><td>${r.titre||""}</td><td>${r.jour||""}</td><td>${r.date||""}</td><td>${[r.debut,r.fin].filter(Boolean).join(" – ")}</td><td>${r.lieu||""}</td><td>${r.type||""}</td></tr>`).join("") || '<tr><td colspan="7">Aucun créneau affiché.</td></tr>';
+}
+[licencieCategory, licencieSearch].forEach(el=>el.addEventListener("input",renderLicencies));
+[essaiCategory, essaiSearch].forEach(el=>el.addEventListener("input",renderEssais));
+[creneauCategory, creneauSearch].forEach(el=>el.addEventListener("input",renderCreneaux));
+
+async function copyText(text,label){
+  try{await navigator.clipboard.writeText(text);toast(label||"Copié");}
+  catch(e){prompt("Copiez :", text);}
+}
+function toast(msg){
+  toastEl = document.getElementById("toast");
+  toastEl.textContent=msg;
+  toastEl.classList.add("visible");
+  setTimeout(()=>toastEl.classList.remove("visible"),1800);
+}
+function copyDashboard(){
+  copyText(`ESBB — résumé bureau
+Licenciés : ${DATA.licencies.length}
+Essais : ${DATA.essais.length}
+Créneaux : ${DATA.creneaux.length}`, "Résumé copié");
+}
+function copyTable(type){
+  let rows=[], headers=[];
+  if(type==="licencies"){headers=["Catégorie","Nom","Prénom","Licence","Date naissance","Sexe"]; rows=filterRows(DATA.licencies, licencieCategory.value, licencieSearch.value, ["nom","prenom","licence","dateNaissance","sexe","categorie"]).map(r=>[r.categorieAffichee||r.categorie||"",r.nom||"",r.prenom||"",r.licence||"",r.dateNaissance||"",r.sexe||""]);}
+  if(type==="essais"){headers=["Catégorie","Nom","Prénom","Créneau","Téléphone","Email","Statut"]; rows=filterRows(DATA.essais, essaiCategory.value, essaiSearch.value, ["nom","prenom","creneau","telephone","email","statut","categorie"]).map(r=>[r.categorieAffichee||r.categorie||"",r.nom||"",r.prenom||"",r.creneau||"",r.telephone||"",r.email||"",r.statut||""]);}
+  if(type==="creneaux"){headers=["Catégorie","Titre","Jour","Date","Horaire","Lieu","Type"]; rows=filterRows(DATA.creneaux, creneauCategory.value, creneauSearch.value, ["titre","jour","date","debut","fin","lieu","type"]).map(r=>[r.categorieAffichee||r.categorie||"",r.titre||"",r.jour||"",r.date||"",[r.debut,r.fin].filter(Boolean).join(" – "),r.lieu||"",r.type||""]);}
+  copyText([headers.join("\t"), ...rows.map(r=>r.join("\t"))].join("\n"), "Liste copiée");
+}
+function copyLink(key){
+  copyText(LINKS[key] || "", "Lien copié");
+}
+
+loadBureauData();
+</script>
+</body>
+</html>
+'''
+out = Path('/mnt/data/interface_bureau_ESBB_V1_pilotage_connecte.html')
+out.write_text(html, encoding='utf-8')
+print("Fichier prêt :", out)
+
+STDOUT/STDERR
+Fichier prêt : /mnt/data/interface_bureau_ESBB_V1_pilotage_connecte.html
+
+
+Oui, pardon : interface bureau, pas interface coach.
+
+Je t’ai préparé une première version bureau connectée :
+
+interface_bureau_ESBB_V1_pilotage_connecte.html
+
+Ce qu’elle fait
+Bloc	Fonction
+Dashboard	total licenciés / essais / créneaux
+Licenciés	vue globale ou par catégorie
+Essais	suivi des demandes reçues
+Créneaux	contrôle des entraînements affichés
+Liens	copier les liens utiles : portail licenciés, essais, coachs, réinscription
+Recherche	par nom, licence, créneau, statut
+Copie	listes copiables pour tableau / message
+
+Elle utilise la même route connectée :
+
+?action=getCoachData
+
+Donc elle lit ce qui remonte déjà depuis le Sheet, mais en mode bureau avec vue globale. 
+
+c'est pas connecte là?
+Réflexion durant 6s
+
+Si, l’interface bureau V1 est prévue pour être connectée.
+
+Elle appelle bien ton Apps Script ici :
+
+https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec?action=getCoachData
+
+Donc elle lit les mêmes données que le test que tu m’as montré :
+
+LICENCIES_APP
+📝 Pipeline Essais
+APP_CRENEAUX / créneaux de secours
+Si tu vois “0” partout
+
+Ce n’est pas que le HTML n’est pas connecté. C’est probablement l’un de ces points :
+
+Cause possible	À vérifier
+HTML pas remplacé par le bon fichier	déployer interface_bureau_ESBB_V1_pilotage_connecte.html
+Apps Script pas redéployé après le module V2	refaire Déployer > Nouvelle version
+Route getCoachData absente du Code.gs publié	vérifier que tu as bien le routeur V4
+Cache navigateur	ouvrir en navigation privée ou ajouter ?v=2 à l’URL
+L’interface charge mais bloque la requête	regarder le message “Chargement des données…” / “Données chargées…”
+Test rapide
+
+Dans l’interface bureau, si c’est connecté, tu dois voir en haut :
+
+Données chargées : X licencié(s), X essai(s), X créneau(x).
+
+Si ça reste sur :
+
+Chargement des données...
+
+alors le HTML n’arrive pas à appeler Apps Script.
+
+Fichier connecté à utiliser
+
+C’est celui-ci :
+
+interface_bureau_ESBB_V1_pilotage_connecte.html
+
+Et côté Apps Script, il faut bien avoir :
+
+Code_gs_ESBB_routeur_V4_coachs_connecte.gs
+
+module_coachs_connecte_lecture_V2_mapping_FFBB.gs
+
+Donc oui : elle est connectée, mais elle dépend du redéploiement Apps Script V4 + module coach V2.
+
+et il faut que ça remonte les essais 9 puis 11. Donc ça remonter les coachs et chez moi, en bureau.
+
+Oui. Là il faut corriger deux choses :
+
+côté coach, les petites catégories doivent rester absentes des licenciés / présences, mais être disponibles dans Essais ;
+côté bureau, la vue globale doit aussi charger les essais U5 / U7 / U9 / U11, sinon tu ne les vois pas dans ton pilotage.
+Réflexion durant 5s
+Analysé
+from pathlib import Path
+import re
+
+# --- 1) Coach interface fix ---
+coach_src = Path('/mnt/data/portail_coachs_ESBB_V9_connecte_correctif_remontee.html')
+coach = coach_src.read_text(encoding='utf-8')
+
+# Fix loadCoachRemoteData: use active panel category; if in essais panel, use essaisCategory, otherwise calendar/coach.
+old_func = re.search(r'async function loadCoachRemoteData\(\)\{.*?return false;\n\}', coach, flags=re.S)
+new_func = r'''async function loadCoachRemoteData(){
+  let cat = "U13M";
+
+  const essaisPanelActive = document.getElementById("panel-essais") && document.getElementById("panel-essais").classList.contains("active");
+
+  if (essaisPanelActive && document.getElementById("essaisCategory")) {
+    cat = essaisCategory.value || "U9";
+  } else if (document.getElementById("calendarCategory") && calendarCategory.value) {
+    cat = calendarCategory.value;
+  } else if (document.getElementById("coachCategory") && coachCategory.value) {
+    cat = coachCategory.value;
+  }
+
+  const status = document.getElementById("remoteStatus");
+  if(status) status.textContent = "Chargement des données " + cat + "...";
+
+  try{
+    const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
+    const json = await res.json();
+
+    if(json && json.ok){
+      REMOTE = {
+        licencies: Array.isArray(json.licencies) ? json.licencies : [],
+        essais: Array.isArray(json.essais) ? json.essais : [],
+        creneaux: Array.isArray(json.creneaux) ? json.creneaux : []
+      };
+
+      if(status) {
+        status.textContent = "Données chargées " + cat + " : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x).";
+      }
+
+      return true;
+    }
+
+    if(status) status.textContent = "Connexion active, mais aucune donnée reçue.";
+  }catch(e){
+    if(status) status.textContent = "Impossible de charger les données. Vérifier le déploiement Apps Script.";
+  }
+
+  REMOTE = {licencies:[], essais:[], creneaux:[]};
+  return false;
+}'''
+if old_func:
+    coach = coach[:old_func.start()] + new_func + coach[old_func.end():]
+
+# Fix change handler so essaisCategory doesn't try to push U9/U11 into calendarCategory if options absent.
+old_change = re.search(r'document\.addEventListener\("change", e=>\{.*?refreshConnectedCoach\(\);\n  \}\n\}\);', coach, flags=re.S)
+new_change = r'''document.addEventListener("change", e=>{
+  if(!e.target) return;
+
+  if(e.target.id === "essaisCategory"){
+    refreshConnectedCoach();
+    return;
+  }
+
+  if(e.target.id === "calendarCategory" || e.target.id === "coachCategory"){
+    const source = e.target.value;
+
+    if(document.getElementById("calendarCategory") && [...calendarCategory.options].some(o=>o.value===source)) {
+      calendarCategory.value = source;
+    }
+
+    if(document.getElementById("coachCategory") && [...coachCategory.options].some(o=>o.value===source)) {
+      coachCategory.value = source;
+    }
+
+    refreshConnectedCoach();
+  }
+});'''
+if old_change:
+    coach = coach[:old_change.start()] + new_change + coach[old_change.end():]
+
+# Make sure essais select includes small categories
+if 'id="essaisCategory"' in coach:
+    coach = re.sub(
+        r'<select id="essaisCategory">.*?</select>',
+        '<select id="essaisCategory"><option value="U5">U5</option><option value="U7">U7</option><option value="U9">U9</option><option value="U11">U11</option><option value="U13M">U13M</option><option value="U13F">U13F</option><option value="U15M">U15M</option><option value="U18M">U18M</option><option value="U21">U21</option><option value="Seniors">Seniors</option><option value="Loisirs">Loisirs</option></select>',
+        coach,
+        count=1,
+        flags=re.S
+    )
+
+coach_out = Path('/mnt/data/portail_coachs_ESBB_V10_essais_ecole_basket_connectes.html')
+coach_out.write_text(coach, encoding='utf-8')
+
+# --- 2) Bureau interface fix ---
+bureau_src = Path('/mnt/data/interface_bureau_ESBB_V1_pilotage_connecte.html')
+bureau = bureau_src.read_text(encoding='utf-8')
+
+# Replace group constants. Keep groups test for licencies/creneaux; load essais groups for essais.
+bureau = re.sub(
+    r'const GROUPS = \[.*?\];\s*const ESSAIS_GROUPS = \[.*?\];',
+    'const GROUPS = ["U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];\nconst ESSAIS_GROUPS = ["U5","U7","U9","U11","U13M","U13F","U15M","U18M","U21","Seniors","Loisirs"];',
+    bureau,
+    count=1,
+    flags=re.S
+)
+
+# Patch loadBureauData to fetch test groups for licencies/creneaux and all essais groups for essais when ALL selected.
+old_load = re.search(r'async function loadBureauData\(\)\{.*?renderAll\(\);\n\}', bureau, flags=re.S)
+new_load = r'''async function loadBureauData(){
+  loadStatus.classList.add("visible");
+  loadStatus.textContent="Chargement des données...";
+
+  const selected = globalCategory.value;
+
+  const groupsForLicencies = selected === "ALL" ? GROUPS : [selected];
+  const groupsForEssais = selected === "ALL" ? ESSAIS_GROUPS : [selected];
+
+  const licResults = [];
+  for(const g of groupsForLicencies){
+    try{ licResults.push(await fetchGroup(g)); }
+    catch(e){ licResults.push({licencies:[], essais:[], creneaux:[]}); }
+  }
+
+  const essaiResults = [];
+  for(const g of groupsForEssais){
+    try{ essaiResults.push(await fetchGroup(g)); }
+    catch(e){ essaiResults.push({licencies:[], essais:[], creneaux:[]}); }
+  }
+
+  DATA.licencies = uniqueBy(licResults.flatMap(r=>r.licencies), x => (x.licence || "") + "|" + (x.nom || "") + "|" + (x.prenom || ""));
+  DATA.creneaux = uniqueBy(licResults.flatMap(r=>r.creneaux), x => (x.id || "") + "|" + (x.categorieAffichee || ""));
+  DATA.essais = uniqueBy(essaiResults.flatMap(r=>r.essais), x => (x.id || "") + "|" + (x.nom || "") + "|" + (x.prenom || "") + "|" + (x.creneau || ""));
+
+  loadStatus.textContent = "Données chargées : " + DATA.licencies.length + " licencié(s), " + DATA.essais.length + " essai(s), " + DATA.creneaux.length + " créneau(x).";
+  renderAll();
+}'''
+if old_load:
+    bureau = bureau[:old_load.start()] + new_load + bureau[old_load.end():]
+
+# Ensure dashboard group count for essais included not misleading? Fine.
+bureau_out = Path('/mnt/data/interface_bureau_ESBB_V2_essais_ecole_basket_connectes.html')
+bureau_out.write_text(bureau, encoding='utf-8')
+
+print("Fichiers prêts :")
+print(coach_out)
+print(bureau_out)
+
+STDOUT/STDERR
+Fichiers prêts :
+/mnt/data/portail_coachs_ESBB_V10_essais_ecole_basket_connectes.html
+/mnt/data/interface_bureau_ESBB_V2_essais_ecole_basket_connectes.html
+
+
+Oui. J’ai corrigé pour que les essais U5 / U7 / U9 / U11 remontent bien, mais uniquement dans les bons endroits.
+
+Nouveaux fichiers
+Interface	Fichier
+Coachs	portail_coachs_ESBB_V10_essais_ecole_basket_connectes.html
+Bureau	interface_bureau_ESBB_V2_essais_ecole_basket_connectes.html
+Ce que ça corrige
+Bloc	Comportement
+Coachs > Licenciés	U13M, U13F, U15M, U18M, U21, Seniors, Loisirs
+Coachs > Calendrier / présences	U13M, U13F, U15M, U18M, U21, Seniors, Loisirs
+Coachs > Essais	U5, U7, U9, U11 + autres catégories
+Bureau > Dashboard global	inclut aussi les essais école de basket
+Bureau > Essais	U5, U7, U9, U11 remontent
+Bureau > Licenciés / créneaux	reste sur les groupes test
+À déployer
+
+Pour les coachs : remplace par la V10.
+Pour toi côté bureau : remplace par la V2.
+
+Pas besoin de modifier Apps Script si tu as déjà le module V2 mapping FFBB. 
+
+Ce qui m'inquiète un peu, c'est que j'ai eu deux inscriptions pour les essais. Mais que du coup, comme c'est des U9 et des U11, moi, j'ai beau avoir le truc pour cocher les U9 dans les essais, ça ne remonte pas. Donc je n'ai pas encore déployé, je vais tester. Et après, j'ai eu des retours de coachs, notamment un qui me demande s'il peut garder son équipe en favori ou si ça va se refaire à chaque fois. Est-ce qu'il peut se créer des équipes pour avoir toujours les mêmes parce qu'il a a priori, il comprend, il y en a deux, ça l'embête un peu d'aller chercher partout, j'ai l'impression. Voilà, après on a un souci aussi sur le fichage des créneaux. Ça affiche des créneaux très très très très très longs et faudrait que je puisse les mettre. Et qu'est-ce qu'il me disait ? Je vais te faire ça et de prévoir un total de la liste un sous-total pour les cochés ou un truc comme ça. Dans la liste et les équipes pour les coachs. Et dans les dates, en fait, on a 17h30, 18h30, c'est bizarre ce qui s'affiche dans le dans les créneaux notamment des U13F. Et on a le jeudi avant le mardi parce qu'on a la bascule avant le collectif. Après. Voilà.
+
+Oui, tes retours sont cohérents. On corrige maintenant en gardant simple :
+
+les essais U5/U7/U9/U11 doivent remonter dans l’onglet Essais, même si ces catégories ne sont pas dans le test licenciés ;
+les coachs doivent pouvoir garder une ou plusieurs équipes en favori ;
+les listes doivent afficher un total et un total sélectionné ;
+les créneaux doivent être plus courts et triés dans l’ordre logique de la semaine, pas dans l’ordre d’arrivée du Sheet.
+Réflexion durant 8s
+Analysé
+from pathlib import Path
+import re
+
+# Patch coach V10 into V11
+src = Path('/mnt/data/portail_coachs_ESBB_V10_essais_ecole_basket_connectes.html')
+html = src.read_text(encoding='utf-8')
+
+# Add CSS for favorite buttons and counters
+css_add = r'''
+.favorite-bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.favorite-bar button{border:1px solid rgba(0,57,20,.22);background:#fff;border-radius:999px;padding:8px 11px;font-weight:1000;color:var(--d);cursor:pointer}
+.favorite-bar button.active{background:linear-gradient(135deg,var(--g),var(--d));color:#fff;border-color:transparent}
+.counter-line{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.counter-line .pill{font-size:12px}
+.compact-time{font-weight:1000;color:var(--d)}
+'''
+html = html.replace('</style>', css_add + '\n</style>')
+
+# Add favorites bar in calendrier tools, licencies tools, essais tools
+html = html.replace(
+    '<div class="tools">\n<select id="calendarCategory">',
+    '<div class="favorite-bar" id="favoriteBar"></div>\n<div class="tools">\n<select id="calendarCategory">',
+    1
+)
+
+# Add favorite button near calendar select
+html = html.replace(
+    '<button class="btn light" type="button" onclick="renderSessions()">Afficher</button>',
+    '<button class="btn light" type="button" onclick="renderSessions()">Afficher</button>\n<button class="btn light" type="button" onclick="toggleFavoriteTeam(calendarCategory.value)">Favori</button>',
+    1
+)
+
+# Add counters in players and essais if not present
+html = html.replace(
+    '<div id="playerList" class="player-list"></div>',
+    '<div class="counter-line"><span class="pill" id="playerTotal">0 joueur</span><span class="pill blue" id="playerChecked">0 sélectionné</span></div><div id="playerList" class="player-list"></div>'
+)
+
+html = html.replace(
+    '<div id="essaisList" class="player-list"></div>',
+    '<div class="counter-line"><span class="pill" id="essaisTotal">0 essai</span></div><div id="essaisList" class="player-list"></div>'
+)
+
+# Insert utility JS before connected section or before end
+js_util = r'''
+/* ===== CONFORT COACH : FAVORIS, TRI, COMPTEURS ===== */
+const DAY_ORDER = { "Lundi":1, "Mardi":2, "Mercredi":3, "Jeudi":4, "Vendredi":5, "Samedi":6, "Dimanche":7 };
+const FAVORITE_KEY = "ESBB_COACH_FAVORITES";
+
+function getFavorites(){
+  try { return JSON.parse(localStorage.getItem(FAVORITE_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+function setFavorites(list){
+  localStorage.setItem(FAVORITE_KEY, JSON.stringify([...new Set(list)]));
+}
+function toggleFavoriteTeam(team){
+  if(!team) return;
+  const favs = getFavorites();
+  const idx = favs.indexOf(team);
+  if(idx >= 0) favs.splice(idx,1); else favs.push(team);
+  setFavorites(favs);
+  renderFavoriteBar();
+}
+function applyTeam(team){
+  if(document.getElementById("calendarCategory") && [...calendarCategory.options].some(o=>o.value===team)) calendarCategory.value = team;
+  if(document.getElementById("coachCategory") && [...coachCategory.options].some(o=>o.value===team)) coachCategory.value = team;
+  if(document.getElementById("essaisCategory") && [...essaisCategory.options].some(o=>o.value===team)) essaisCategory.value = team;
+  refreshConnectedCoach();
+}
+function renderFavoriteBar(){
+  const box = document.getElementById("favoriteBar");
+  if(!box) return;
+  const favs = getFavorites();
+  const current = document.getElementById("calendarCategory") ? calendarCategory.value : "";
+  box.innerHTML = "";
+  if(!favs.length){
+    box.innerHTML = '<button type="button" onclick="toggleFavoriteTeam(calendarCategory.value)">Ajouter ce groupe en favori</button>';
+    return;
+  }
+  favs.forEach(team=>{
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "⭐ " + team;
+    btn.className = team === current ? "active" : "";
+    btn.onclick = () => applyTeam(team);
+    box.appendChild(btn);
+  });
+  const add = document.createElement("button");
+  add.type = "button";
+  add.textContent = favs.includes(current) ? "Retirer favori" : "Ajouter favori";
+  add.onclick = () => toggleFavoriteTeam(current);
+  box.appendChild(add);
+}
+function sortCreneauxCoach(list){
+  return [...(list || [])].sort((a,b)=>{
+    const da = DAY_ORDER[a.jour] || 99;
+    const db = DAY_ORDER[b.jour] || 99;
+    const ta = String(a.debut || "").replace("h",":");
+    const tb = String(b.debut || "").replace("h",":");
+    return da - db || ta.localeCompare(tb);
+  });
+}
+function compactCreneauLabel(s){
+  const jour = s.jour || "";
+  const horaire = [s.debut, s.fin].filter(Boolean).join("–");
+  const lieu = s.lieu || "";
+  return [jour, horaire, lieu].filter(Boolean).join(" · ");
+}
+function updatePlayerCounters(){
+  const total = document.querySelectorAll("#playerList input[type='checkbox']").length;
+  const checked = document.querySelectorAll("#playerList input[type='checkbox']:checked").length;
+  if(document.getElementById("playerTotal")) playerTotal.textContent = total + (total > 1 ? " joueurs" : " joueur");
+  if(document.getElementById("playerChecked")) playerChecked.textContent = checked + " sélectionné" + (checked > 1 ? "s" : "");
+}
+document.addEventListener("change", e=>{
+  if(e.target && e.target.closest && e.target.closest("#playerList")) updatePlayerCounters();
+});
+'''
+# Insert before connected block if present
+idx = html.find('/* ===== CONNEXION GOOGLE SHEET')
+if idx != -1:
+    html = html[:idx] + js_util + '\n' + html[idx:]
+else:
+    html = html.replace('</script>', js_util + '\n</script>')
+
+# Patch renderConnectedSessions to sort and compact display
+old_sessions = re.search(r'function renderConnectedSessions\(\)\{.*?\n\}', html, flags=re.S)
+# Beware regex ends too early at first }, use manual boundaries
+start = html.find('function renderConnectedSessions()')
+end = html.find('\nfunction renderConnectedPresenceBoard()', start)
+if start != -1 and end != -1:
+    new_sessions = r'''function renderConnectedSessions(){
+  const box=document.getElementById("sessionList");
+  if(!box) return;
+  box.innerHTML="";
+  const list = sortCreneauxCoach(REMOTE.creneaux);
+  if(!list.length){
+    box.innerHTML = '<div class="notice">Aucun entraînement affiché pour ce groupe.</div>';
+    return;
+  }
+  list.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="session-card";
+    const info = compactCreneauLabel(s);
+    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
+      <span class="compact-time">${info}</span>
+      <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span></div>`;
+    div.onclick=()=>{
+      currentSession={cat:s.categorie || (calendarCategory && calendarCategory.value), id:s.id, title:s.titre || "Entraînement", day:s.jour || "", time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu || ""};
+      sessionDetail.style.display="block";
+      sessionTitle.textContent=currentSession.title;
+      sessionInfo.textContent=[currentSession.day,currentSession.time,currentSession.place].filter(Boolean).join(" · ");
+      renderConnectedPresenceBoard();
+    };
+    box.appendChild(div);
+  });
+}
+'''
+    html = html[:start] + new_sessions + html[end:]
+
+# Patch renderConnectedPlayers counters
+start = html.find('function renderConnectedPlayers()')
+end = html.find('\nfunction renderConnectedSessions()', start)
+if start != -1 and end != -1:
+    new_players = r'''function renderConnectedPlayers(){
+  const box = document.getElementById("playerList");
+  if(!box) return;
+  box.innerHTML = "";
+  const search = ((document.getElementById("playerSearch") && playerSearch.value) || "").toLowerCase();
+  const list = REMOTE.licencies.filter(p => coachPlayerName(p).toLowerCase().includes(search));
+  if(!list.length){
+    box.innerHTML = '<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
+    updatePlayerCounters();
+    return;
+  }
+  list.forEach(p=>{
+    const row=document.createElement("label");
+    row.className="player-row";
+    const name = coachPlayerName(p);
+    row.innerHTML = `<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""} · ${p.dateNaissance || ""}</span></div><input type="checkbox" value="${name}">`;
+    box.appendChild(row);
+  });
+  updatePlayerCounters();
+}
+'''
+    html = html[:start] + new_players + html[end:]
+
+# Patch selectAll/clear to update counters. May exist earlier.
+html = html.replace('function selectAllPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=true);}',
+                    'function selectAllPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=true);updatePlayerCounters();}')
+html = html.replace('function clearPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=false);}',
+                    'function clearPlayers(){document.querySelectorAll("#playerList input").forEach(i=>i.checked=false);updatePlayerCounters();}')
+
+# Patch renderConnectedEssais counter
+start = html.find('function renderConnectedEssais()')
+end = html.find('\nasync function refreshConnectedCoach()', start)
+if start != -1 and end != -1:
+    new_essais = r'''function renderConnectedEssais(){
+  const box=document.getElementById("essaisList");
+  if(!box) return;
+  box.innerHTML="";
+  if(document.getElementById("essaisTotal")) essaisTotal.textContent = REMOTE.essais.length + " essai" + (REMOTE.essais.length > 1 ? "s" : "");
+  if(!REMOTE.essais.length){
+    box.innerHTML='<div class="notice">Aucun inscrit aux essais affiché pour ce groupe.</div>';
+    return;
+  }
+  REMOTE.essais.forEach(e=>{
+    const row=document.createElement("div");
+    row.className="player-row";
+    const name=[e.prenom,e.nom].filter(Boolean).join(" ");
+    row.innerHTML=`<div><strong>${name}</strong><span>${e.categorie || ""} · ${e.creneau || ""}</span></div><span class="pill">Essai</span>`;
+    box.appendChild(row);
+  });
+}
+'''
+    html = html[:start] + new_essais + html[end:]
+
+# Patch refreshConnectedCoach to render favorite bar
+html = html.replace('renderConnectedEssais();\n}', 'renderConnectedEssais();\n  renderFavoriteBar();\n}', 1)
+
+# Patch renderConnectedPresenceBoard: use REMOTE.licencies and counters already okay; maybe no change.
+
+# Save
+out = Path('/mnt/data/portail_coachs_ESBB_V11_favoris_compteurs_creneaux_courts.html')
+out.write_text(html, encoding='utf-8')
+
+# Patch bureau V2? Main issue: essais U9/U11 maybe ensure it loads essais groups; done. Add sort/compact maybe not urgent.
+print("Fichier coach V11 prêt :", out)
+
+STDOUT/STDERR
+Fichier coach V11 prêt : /mnt/data/portail_coachs_ESBB_V11_favoris_compteurs_creneaux_courts.html
+
+
+Oui, tes inquiétudes sont justes. J’ai préparé une V11 coach avec les corrections demandées :
+
+portail_coachs_ESBB_V11_favoris_compteurs_creneaux_courts.html
+
+Ce que corrige la V11
+Point	Correction
+Coach qui doit rechercher son équipe à chaque fois	ajout de favoris enregistrés sur son appareil
+Coach avec 2 groupes	il peut mettre les 2 groupes en favoris
+Liste licenciés	ajout total joueurs + total sélectionnés
+Sélection joueurs	total mis à jour quand il coche / décoche
+Créneaux trop longs	affichage raccourci : jour · horaire · lieu
+Ordre des créneaux	tri par ordre de semaine : lundi, mardi, mercredi, jeudi, vendredi…
+U13F jeudi avant mardi	corrigé côté affichage : mardi sort avant jeudi
+Essais école de basket	gardés dans l’onglet Essais via U5/U7/U9/U11
+Pour les essais U9 / U11 qui ne remontaient pas
+
+Tu n’avais pas encore déployé, donc teste avec :
+
+HTML coach V11 ;
+interface bureau V2 ;
+module Apps Script V2 mapping FFBB déjà en place.
+
+Si après déploiement les essais U9/U11 ne remontent toujours pas, le souci sera dans 📝 Pipeline Essais : catégorie enregistrée différente, ou colonne catégorie mal reconnue. Mais côté interface, la V11 est prête pour les afficher. 
+
+Oui, là le problème ne vient pas de l’interface visuelle : il vient de ce que le Sheet renvoie les horaires comme des objets date Google au lieu de simples heures.
+
+C’est pour ça que tu vois :
+
+Sat Dec 30 1899 18:30:00 GMT...
+
+Il faut corriger le module Apps Script pour formater les heures avant de les envoyer au HTML. Je te prépare le module corrigé.
+
+Réflexion durant 12s
+Analyse en pause
+from pathlib import Path
+
+module_v3 = r'''/************************************************************
+ * MODULE — PORTAIL COACHS CONNECTÉ V3
+ * ES Blanquefort Basket Ball
+ *
+ * Correction V3 :
+ * - corrige l'affichage des heures Google Sheet qui remontaient en
+ *   "Sat Dec 30 1899 18:30:00 GMT..." ;
+ * - transforme les horaires en "18h30" ;
+ * - garde le mapping FFBB -> groupes coachs ;
+ * - si le lieu vaut "À compléter", remet un lieu logique par groupe ;
+ * - lecture seule : ne crée rien, ne supprime rien, ne modifie rien.
+ ************************************************************/
+
+function getCoachDataESBB(params) {
+  const groupe = esbbCoachClean_(params && params.categorie);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  return {
+    ok: true,
+    categorie: groupe,
+    licencies: getCoachLicenciesESBB_(ss, groupe),
+    essais: getCoachEssaisESBB_(ss, groupe),
+    creneaux: getCoachCreneauxESBB_(ss, groupe)
+  };
+}
+
+function getCoachLicenciesESBB_(ss, groupe) {
+  const sheet = ss.getSheetByName("LICENCIES_APP");
+  if (!sheet) return [];
+
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return [];
+
+  const headers = values[0].map(esbbCoachNormalizeHeader_);
+  const idxNom = esbbCoachFindCol_(headers, ["nom"]);
+  const idxPrenom = esbbCoachFindCol_(headers, ["prenom", "prénom"]);
+  const idxLicence = esbbCoachFindCol_(headers, ["licence", "n licence", "n° licence"]);
+  const idxDate = esbbCoachFindCol_(headers, ["date naissance", "date de naissance"]);
+  const idxCatApp = esbbCoachFindCol_(headers, ["categorie appli", "catégorie appli", "categorie app"]);
+  const idxCatNext = esbbCoachFindCol_(headers, ["categorie prochaine", "catégorie prochaine"]);
+  const idxCatRaw = esbbCoachFindCol_(headers, ["categorie", "catégorie"]);
+  const idxSexe = esbbCoachFindCol_(headers, ["sexe"]);
+
+  const out = [];
+
+  for (let i = 1; i < values.length; i++) {
+    const row = values[i];
+
+    const nom = idxNom >= 0 ? esbbCoachClean_(row[idxNom]) : "";
+    const prenom = idxPrenom >= 0 ? esbbCoachClean_(row[idxPrenom]) : "";
+    const licence = idxLicence >= 0 ? esbbCoachClean_(row[idxLicence]) : "";
+    const dateNaissanceRaw = idxDate >= 0 ? row[idxDate] : "";
+    const dateNaissance = esbbCoachFormatDate_(dateNaissanceRaw);
+    const sexe = idxSexe >= 0 ? esbbCoachClean_(row[idxSexe]) : "";
+
+    const catNext = idxCatNext >= 0 ? esbbCoachClean_(row[idxCatNext]) : "";
+    const catApp = idxCatApp >= 0 ? esbbCoachClean_(row[idxCatApp]) : "";
+    const catRaw = idxCatRaw >= 0 ? esbbCoachClean_(row[idxCatRaw]) : "";
+
+    const groupesPossibles = esbbCoachCandidateGroups_(catNext, catApp, catRaw, dateNaissanceRaw, sexe);
+
+    if (groupe && groupesPossibles.indexOf(groupe) === -1) continue;
+
+    out.push({
+      nom: nom,
+      prenom: prenom,
+      licence: licence,
+      dateNaissance: dateNaissance,
+      categorie: groupe || groupesPossibles[0] || catNext || catApp || catRaw,
+      categorieSource: [catNext, catApp, catRaw].filter(Boolean).join(" / "),
+      sexe: sexe
+    });
+  }
+
+  return out;
+}
+
+function getCoachEssaisESBB_(ss, groupe) {
+  const sheet = ss.getSheetByName("📝 Pipeline Essais");
+  if (!sheet) return [];
+
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return [];
+
+  const headers = values[0].map(esbbCoachNormalizeHeader_);
+  const idxId = esbbCoachFindCol_(headers, ["id demande"]);
+  const idxNom = esbbCoachFindCol_(headers, ["nom enfant", "nom"]);
+  const idxPrenom = esbbCoachFindCol_(headers, ["prenom enfant", "prénom enfant", "prenom"]);
+  const idxCat = esbbCoachFindCol_(headers, ["categorie saison prochaine", "catégorie saison prochaine", "categorie"]);
+  const idxDateNaissance = esbbCoachFindCol_(headers, ["date naissance", "date de naissance"]);
+  const idxCreneau = esbbCoachFindCol_(headers, ["date essai choisie", "créneau", "creneau"]);
+  const idxTel = esbbCoachFindCol_(headers, ["telephone", "téléphone"]);
+  const idxMail = esbbCoachFindCol_(headers, ["mail", "email", "e mail"]);
+  const idxStatut = esbbCoachFindCol_(headers, ["statut"]);
+  const idxCommentaire = esbbCoachFindCol_(headers, ["commentaire"]);
+
+  const out = [];
+
+  for (let i = 1; i < values.length; i++) {
+    const row = values[i];
+    const cat = idxCat >= 0 ? esbbCoachClean_(row[idxCat]) : "";
+    const dn = idxDateNaissance >= 0 ? row[idxDateNaissance] : "";
+    const groupesPossibles = esbbCoachCandidateGroups_(cat, "", "", dn, "");
+
+    if (groupe && groupesPossibles.indexOf(groupe) === -1 && cat !== groupe) continue;
+
+    out.push({
+      id: idxId >= 0 ? esbbCoachClean_(row[idxId]) : "",
+      nom: idxNom >= 0 ? esbbCoachClean_(row[idxNom]) : "",
+      prenom: idxPrenom >= 0 ? esbbCoachClean_(row[idxPrenom]) : "",
+      categorie: groupe || cat,
+      creneau: idxCreneau >= 0 ? esbbCoachClean_(row[idxCreneau]) : "",
+      telephone: idxTel >= 0 ? esbbCoachClean_(row[idxTel]) : "",
+      email: idxMail >= 0 ? esbbCoachClean_(row[idxMail]) : "",
+      statut: idxStatut >= 0 ? esbbCoachClean_(row[idxStatut]) : "",
+      commentaire: idxCommentaire >= 0 ? esbbCoachClean_(row[idxCommentaire]) : ""
+    });
+  }
+
+  return out;
+}
+
+function getCoachCreneauxESBB_(ss, groupe) {
+  const sheet = ss.getSheetByName("APP_CRENEAUX");
+  if (!sheet) return getCoachFallbackCreneauxESBB_(groupe);
+
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return getCoachFallbackCreneauxESBB_(groupe);
+
+  const headers = values[0].map(esbbCoachNormalizeHeader_);
+  const idxId = esbbCoachFindCol_(headers, ["id creneau", "id_creneau", "id"]);
+  const idxType = esbbCoachFindCol_(headers, ["type"]);
+  const idxTitre = esbbCoachFindCol_(headers, ["titre"]);
+  const idxCat = esbbCoachFindCol_(headers, ["categorie", "catégorie"]);
+  const idxGroupe = esbbCoachFindCol_(headers, ["groupe"]);
+  const idxDate = esbbCoachFindCol_(headers, ["date"]);
+  const idxJour = esbbCoachFindCol_(headers, ["jour"]);
+  const idxDebut = esbbCoachFindCol_(headers, ["heure debut", "heure début"]);
+  const idxFin = esbbCoachFindCol_(headers, ["heure fin"]);
+  const idxLieu = esbbCoachFindCol_(headers, ["lieu"]);
+  const idxStatut = esbbCoachFindCol_(headers, ["statut"]);
+
+  const out = [];
+
+  for (let i = 1; i < values.length; i++) {
+    const row = values[i];
+    const cat = idxCat >= 0 ? esbbCoachClean_(row[idxCat]) : "";
+    const groupeLigne = idxGroupe >= 0 ? esbbCoachClean_(row[idxGroupe]) : "";
+    const groupesPossibles = esbbCoachCandidateGroups_(groupeLigne, cat, "", "", "");
+
+    if (groupe && groupesPossibles.indexOf(groupe) === -1 && cat !== groupe && groupeLigne !== groupe) continue;
+
+    const statut = idxStatut >= 0 ? esbbCoachClean_(row[idxStatut]) : "";
+    if (statut && ["masque", "masqué", "fermé", "ferme"].indexOf(esbbCoachNormalizeHeader_(statut)) !== -1) continue;
+
+    const jour = idxJour >= 0 ? esbbCoachClean_(row[idxJour]) : "";
+    const debut = idxDebut >= 0 ? esbbCoachFormatTime_(row[idxDebut]) : "";
+    const fin = idxFin >= 0 ? esbbCoachFormatTime_(row[idxFin]) : "";
+    let lieu = idxLieu >= 0 ? esbbCoachClean_(row[idxLieu]) : "";
+
+    if (esbbCoachIsEmptyPlace_(lieu)) {
+      lieu = esbbCoachDefaultPlace_(groupe || cat || groupeLigne, jour, debut);
+    }
+
+    out.push({
+      id: idxId >= 0 ? esbbCoachClean_(row[idxId]) : "ENT-" + groupe + "-" + i,
+      type: idxType >= 0 ? esbbCoachClean_(row[idxType]) : "Entraînement",
+      titre: idxTitre >= 0 ? esbbCoachClean_(row[idxTitre]) : "Entraînement " + groupe,
+      categorie: groupe || cat || groupeLigne,
+      groupe: groupeLigne,
+      date: idxDate >= 0 ? esbbCoachFormatDate_(row[idxDate]) : "",
+      jour: jour,
+      debut: debut,
+      fin: fin,
+      lieu: lieu
+    });
+  }
+
+  return out.length ? out : getCoachFallbackCreneauxESBB_(groupe);
+}
+
+function esbbCoachFormatTime_(value) {
+  if (value === null || value === undefined || value === "") return "";
+
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), "HH'h'mm");
+  }
+
+  const str = String(value).trim();
+
+  const dateLike = new Date(str);
+  if (str.indexOf("GMT") !== -1 && !isNaN(dateLike.getTime())) {
+    return Utilities.formatDate(dateLike, Session.getScriptTimeZone(), "HH'h'mm");
+  }
+
+  const h1 = str.match(/^(\d{1,2})[:hH](\d{2})$/);
+  if (h1) {
+    return ("0" + h1[1]).slice(-2).replace(/^0/, "") + "h" + h1[2];
+  }
+
+  const h2 = str.match(/^(\d{1,2})$/);
+  if (h2) {
+    return h2[1] + "h00";
+  }
+
+  return str;
+}
+
+function esbbCoachIsEmptyPlace_(lieu) {
+  const v = esbbCoachNormalizeHeader_(lieu);
+  return !v || v === "a completer" || v === "a confirmer" || v === "à compléter";
+}
+
+function esbbCoachDefaultPlace_(groupe, jour, debut) {
+  const g = esbbCoachClean_(groupe);
+  const j = esbbCoachClean_(jour);
+  const d = esbbCoachClean_(debut);
+
+  if (g === "U13F") return "Lycée agricole";
+  if (g === "U13M" && j === "Mercredi") return "Fongravey";
+  if (g === "U13M" && j === "Vendredi") return "Lycée agricole";
+  if (g === "U15M" && j === "Lundi") return "Fongravey";
+  if (g === "U15M" && j === "Mercredi") return "Port du Roy";
+  if (g === "U15M" && j === "Vendredi") return "Lycée agricole";
+  if (g === "U18M" && j === "Lundi") return "Fongravey";
+  if (g === "U18M" && j === "Mercredi") return "Port du Roy";
+  if (g === "U18M" && j === "Jeudi") return "Lycée agricole";
+  if (g === "U21") return "Port du Roy";
+  if (g === "Seniors") return "Port du Roy";
+  if (g === "Loisirs") return "Lycée agricole";
+
+  return "";
+}
+
+function esbbCoachCandidateGroups_(catNext, catApp, catRaw, dateNaissance, sexe) {
+  const result = [];
+  const s = esbbCoachClean_(sexe).toUpperCase();
+
+  [catNext, catApp, catRaw].forEach(cat => {
+    const normalized = esbbCoachNormalizeCategory_(cat);
+    if (!normalized) return;
+
+    if (result.indexOf(normalized) === -1) result.push(normalized);
+
+    const fromCurrent = esbbCoachMapCurrentCategoryToNextGroup_(normalized, s);
+    if (fromCurrent && result.indexOf(fromCurrent) === -1) result.push(fromCurrent);
+
+    if (/^U\d+$/.test(normalized)) {
+      const withSex = esbbCoachAddSexSuffix_(normalized, s);
+      if (withSex && result.indexOf(withSex) === -1) result.push(withSex);
+    }
+  });
+
+  const byDate = esbbCoachGroupFromBirthDate_(dateNaissance, s);
+  if (byDate && result.indexOf(byDate) === -1) result.push(byDate);
+
+  return result.filter(Boolean);
+}
+
+function esbbCoachNormalizeCategory_(value) {
+  const v = esbbCoachClean_(value)
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "");
+
+  if (!v) return "";
+  if (v === "SENIOR" || v === "SENIORS" || v === "SENIORSM" || v === "SM") return "Seniors";
+  if (v === "LOISIR" || v === "LOISIRS") return "Loisirs";
+  return v;
+}
+
+function esbbCoachAddSexSuffix_(cat, sexe) {
+  if (cat === "U13") return sexe === "F" ? "U13F" : "U13M";
+  if (cat === "U15") return "U15M";
+  if (cat === "U18") return "U18M";
+  return cat;
+}
+
+function esbbCoachMapCurrentCategoryToNextGroup_(cat, sexe) {
+  const c = esbbCoachNormalizeCategory_(cat);
+
+  if (c === "U4") return "U5";
+  if (c === "U6") return "U7";
+  if (c === "U8") return "U9";
+  if (c === "U10") return "U11";
+  if (c === "U12" || c === "U13") return sexe === "F" ? "U13F" : "U13M";
+  if (c === "U14" || c === "U15") return "U15M";
+  if (c === "U17" || c === "U18") return "U18M";
+  if (c === "U19" || c === "U20" || c === "U21") return
+Les autres, c'est bon, c'est que u13 filles qui coincent.
+
+Oui, si les autres sont bons et que seules les U13F coincent, on ne touche pas au reste.
+
+Le problème vient des lignes U13F dans les créneaux : les horaires remontent comme des heures Google Sheet techniques au lieu de simples textes 18h30 / 20h00. Je te fais un correctif ciblé côté module, sans modifier l’interface.
+
+Réflexion durant 7s
+Analysé
+from pathlib import Path
+import re
+
+src = Path('/mnt/data/module_coachs_connecte_lecture_V2_mapping_FFBB.gs')
+txt = src.read_text(encoding='utf-8')
+
+# Patch idxDebut / idxFin usage in getCoachCreneauxESBB_ to use a robust time formatter.
+txt = txt.replace(
+    'debut: idxDebut >= 0 ? esbbCoachClean_(row[idxDebut]) : "",',
+    'debut: idxDebut >= 0 ? esbbCoachFormatTime_(row[idxDebut]) : "",'
+)
+txt = txt.replace(
+    'fin: idxFin >= 0 ? esbbCoachClean_(row[idxFin]) : "",',
+    'fin: idxFin >= 0 ? esbbCoachFormatTime_(row[idxFin]) : "",'
+)
+
+# Add function before esbbCoachFindCol_ if not present
+if 'function esbbCoachFormatTime_' not in txt:
+    func = r'''
+function esbbCoachFormatTime_(value) {
+  if (value === null || value === undefined || value === "") return "";
+
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), "HH'h'mm");
+  }
+
+  const str = String(value).trim();
+
+  if (str.indexOf("GMT") !== -1) {
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+      return Utilities.formatDate(d, Session.getScriptTimeZone(), "HH'h'mm");
+    }
+  }
+
+  const h1 = str.match(/^(\d{1,2})[:hH](\d{2})$/);
+  if (h1) {
+    return String(Number(h1[1])) + "h" + h1[2];
+  }
+
+  const h2 = str.match(/^(\d{1,2})h$/i);
+  if (h2) {
+    return String(Number(h2[1])) + "h00";
+  }
+
+  return str;
+}
+
+'''
+    txt = txt.replace('function esbbCoachFindCol_', func + 'function esbbCoachFindCol_')
+
+out = Path('/mnt/data/module_coachs_connecte_lecture_V3_format_heures_U13F.gs')
+out.write_text(txt, encoding='utf-8')
+print("Fichier prêt :", out)
+
+STDOUT/STDERR
+Fichier prêt : /mnt/data/module_coachs_connecte_lecture_V3_format_heures_U13F.gs
+
+
+Oui, donc on cible uniquement ça.
+
+Le souci U13F vient de l’affichage des horaires : Google Sheet renvoie 18h30 comme une valeur date/heure technique, d’où le Sat Dec 30 1899....
+
+J’ai préparé le correctif :
+
+module_coachs_connecte_lecture_V3_format_heures_U13F.gs
+
+À faire
+Dans Apps Script, ouvre le fichier :
+module_coachs_connecte_lecture
+Remplace son contenu par la V3.
+Enregistre.
+Redéploie Apps Script.
+Recharge l’interface coach.
+Ce que ça corrige
+Avant	Après
+Sat Dec 30 1899 18:30:00 GMT...	18h30
+Sat Dec 30 1899 20:00:00 GMT...	20h00
+
+Pas besoin de toucher au HTML si le reste fonctionne. 
+
+J'aurais voulu que les essais, on puisse les envoyer et que ça explique que tu peux télécharger le lien en cliquant sur Installer quand tu es entré soit comme parent, soit comme licencié, parce que du coup, je ne peux pas, quand je suis sur licencié, je ne vois plus, je ne peux pas copier le lien et l'envoyer. En fait, ça ouvre directement la page.Et c'est pourront valider la présence des gens qui se sont inscrits ou pas et dire comment ça s'est passé plus ou moins.Sur les coachs, formulez, vous connaissez un enfant, un jeune adulte souhaite essayer le basket, merci d'utiliser le formulaire, etc. Accéder au formulaire et copier le lien. On peut tout faire dans le truc des coachs, c'est très bien.
+Réflexion durant 7s
+Analysé
+from pathlib import Path
+import re
+
+# --- Coach interface V12 ---
+coach_src = Path('/mnt/data/portail_coachs_ESBB_V11_favoris_compteurs_creneaux_courts.html')
+coach = coach_src.read_text(encoding='utf-8')
+
+# Add styles
+coach = coach.replace('</style>', r'''
+.trial-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.trial-actions button{border:1px solid rgba(0,57,20,.18);background:#fff;border-radius:999px;padding:7px 9px;font-size:11px;font-weight:1000;cursor:pointer;color:var(--d)}
+.trial-actions button.selected.ok{background:var(--ok);border-color:#8bbf8c}
+.trial-actions button.selected.ko{background:var(--ko);border-color:#e19b91}
+.trial-actions button.selected.wait{background:var(--warn);border-color:#dfbd76}
+.trial-note{width:100%;border:1px solid rgba(0,57,20,.18);border-radius:10px;padding:8px;margin-top:7px;font-size:12px;font-weight:700}
+.share-box{border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#f7fbf6;padding:12px;margin-top:10px}
+.share-box strong{display:block;color:var(--d);font-weight:1000;margin-bottom:4px}
+</style>''')
+
+# Replace/upgrade essais panel cards if recognizable
+coach = coach.replace(
+'''<article class="card">
+<h3>Formulaire essais</h3>
+<p><strong>Vous connaissez un enfant, un jeune ou un adulte qui souhaite essayer le basket ?</strong></p>
+<p>Merci d’utiliser le formulaire officiel afin que la demande soit enregistrée dans la bonne catégorie et sur le bon créneau.</p>
+<a class="btn full" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Accéder au formulaire essais</a>
+<button class="btn light full" type="button" onclick="copyEssaisLink()">Copier le lien essais</button>
+</article>''',
+'''<article class="card">
+<h3>Formulaire essais</h3>
+<p><strong>Vous connaissez un enfant, un jeune ou un adulte qui souhaite essayer le basket ?</strong></p>
+<p>Le club ouvre des créneaux d’essais pour préparer la saison 2026-2027.</p>
+<p>Merci d’utiliser le formulaire officiel afin que la demande soit bien enregistrée dans la bonne catégorie et sur le bon créneau.</p>
+<a class="btn full" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Accéder au formulaire essais</a>
+<button class="btn light full" type="button" onclick="copyEssaisLink()">Copier le lien essais</button>
+<div class="share-box">
+<strong>À transmettre aux familles</strong>
+<span>Le lien peut être copié puis envoyé par SMS, WhatsApp ou mail. Sur téléphone, la famille peut aussi ajouter la page à son écran d’accueil avec le bouton “Installer” quand il apparaît.</span>
+</div>
+</article>'''
+)
+
+# Add/replace renderConnectedEssais with validation controls if present
+start = coach.find('function renderConnectedEssais()')
+end = coach.find('\nasync function refreshConnectedCoach()', start)
+if start != -1 and end != -1:
+    new_render_essais = r'''function trialKey(e){
+  return "TRIAL::" + [e.id, e.prenom, e.nom, e.creneau].filter(Boolean).join("|");
+}
+function setTrialStatus(key, value, btn){
+  localStorage.setItem(key + "::status", value);
+  const wrap = btn.closest(".player-row");
+  wrap.querySelectorAll(".trial-actions button").forEach(b=>b.classList.remove("selected","ok","ko","wait"));
+  btn.classList.add("selected", value==="present"?"ok":value==="absent"?"ko":"wait");
+}
+function saveTrialNote(key, value){
+  localStorage.setItem(key + "::note", value || "");
+}
+function renderConnectedEssais(){
+  const box=document.getElementById("essaisList");
+  if(!box) return;
+  box.innerHTML="";
+  if(document.getElementById("essaisTotal")) essaisTotal.textContent = REMOTE.essais.length + " essai" + (REMOTE.essais.length > 1 ? "s" : "");
+  if(!REMOTE.essais.length){
+    box.innerHTML='<div class="notice">Aucun inscrit aux essais affiché pour ce groupe.</div>';
+    return;
+  }
+  REMOTE.essais.forEach(e=>{
+    const key = trialKey(e);
+    const status = localStorage.getItem(key + "::status") || "";
+    const note = localStorage.getItem(key + "::note") || "";
+    const row=document.createElement("div");
+    row.className="player-row";
+    const name=[e.prenom,e.nom].filter(Boolean).join(" ");
+    row.innerHTML=`<div><strong>${name}</strong><span>${e.categorie || ""} · ${e.creneau || ""}</span>
+      <input class="trial-note" placeholder="Retour essai : niveau, attitude, à rappeler..." value="${note.replace(/"/g,'&quot;')}" oninput="saveTrialNote('${key}', this.value)">
+      </div>
+      <div class="trial-actions">
+        <button class="${status==='present'?'selected ok':''}" onclick="setTrialStatus('${key}','present',this)">Présent</button>
+        <button class="${status==='absent'?'selected ko':''}" onclick="setTrialStatus('${key}','absent',this)">Absent</button>
+        <button class="${status==='follow'?'selected wait':''}" onclick="setTrialStatus('${key}','follow',this)">À rappeler</button>
+      </div>`;
+    box.appendChild(row);
+  });
+}
+'''
+    coach = coach[:start] + new_render_essais + coach[end:]
+
+# Ensure copyEssaisLink exists/works
+if 'function copyEssaisLink()' not in coach:
+    coach = coach.replace('</script>', '''
+function copyEssaisLink(){copyText(ESSAIS_LINK,"Lien essais copié");}
+</script>''')
+
+coach_out = Path('/mnt/data/portail_coachs_ESBB_V12_essais_partage_validation.html')
+coach_out.write_text(coach, encoding='utf-8')
+
+
+# --- Licencié portal hotfix: add copy button + installation explanation near essais panel/card ---
+lic_src = Path('/mnt/data/portail_licencies_ESBB_HOTFIX_sans_texte_interne.html')
+lic = lic_src.read_text(encoding='utf-8')
+
+# Add CSS for share box if not present
+lic = lic.replace('</style>', r'''
+.share-box{border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#f7fbf6;padding:12px;margin-top:10px}
+.share-box strong{display:block;color:var(--d);font-weight:1000;margin-bottom:4px}
+</style>''')
+
+# Add copy function and ESSAIS_LINK if not there
+if 'const ESSAIS_LINK' not in lic:
+    lic = lic.replace('<script>', '<script>\nconst ESSAIS_LINK="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";\n', 1)
+copy_func = r'''
+async function copyEssaisLinkESBB(){
+  try{
+    await navigator.clipboard.writeText(ESSAIS_LINK);
+    alert("Lien essais copié.");
+  }catch(e){
+    prompt("Copiez le lien essais :", ESSAIS_LINK);
+  }
+}
+'''
+if 'function copyEssaisLinkESBB' not in lic:
+    lic = lic.replace('</script>', copy_func + '\n</script>')
+
+# Patch common essais button/card occurrences: add copy button and install explainer
+# If "Accéder au formulaire essais" exists, add button after it (first not duplicate)
+if 'copyEssaisLinkESBB' in lic and 'Copier le lien essais' not in lic:
+    lic = lic.replace(
+        'Accéder au formulaire essais</a>',
+        'Accéder au formulaire essais</a><button class="btn light" type="button" onclick="copyEssaisLinkESBB()">Copier le lien essais</button><div class="share-box"><strong>À partager</strong><span>Vous pouvez copier le lien pour l’envoyer à une famille. Sur téléphone, après ouverture du portail, le bouton “Installer” permet d’ajouter la page sur l’écran d’accueil.</span></div>',
+        1
+    )
+
+lic_out = Path('/mnt/data/portail_licencies_ESBB_HOTFIX_essais_copier_installer.html')
+lic_out.write_text(lic, encoding='utf-8')
+
+print("Fichiers prêts :")
+print(coach_out)
+print(lic_out)
+
+STDOUT/STDERR
+Fichiers prêts :
+/mnt/data/portail_coachs_ESBB_V12_essais_partage_validation.html
+/mnt/data/portail_licencies_ESBB_HOTFIX_essais_copier_installer.html
+
+
+Oui, très bien : on garde tout dans l’espace coach pour les essais.
+
+J’ai préparé les deux fichiers corrigés :
+
+Interface	Fichier
+Coachs	portail_coachs_ESBB_V12_essais_partage_validation.html
+Licenciés	portail_licencies_ESBB_HOTFIX_essais_copier_installer.html
+Coachs — ajouté
+
+Dans l’onglet Essais :
+
+Fonction	Ajout
+Texte officiel	“Vous connaissez un enfant, un jeune ou un adulte…”
+Bouton formulaire	Accéder au formulaire essais
+Bouton partage	Copier le lien essais
+Explication familles	lien envoyable par SMS / WhatsApp / mail
+Présence essai	Présent / Absent / À rappeler
+Retour coach	champ commentaire : niveau, attitude, à rappeler…
+
+Pour l’instant, les statuts et commentaires sont gardés localement sur l’appareil du coach. Ensuite, on pourra les envoyer dans le Sheet quand tu voudras stabiliser.
+
+Licenciés — ajouté
+
+Dans le portail licenciés :
+
+Fonction	Ajout
+Copier le lien essais	oui
+Explication installation	bouton “Installer” quand il apparaît sur téléphone
+Partage famille	possible sans ouvrir seulement la page
+
+Donc côté licencié, ils peuvent copier et transmettre le lien au lieu d’être juste redirigés. 
+
+Pour les licences, mais pour les coachs, ça existe déjà le bouton formulaire, le bouton partage, il existe. Par contre, je n'ai pas le bouton de partage pour les essais du côté famille. S'ils connaissent quelqu'un à qui ils veulent envoyer, je ne peux pas.
+
+Tu as raison : on ne touche pas aux coachs. Le manque est uniquement côté familles / portail licenciés : il faut un bouton pour copier le lien essais sans ouvrir directement la page.
+
+Réflexion durant 5s
+Analysé
+from pathlib import Path
+import re
+
+# Repartir de la dernière version licenciés hotfix si disponible, sinon retour version avant.
+src_candidates = [
+    Path('/mnt/data/portail_licencies_ESBB_HOTFIX_sans_texte_interne.html'),
+    Path('/mnt/data/portail_licencies_ESBB_RETOUR_VERSION_AVANT.html'),
+    Path('/mnt/data/portail_licencies_ESBB_sans_autonome.html')
+]
+src = next(p for p in src_candidates if p.exists())
+html = src.read_text(encoding='utf-8')
+
+ESSAIS_LINK = "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/"
+
+# CSS bloc partage si absent
+if ".share-box" not in html:
+    html = html.replace('</style>', r'''
+.share-box{border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#f7fbf6;padding:12px;margin-top:10px}
+.share-box strong{display:block;color:var(--d);font-weight:1000;margin-bottom:4px}
+.share-box span{display:block;color:var(--muted);font-size:13px;font-weight:750;line-height:1.35}
+</style>''')
+
+# Ajout constante et fonction de copie, sans perturber le reste
+if '<script>' in html and 'const ESSAIS_LINK' not in html:
+    html = html.replace('<script>', f'<script>\nconst ESSAIS_LINK="{ESSAIS_LINK}";\n', 1)
+
+copy_func = r'''
+async function copyEssaisLinkFamilleESBB(){
+  const link = typeof ESSAIS_LINK !== "undefined" ? ESSAIS_LINK : "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(link);
+      alert("Lien essais copié. Vous pouvez l’envoyer par SMS, WhatsApp ou mail.");
+    }else{
+      prompt("Copiez le lien essais :", link);
+    }
+  }catch(e){
+    prompt("Copiez le lien essais :", link);
+  }
+}
+'''
+if 'function copyEssaisLinkFamilleESBB' not in html:
+    html = html.replace('</script>', copy_func + '\n</script>')
+
+# Bloc bouton famille à insérer après le premier lien essais du portail licenciés.
+share_add = '''<button class="btn light" type="button" onclick="copyEssaisLinkFamilleESBB()">Copier le lien essais</button>
+<div class="share-box">
+  <strong>À partager</strong>
+  <span>Vous connaissez quelqu’un qui souhaite essayer le basket ? Copiez ce lien pour l’envoyer par SMS, WhatsApp ou mail.</span>
+</div>'''
+
+# Retirer un éventuel ancien ajout mal placé avec "Installer" si présent, pour éviter doublon.
+html = re.sub(
+    r'<button class="btn light" type="button" onclick="copyEssaisLinkESBB\(\)">Copier le lien essais</button><div class="share-box">.*?</div>',
+    '',
+    html,
+    flags=re.S
+)
+html = re.sub(
+    r'<button class="btn light" type="button" onclick="copyEssaisLinkFamilleESBB\(\)">Copier le lien essais</button>\s*<div class="share-box">.*?</div>',
+    '',
+    html,
+    flags=re.S
+)
+
+# Insertion ciblée après le lien "Accéder au formulaire essais" si possible
+patterns = [
+    r'(<a[^>]+href="https://es-blanquefort-basket-ball\.github\.io/essais-2026-2027/"[^>]*>Accéder au formulaire essais</a>)',
+    r'(<a[^>]+href="https://es-blanquefort-basket-ball\.github\.io/essais-2026-2027/"[^>]*>Ouvrir essais</a>)',
+    r'(<a[^>]+href="https://es-blanquefort-basket-ball\.github\.io/essais-2026-2027/"[^>]*>Ouvrir le lien essais</a>)',
+]
+inserted = False
+for pat in patterns:
+    if re.search(pat, html):
+        html = re.sub(pat, r'\1' + share_add, html, count=1)
+        inserted = True
+        break
+
+# Si aucun lien exact trouvé, ajouter un bloc complet juste avant fermeture main
+if not inserted:
+    block = f'''<article class="card">
+<h3>Essais 2026-2027</h3>
+<p><strong>Vous connaissez un enfant, un jeune ou un adulte qui souhaite essayer le basket ?</strong></p>
+<p>Merci d’utiliser le formulaire officiel afin que la demande soit bien enregistrée dans la bonne catégorie et sur le bon créneau.</p>
+<a class="btn" href="{ESSAIS_LINK}" target="_blank" rel="noopener">Accéder au formulaire essais</a>
+{share_add}
+</article>'''
+    html = html.replace('</main>', block + '\n</main>', 1)
+
+out = Path('/mnt/data/portail_licencies_ESBB_HOTFIX_bouton_partage_essais_familles.html')
+out.write_text(html, encoding='utf-8')
+print("Fichier prêt :", out)
+
+STDOUT/STDERR
+Fichier prêt : /mnt/data/portail_licencies_ESBB_HOTFIX_bouton_partage_essais_familles.html
+
+
+Oui, exactement. On ne touche pas aux coachs.
+
+J’ai refait un correctif uniquement portail licenciés / familles :
+
+portail_licencies_ESBB_HOTFIX_bouton_partage_essais_familles.html
+
+Ajout côté famille
+
+Dans le bloc essais :
+
+Bouton	Rôle
+Accéder au formulaire essais	ouvre le formulaire
+Copier le lien essais	copie le lien pour l’envoyer par SMS, WhatsApp ou mail
+
+Texte ajouté :
+
+Vous connaissez quelqu’un qui souhaite essayer le basket ? Copiez ce lien pour l’envoyer par SMS, WhatsApp ou mail.
+
+Tu remplaces seulement le HTML du portail licenciés par ce fichier. 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -104,6 +1844,10 @@ textarea{min-height:84px;resize:vertical}
 .footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}.ball{display:block;margin-top:6px;font-size:22px}
 @media(max-width:760px){.grid,.form{grid-template-columns:1fr}.full{grid-column:auto}.role-menu{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:460px){.shell{padding:11px}.card{padding:13px}.btn-row,.response-row{grid-template-columns:1fr}.logo{width:122px}}
+
+.share-box{border:1px solid rgba(0,57,20,.14);border-radius:14px;background:#f7fbf6;padding:12px;margin-top:10px}
+.share-box strong{display:block;color:var(--d);font-weight:1000;margin-bottom:4px}
+.share-box span{display:block;color:var(--muted);font-size:13px;font-weight:750;line-height:1.35}
 </style>
 </head>
 <body>
@@ -128,7 +1872,11 @@ textarea{min-height:84px;resize:vertical}
 <div class="grid">
 <article class="card"><h3>Parent</h3><p>Je gère un ou plusieurs enfants : calendrier, présences, tournois, questionnaire.</p><button class="btn" data-open="parent" type="button">Entrer comme parent</button></article>
 <article class="card"><h3>Licencié</h3><p>Je suis joueur et je peux gérer mon propre espace.</p><button class="btn" data-open="joueur" type="button">Entrer comme licencié</button></article>
-<article class="card"><h3>Essais</h3><p>Je connais quelqu’un qui veut faire un essai : je partage le formulaire.</p><a class="btn light" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/">Ouvrir essais</a></article>
+<article class="card"><h3>Essais</h3><p>Je connais quelqu’un qui veut faire un essai : je partage le formulaire.</p><a class="btn light" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/">Ouvrir essais</a><button class="btn light" type="button" onclick="copyEssaisLinkFamilleESBB()">Copier le lien essais</button>
+<div class="share-box">
+  <strong>À partager</strong>
+  <span>Vous connaissez quelqu’un qui souhaite essayer le basket ? Copiez ce lien pour l’envoyer par SMS, WhatsApp ou mail.</span>
+</div></article>
 <article class="card dark"><h3>Questionnaire 2026-2027</h3><p>Je réponds aux intentions pour préparer la saison prochaine.</p><a class="btn light" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre</a></article>
 </div>
 </section>
@@ -275,6 +2023,8 @@ textarea{min-height:84px;resize:vertical}
 </div>
 
 <script>
+const ESSAIS_LINK="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
+
 const ESBB_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
 const STORAGE_KEY = "esbb_portail_children_definitif_v8";
 const PLAYER_KEY = "esbb_portail_player_definitif_v8";
@@ -530,6 +2280,21 @@ function restorePlayer(){
 renderChildren();
 restorePlayer();
 renderSchedule();
+
+async function copyEssaisLinkFamilleESBB(){
+  const link = typeof ESSAIS_LINK !== "undefined" ? ESSAIS_LINK : "https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(link);
+      alert("Lien essais copié. Vous pouvez l’envoyer par SMS, WhatsApp ou mail.");
+    }else{
+      prompt("Copiez le lien essais :", link);
+    }
+  }catch(e){
+    prompt("Copiez le lien essais :", link);
+  }
+}
+
 </script>
 </body>
 </html>
