@@ -130,7 +130,7 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <div class="label">Calendrier entraînements</div>
 <div class="welcome-card">
 <h2>Choisir un entraînement</h2>
-<p>Choisissez un groupe test, puis un entraînement. Vous pouvez ensuite suivre les présences, voir les essais et préparer un rappel.</p>
+<p>Choisissez un groupe, puis un entraînement. Les données affichées sont lues depuis la base club quand elle est disponible.</p><div class="status visible" id="remoteStatus">Chargement des données...</div>
 </div>
 <div class="tools">
 <select id="calendarCategory">
@@ -568,6 +568,8 @@ async function loadCoachRemoteData(){
   const cat = (document.getElementById("calendarCategory") && calendarCategory.value) ||
               (document.getElementById("coachCategory") && coachCategory.value) ||
               "U13M";
+  const status = document.getElementById("remoteStatus");
+  if(status) status.textContent = "Chargement des données " + cat + "...";
   try{
     const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
     const json = await res.json();
@@ -577,9 +579,13 @@ async function loadCoachRemoteData(){
         essais: Array.isArray(json.essais) ? json.essais : [],
         creneaux: Array.isArray(json.creneaux) ? json.creneaux : []
       };
+      if(status) status.textContent = "Données chargées : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x).";
       return true;
     }
-  }catch(e){}
+    if(status) status.textContent = "Connexion active, mais aucune donnée reçue.";
+  }catch(e){
+    if(status) status.textContent = "Impossible de charger les données. Vérifier le déploiement Apps Script.";
+  }
   REMOTE = {licencies:[], essais:[], creneaux:[]};
   return false;
 }
@@ -714,10 +720,10 @@ document.addEventListener("input", e=>{
 });
 
 refreshConnectedCoach();
-renderSessions();
-renderPlayers();
-renderEssais();
-renderTournois();
+
+document.addEventListener("DOMContentLoaded", () => {
+  refreshConnectedCoach();
+});
 </script>
 </body>
 </html>
