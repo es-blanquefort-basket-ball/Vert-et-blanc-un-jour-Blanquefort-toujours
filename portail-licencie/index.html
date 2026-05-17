@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<!-- PORTAIL_BETA_ENVOI_SOIR_ESBB -->
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#003914" />
-<title>Portail licencié | ES Blanquefort Basket Ball</title>
-<link rel="manifest" href="manifest.json" />
-<link rel="apple-touch-icon" href="../assets/icon-192.png" />
+<!-- PORTAIL_ESBB_ROLES_PARENT_LICENCIE_V3 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#003914">
+<title>Portail fin de saison | ES Blanquefort Basket Ball</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
 <style>
-:root{--g:#003914;--d:#001f0c;--l:#0b6b2b;--bg:#f7fbf6;--muted:#56695c;--line:rgba(0,57,20,.22)}
+:root{
+  --g:#003914;--d:#001f0c;--l:#0b6b2b;--bg:#f7fbf6;--muted:#56695c;--line:rgba(0,57,20,.22);--red:#fff0ed;--blue:#edf4ff;--orange:#fff2df
+}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-y:auto}
 body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(135deg,#fff 0%,#f7fbf6 58%,#eef5ed 100%);color:#082313}
-a{text-decoration:none;color:inherit}button,input,select,textarea{font:inherit}
+button,input,select,textarea{font:inherit}a{color:inherit;text-decoration:none}
 .page{min-height:100vh;padding:14px 8px 32px;position:relative;overflow:hidden}
 .page:before{content:"";position:absolute;left:50%;top:-180px;width:560px;height:292px;transform:translateX(-50%);background:linear-gradient(135deg,var(--d),var(--g));border-radius:0 0 70% 70%;z-index:0;box-shadow:0 24px 60px rgba(0,31,12,.18)}
-.container{width:100%;max-width:980px;margin:0 auto;position:relative;z-index:1}
+.container{width:100%;max-width:1040px;margin:0 auto;position:relative;z-index:1}
 .hero{text-align:center;padding-top:4px;margin-bottom:12px}
-.logo{width:132px;max-width:44vw;height:auto;filter:drop-shadow(0 12px 16px rgba(0,31,12,.22))}
+.logo{width:130px;max-width:44vw;height:auto;filter:drop-shadow(0 12px 16px rgba(0,31,12,.22))}
 .clubline{display:flex;align-items:center;justify-content:center;gap:7px;margin:4px 0 8px;color:var(--d);font-weight:1000;font-size:clamp(14px,3.8vw,18px);line-height:1.15}
 .dot,.club-dot{width:14px;height:14px;min-width:14px;border-radius:50%;display:inline-block}.dot.green,.club-dot.green{background:#003914}.dot.white,.club-dot.white{background:#fff;border:2px solid #003914}.club-dot{vertical-align:-2px;margin:0 3px}
 .slogan{display:inline-flex;margin:0 auto 10px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--d);font-weight:1000;font-size:13px;box-shadow:0 8px 18px rgba(0,31,12,.08)}
 .kicker{display:inline-flex;padding:7px 12px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--g),var(--l));font-weight:950;font-size:12px;box-shadow:0 8px 18px rgba(0,57,20,.18)}
 h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32px,9vw,54px);line-height:.96;letter-spacing:-.8px;font-weight:1000}
-.hero p{max-width:720px;margin:0 auto;font-size:14.5px;line-height:1.45;font-weight:700;color:#244232}
+.hero p{max-width:760px;margin:0 auto;font-size:14.5px;line-height:1.45;font-weight:700;color:#244232}
 .shell{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 46px rgba(0,31,12,.16);overflow:hidden}
 .tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:9px;background:linear-gradient(135deg,#f7fbf6,#fff);border-bottom:1px solid rgba(0,57,20,.14)}
-.tab-btn{width:100%;min-height:34px;border:1px solid rgba(0,57,20,.16);background:#fff;color:var(--d);font-weight:1000;border-radius:12px;padding:6px 5px;font-size:11px;line-height:1.05;cursor:pointer;text-align:center;box-shadow:0 5px 12px rgba(0,31,12,.04)}
+.tab-btn{width:100%;min-height:34px;border:1px solid rgba(0,57,20,.16);background:#fff;color:var(--d);font-weight:1000;border-radius:12px;padding:6px 5px;font-size:10.8px;line-height:1.05;cursor:pointer;text-align:center;box-shadow:0 5px 12px rgba(0,31,12,.04)}
 .tab-btn.active{background:linear-gradient(135deg,var(--g),var(--d));color:#fff;border-color:transparent}
 .panel{display:none;padding:13px}.panel.active{display:block}
 .label{display:inline-flex;margin:0 0 11px;padding:7px 12px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--d),#00551f);font-weight:1000;text-transform:uppercase;font-size:12px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .card{padding:15px;border-radius:15px;background:#fff;border:1px solid rgba(0,57,20,.16);box-shadow:0 8px 18px rgba(0,31,12,.05)}
 .card.dark{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}
-.card h2,.card h3{margin:0 0 7px;color:var(--d);font-size:18px;text-transform:uppercase;font-weight:1000}.card.dark h3{color:#fff}
+.card h3{margin:0 0 7px;color:var(--d);font-size:18px;text-transform:uppercase;font-weight:1000}.card.dark h3{color:#fff}
 .card p{margin:0 0 12px;color:var(--muted);line-height:1.42;font-weight:650;font-size:14px}.card.dark p{color:rgba(255,255,255,.84)}
-.hint{color:var(--muted);font-size:13px;line-height:1.35;margin:0 0 10px;font-weight:650}
 .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{display:grid;gap:6px}.full{grid-column:1/-1}
 label{color:var(--d);font-size:12px;font-weight:1000;text-transform:uppercase}
 input,select,textarea{width:100%;min-height:42px;padding:10px 12px;color:#082313;font-size:15px;font-weight:650;border:1px solid rgba(0,57,20,.24);border-radius:11px;background:#fff;outline:0}
@@ -43,87 +44,371 @@ textarea{min-height:84px;resize:vertical}
 .btn{width:100%;min-height:46px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--g),var(--d));font-size:13px;font-weight:1000;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 12px 24px rgba(0,57,20,.18);display:inline-flex;align-items:center;justify-content:center;text-align:center;margin-top:10px}
 .btn.light{color:var(--d);background:#fff;border:1px solid rgba(0,57,20,.24);box-shadow:none}
 .btn-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.status{display:none;margin-top:10px;padding:11px 12px;border-radius:13px;background:#eaf4e9;border:1px solid rgba(0,57,20,.16);color:var(--d);font-weight:900;line-height:1.35;font-size:13px}.status.visible{display:block}.status.error{background:var(--red);color:#8a1f11;border-color:rgba(180,35,24,.25)}
+.pill{display:inline-flex;padding:6px 9px;border-radius:999px;background:#eaf4e9;color:var(--d);font-weight:1000;font-size:11px;white-space:nowrap}.pill.blue{background:var(--blue)}.pill.orange{background:var(--orange)}
+.child-list{display:grid;gap:8px;margin-top:10px}
+.child-btn{width:100%;border:1px solid rgba(0,57,20,.18);background:#fff;border-radius:13px;padding:11px;text-align:left;cursor:pointer}
+.child-btn strong{display:block;color:var(--d);font-weight:1000}.child-btn span{display:block;margin-top:2px;color:var(--muted);font-size:13px;font-weight:650}
+.child-btn.active{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}.child-btn.active strong,.child-btn.active span{color:#fff}
 .choice-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.choice-row button{min-height:40px;border-radius:11px;border:1px solid rgba(0,57,20,.22);background:#fff;color:var(--d);font-weight:1000;cursor:pointer;font-size:13px}.choice-row button.selected{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}
-.status{display:none;margin-top:10px;padding:11px 12px;border-radius:13px;background:#eaf4e9;border:1px solid rgba(0,57,20,.16);color:var(--d);font-weight:900;line-height:1.35;font-size:13px}.status.visible{display:block}.status.error{background:#fff0ed;color:#8a1f11;border-color:rgba(180,35,24,.25)}
-.pill{display:inline-flex;padding:6px 9px;border-radius:999px;background:#edf4ff;color:var(--d);font-weight:1000;font-size:11px}
 .footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}.ball{display:block;margin-top:6px;font-size:22px}
 @media(max-width:760px){.grid,.form{grid-template-columns:1fr}.full{grid-column:auto}}
-@media(max-width:460px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:8px}.tab-btn{font-size:10.5px;min-height:32px;padding:6px 3px;border-radius:10px}.panel{padding:11px}.card{padding:13px}.choice-row,.btn-row{grid-template-columns:1fr}.logo{width:122px}}
+@media(max-width:460px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:8px}.tab-btn{font-size:10px;min-height:32px;padding:6px 3px;border-radius:10px}.panel{padding:11px}.card{padding:13px}.choice-row,.btn-row{grid-template-columns:1fr}.logo{width:122px}}
 </style>
 </head>
 <body>
-<div class="page"><div class="container">
+<div class="page">
+<div class="container">
 <header class="hero">
 <img class="logo" src="../assets/logo.png" alt="Logo ES Blanquefort Basket Ball">
 <div class="clubline"><span class="dot green"></span><span>ES Blanquefort Basket Ball</span><span class="dot white"></span></div>
 <div class="slogan">Vert et blanc un jour, Blanquefort toujours&nbsp;!</div><br>
-<div class="kicker">🏀 PORTAIL LICENCIÉ</div>
-<h1>Préparer<br>la saison</h1>
-<p>Ce portail test permet aux familles et licenciés de suivre la fin de saison : informations parent/enfant, présences, entraînements, tournois, essais et retours terrain.</p>
+<div class="kicker">🏀 PORTAIL FIN DE SAISON</div>
+<h1>Chaque rôle<br>son espace</h1>
+<p>Un portail test pour la fin de saison : parents, licenciés autonomes, présences, tournois, essais et préparation 2026-2027.</p>
 </header>
+
 <main class="shell">
 <nav class="tabs">
-<button class="tab-btn active" data-tab="accueil">Accueil</button><button class="tab-btn" data-tab="parent">Parent</button><button class="tab-btn" data-tab="licencie">Licencié</button><button class="tab-btn" data-tab="fin-saison">Fin saison</button>
-<button class="tab-btn" data-tab="presences">Présences</button><button class="tab-btn" data-tab="essais">Essais</button><button class="tab-btn" data-tab="retour">Retour</button><button class="tab-btn" data-tab="installer">Installer</button>
+<button class="tab-btn active" data-tab="accueil">Accueil</button>
+<button class="tab-btn" data-tab="parent">Parent</button>
+<button class="tab-btn" data-tab="joueur">Licencié</button>
+<button class="tab-btn" data-tab="enfant">Espace enfant</button>
+<button class="tab-btn" data-tab="fin">Fin saison</button>
+<button class="tab-btn" data-tab="essais">Essais</button>
+<button class="tab-btn" data-tab="retour">Retour</button>
+<button class="tab-btn" data-tab="installer">Installer</button>
 </nav>
-<section id="panel-accueil" class="panel active"><div class="label">Accueil</div><div class="grid">
-<article class="card"><h3>Espace parent</h3><p>Confirmer l’enfant concerné et les coordonnées parent utiles au club.</p><button class="btn light" type="button" data-go="parent">Ouvrir parent</button></article>
-<article class="card"><h3>Espace licencié</h3><p>Un espace simple pour les jeunes : informations utiles et retour sur l’application.</p><button class="btn light" type="button" data-go="licencie">Ouvrir licencié</button></article>
-<article class="card"><h3>Fin de saison</h3><p>Suivre les entraînements, tournois, présences et informations importantes.</p><button class="btn light" type="button" data-go="fin-saison">Voir fin de saison</button></article>
-<article class="card"><h3>Essais club</h3><p>Partager le lien d’essai avec une famille qui souhaite découvrir le basket.</p><button class="btn light" type="button" data-go="essais">Lien essais</button></article>
-<article class="card"><h3>Questionnaire 2026-2027</h3><p>Répondre aux intentions pour aider le club à préparer les groupes.</p><a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre</a></article>
-<article class="card dark"><h3>Votre avis</h3><p>Vos retours aideront à améliorer l’application avant la saison prochaine.</p><button class="btn light" type="button" data-go="retour">Faire un retour</button></article>
-</div></section>
-<section id="panel-parent" class="panel"><div class="label">Parent / enfant</div><p class="hint">Indiquez l’enfant concerné et vos coordonnées. Le club rapprochera ensuite ces informations avec sa base licenciés.</p>
-<article class="card"><h3>Parent et enfant</h3><div class="form">
-<div class="field"><label for="childLastName">Nom de l’enfant</label><input id="childLastName" type="text" placeholder="Nom"></div>
-<div class="field"><label for="childFirstName">Prénom de l’enfant</label><input id="childFirstName" type="text" placeholder="Prénom"></div>
+
+<section id="panel-accueil" class="panel active">
+<div class="label">Accueil</div>
+<div class="grid">
+<article class="card"><h3>Espace parent</h3><p>Le parent peut gérer un ou plusieurs enfants et répondre pour chacun.</p><button class="btn light" data-go="parent" type="button">Ouvrir parent</button></article>
+<article class="card"><h3>Espace licencié</h3><p>Le joueur autonome peut gérer son propre espace : présences, tournois, infos et questionnaire.</p><button class="btn light" data-go="joueur" type="button">Ouvrir licencié</button></article>
+<article class="card"><h3>Espace enfant</h3><p>Le parent accède à l’espace de l’enfant sélectionné : fin de saison, présence, tournoi, questionnaire.</p><button class="btn light" data-go="enfant" type="button">Voir enfant</button></article>
+<article class="card"><h3>Fin de saison</h3><p>Entraînements, présences, tournois et informations utiles.</p><button class="btn light" data-go="fin" type="button">Voir fin de saison</button></article>
+<article class="card"><h3>Essais club</h3><p>Partager le formulaire d’essai avec une famille qui souhaite découvrir le basket.</p><button class="btn light" data-go="essais" type="button">Lien essais</button></article>
+<article class="card dark"><h3>Questionnaire</h3><p>Répondre aux intentions pour aider le club à préparer les groupes 2026-2027.</p><a class="btn light" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre</a></article>
+</div>
+</section>
+
+<section id="panel-parent" class="panel">
+<div class="label">Parent / responsable légal</div>
+<div class="grid">
+<article class="card">
+<h3>Ajouter un enfant</h3>
+<div class="form">
+<div class="field"><label for="childLastName">Nom enfant</label><input id="childLastName" placeholder="Nom"></div>
+<div class="field"><label for="childFirstName">Prénom enfant</label><input id="childFirstName" placeholder="Prénom"></div>
 <div class="field"><label for="childBirthDate">Date de naissance</label><input id="childBirthDate" type="date"></div>
 <div class="field"><label for="childCategory">Catégorie actuelle</label><select id="childCategory"><option>Je ne sais pas</option><option>U5</option><option>U7</option><option>U9</option><option>U11</option><option>U13</option><option>U15</option><option>U18</option><option>Seniors</option><option>Loisirs</option></select></div>
-<div class="field"><label for="parentName">Nom du parent</label><input id="parentName" type="text" placeholder="Nom parent"></div>
+<div class="field"><label for="parentName">Nom parent</label><input id="parentName" placeholder="Nom parent"></div>
 <div class="field"><label for="parentPhone">Téléphone parent</label><input id="parentPhone" type="tel" placeholder="06..."></div>
 <div class="field full"><label for="parentEmail">Mail parent</label><input id="parentEmail" type="email" placeholder="adresse@mail.fr"></div>
-</div><div class="btn-row"><button class="btn" type="button" id="saveIdentityBtn">Enregistrer auprès du club</button><button class="btn light" type="button" id="clearLocalBtn">Effacer ce test</button></div><div class="status" id="identityStatus"></div></article>
-<article class="card" id="savedChildCard" style="display:none;margin-top:12px"><h3>Information enregistrée sur ce téléphone</h3><p id="savedChildText"></p><button class="btn light" type="button" id="resendBtn">Renvoyer au club</button></article>
+</div>
+<div class="btn-row"><button class="btn" id="saveChildBtn" type="button">Enregistrer l’enfant</button><button class="btn light" id="clearBtn" type="button">Effacer ce test</button></div>
+<div class="status" id="childStatus"></div>
+</article>
+<article class="card">
+<h3>Mes enfants</h3>
+<p>Sélectionnez un enfant pour ouvrir son espace.</p>
+<div id="childList" class="child-list"></div>
+<button class="btn light" type="button" data-go="enfant">Ouvrir l’espace enfant</button>
+</article>
+</div>
 </section>
-<section id="panel-licencie" class="panel"><div class="label">Licencié</div><div class="grid"><article class="card"><h3>Mon espace</h3><p>Retrouver les informations utiles pour la fin de saison : présences, tournois, essais et retours au club.</p><button class="btn light" type="button" data-go="fin-saison">Saison 2026-2027</button></article><article class="card"><h3>Je donne mon avis</h3><p>Pour les jeunes licenciés : dire ce qui est clair, ce qui manque ou ce qui peut être amélioré.</p><button class="btn light" type="button" data-go="retour">Faire un retour</button></article></div></section>
-<section id="panel-fin-saison" class="panel"><div class="label">Fin de saison</div><div class="grid">
-<article class="card"><h3>Entraînements</h3><p>Les créneaux et présences aux entraînements seront publiés progressivement par le club.</p><button class="btn light" type="button" data-go="presences">Voir présences</button></article>
-<article class="card"><h3>Tournois</h3><p>Les tournois ouverts apparaîtront ici avec les disponibilités, transports et accompagnateurs.</p><button class="btn light" type="button" data-go="presences">Voir tournois</button></article>
-<article class="card"><h3>Questionnaire 2026-2027</h3><p>Répondre aux intentions pour aider le club à préparer les groupes de la saison prochaine.</p><a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Ouvrir le questionnaire</a></article>
-<article class="card"><h3>Date à retenir</h3><p>Samedi 27 juin : AG du club et auberge espagnole. Les convocations et informations suivront.</p><span class="pill">Info club</span></article>
-</div></section>
-<section id="panel-presences" class="panel"><div class="label">Présence / absence</div>
+
+<section id="panel-joueur" class="panel">
+<div class="label">Licencié autonome</div>
 <div class="grid">
-<article class="card"><h3>Entraînements</h3><p>Indiquer une présence, une absence ou une réponse à confirmer pour un entraînement publié par le club.</p><div class="choice-row"><button type="button">Présent</button><button type="button">Absent</button><button type="button">À confirmer</button></div><div class="status visible">Les vrais créneaux seront publiés par le club.</div></article>
-<article class="card"><h3>Tournois</h3><p>Répondre aux tournois : participation, besoin de transport ou parent accompagnateur.</p><div class="choice-row"><button type="button">Je participe</button><button type="button">Absent</button><button type="button">À confirmer</button></div><div class="choice-row"><button type="button">Je peux transporter</button><button type="button">Besoin transport</button><button type="button">Accompagnateur</button></div></article>
-</div></section>
-<section id="panel-essais" class="panel"><div class="label">Essais</div><div class="grid"><article class="card"><h3>Faire un essai</h3><p>Vous connaissez quelqu’un qui souhaite essayer le basket ? Envoyez-lui le lien.</p><a class="btn" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Ouvrir le lien essais</a></article><article class="card"><h3>Copier le lien</h3><p>Pratique pour SMS, WhatsApp ou mail.</p><button class="btn light" type="button" id="copyEssaisBtn">Copier le lien essais</button></article></div></section>
-<section id="panel-retour" class="panel"><div class="label">Retour</div><article class="card"><h3>Améliorer l’application</h3><p>Indiquez ce qui est clair, ce qui manque ou ce qui ne fonctionne pas.</p><div class="form"><div class="field"><label for="feedbackProfile">Profil</label><select id="feedbackProfile"><option>Parent</option><option>Licencié</option><option>Coach</option><option>Bureau</option></select></div><div class="field"><label for="feedbackType">Type de retour</label><select id="feedbackType"><option>Tout est clair</option><option>Il manque une information</option><option>Je ne comprends pas</option><option>Problème technique</option><option>Idée d’amélioration</option></select></div><div class="field full"><label for="feedbackMessage">Message</label><textarea id="feedbackMessage" placeholder="Votre retour..."></textarea></div></div><button class="btn" type="button" id="saveFeedbackBtn">Envoyer mon retour</button><div class="status" id="feedbackStatus"></div></article></section>
-<section id="panel-installer" class="panel"><div class="label">Installer</div><article class="card"><h3>Ajouter à l’écran d’accueil</h3><p>Sur iPhone : ouvrir dans Safari, bouton partager, puis “Sur l’écran d’accueil”. Sur Android : menu du navigateur, puis “Ajouter à l’écran d’accueil”.</p><span class="pill">Accès rapide</span></article></section>
+<article class="card">
+<h3>Mon espace joueur</h3>
+<p>Pour les licenciés autonomes : U13+, U15, U18, Seniors. Tu peux répondre toi-même aux informations qui te concernent.</p>
+<div class="form">
+<div class="field"><label for="playerLastName">Nom</label><input id="playerLastName" placeholder="Nom"></div>
+<div class="field"><label for="playerFirstName">Prénom</label><input id="playerFirstName" placeholder="Prénom"></div>
+<div class="field"><label for="playerBirthDate">Date naissance</label><input id="playerBirthDate" type="date"></div>
+<div class="field"><label for="playerCategory">Catégorie</label><select id="playerCategory"><option>U13</option><option>U15</option><option>U18</option><option>Seniors</option><option>Loisirs</option></select></div>
+<div class="field full"><label for="playerEmail">Mail si tu veux recevoir les infos</label><input id="playerEmail" type="email" placeholder="adresse@mail.fr"></div>
+</div>
+<button class="btn" type="button" id="savePlayerBtn">Enregistrer mon espace</button>
+<div class="status" id="playerStatus"></div>
+</article>
+<article class="card">
+<h3>Ce que je peux faire</h3>
+<p>Voir mes infos de fin de saison, répondre présent/absent, répondre aux tournois, ouvrir le questionnaire 2026-2027.</p>
+<button class="btn light" data-go="fin" type="button">Présences / tournois</button>
+<a class="btn light" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Questionnaire 2026-2027</a>
+</article>
+</div>
+</section>
+
+<section id="panel-enfant" class="panel">
+<div class="label">Espace enfant</div>
+<div class="grid">
+<article class="card">
+<h3 id="activeChildTitle">Aucun enfant sélectionné</h3>
+<p id="activeChildText">Ajoutez ou sélectionnez un enfant depuis l’espace parent.</p>
+<button class="btn light" type="button" data-go="parent">Sélectionner un enfant</button>
+</article>
+<article class="card">
+<h3>Actions pour cet enfant</h3>
+<p>Répondre aux informations qui concernent l’enfant sélectionné.</p>
+<button class="btn light" type="button" data-go="fin">Présences / tournois</button>
+<a class="btn light" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Questionnaire 2026-2027</a>
+<button class="btn light" type="button" data-go="retour">Faire un retour parent/enfant</button>
+</article>
+</div>
+</section>
+
+<section id="panel-fin" class="panel">
+<div class="label">Fin de saison</div>
+<div class="grid">
+<article class="card">
+<h3>Présence entraînement</h3>
+<p>Répondre pour un entraînement ou un créneau publié par le club.</p>
+<div class="choice-row"><button type="button">Présent</button><button type="button">Absent</button><button type="button">À confirmer</button></div>
+<div class="status visible">Module de démonstration. Les vrais créneaux seront publiés par le club.</div>
+</article>
+<article class="card">
+<h3>Tournois</h3>
+<p>Répondre à un tournoi : participation, transport, accompagnateur.</p>
+<div class="choice-row"><button type="button">Je participe</button><button type="button">Absent</button><button type="button">À confirmer</button></div>
+<div class="choice-row"><button type="button">Je peux transporter</button><button type="button">Besoin transport</button><button type="button">Accompagnateur</button></div>
+</article>
+<article class="card"><h3>Questionnaire 2026-2027</h3><p>Je continue, j’arrête ou je ne sais pas encore.</p><a class="btn" href="https://es-blanquefort-basket-ball.github.io/reinscription-2026-2027/">Répondre</a></article>
+<article class="card"><h3>Date à retenir</h3><p>Samedi 27 juin : AG du club et auberge espagnole. Les informations suivront.</p><span class="pill blue">Info club</span></article>
+</div>
+</section>
+
+<section id="panel-essais" class="panel">
+<div class="label">Essais</div>
+<div class="grid">
+<article class="card"><h3>Faire un essai</h3><p>Vous connaissez quelqu’un qui souhaite essayer le basket ? Envoyez-lui le lien.</p><a class="btn" href="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/" target="_blank" rel="noopener">Ouvrir le lien essais</a></article>
+<article class="card"><h3>Copier le lien</h3><p>Pratique pour SMS, WhatsApp ou mail.</p><button class="btn light" type="button" id="copyEssaisBtn">Copier le lien essais</button></article>
+</div>
+</section>
+
+<section id="panel-retour" class="panel">
+<div class="label">Retour</div>
+<article class="card">
+<h3>Faire un retour</h3>
+<p>Parent, licencié ou coach : dites ce qui manque, ce qui est clair ou ce qui bloque.</p>
+<div class="form">
+<div class="field"><label for="feedbackProfile">Profil</label><select id="feedbackProfile"><option>Parent</option><option>Licencié</option><option>Coach</option><option>Bureau</option></select></div>
+<div class="field"><label for="feedbackType">Type</label><select id="feedbackType"><option>Il manque une information</option><option>Je ne comprends pas</option><option>Problème technique</option><option>Idée d’amélioration</option><option>Tout est clair</option></select></div>
+<div class="field full"><label for="feedbackMessage">Message</label><textarea id="feedbackMessage" placeholder="Votre retour..."></textarea></div>
+</div>
+<button class="btn" type="button" id="saveFeedbackBtn">Envoyer mon retour</button>
+<div class="status" id="feedbackStatus"></div>
+</article>
+</section>
+
+<section id="panel-installer" class="panel">
+<div class="label">Installer</div>
+<article class="card"><h3>Ajouter à l’écran d’accueil</h3><p>Sur iPhone : Safari → Partager → Sur l’écran d’accueil. Sur Android : menu navigateur → Ajouter à l’écran d’accueil.</p><span class="pill">Accès rapide</span></article>
+</section>
 </main>
+
 <div class="footer">Un club, <span class="club-dot green"></span> deux couleurs <span class="club-dot white"></span>, une passion.<span class="ball">🏀</span></div>
-</div></div>
+</div>
+</div>
+
 <script>
-const ESBB_SCRIPT_URL="https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
-const STORAGE_KEY="esbb_beta_child_v1";
-function activateTab(tab){document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tab));document.querySelectorAll(".panel").forEach(panel=>panel.classList.toggle("active",panel.id==="panel-"+tab));history.replaceState(null,"","#"+tab)}
+const ESBB_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
+const STORAGE_KEY = "esbb_portail_roles_children_v3";
+const PLAYER_KEY = "esbb_portail_roles_player_v3";
+let activeChildIndex = 0;
+
+function activateTab(tab){
+  document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.toggle("active", btn.dataset.tab === tab));
+  document.querySelectorAll(".panel").forEach(panel=>panel.classList.toggle("active", panel.id === "panel-" + tab));
+  history.replaceState(null, "", "#" + tab);
+}
+
 document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>activateTab(btn.dataset.tab)));
 document.querySelectorAll("[data-go]").forEach(btn=>btn.addEventListener("click",()=>activateTab(btn.dataset.go)));
-const initialTab=location.hash?location.hash.replace("#",""):"accueil";if(document.getElementById("panel-"+initialTab))activateTab(initialTab);
-document.querySelectorAll(".choice-row button").forEach(btn=>btn.addEventListener("click",()=>{btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected")}));
-async function sendToSheetESBB(action,data){await fetch(ESBB_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,data})});return{ok:true}}
-function showStatus(id,message,type){const box=document.getElementById(id);if(!box)return;box.textContent=message;box.classList.add("visible");box.classList.toggle("error",type==="error")}
-function getChildData(){return{nom:document.getElementById("childLastName").value.trim(),prenom:document.getElementById("childFirstName").value.trim(),dateNaissance:document.getElementById("childBirthDate").value,categorie:document.getElementById("childCategory").value,parent:document.getElementById("parentName").value.trim(),telephone:document.getElementById("parentPhone").value.trim(),email:document.getElementById("parentEmail").value.trim()}}
-function fillChildData(data){if(!data)return;document.getElementById("childLastName").value=data.nom||"";document.getElementById("childFirstName").value=data.prenom||"";document.getElementById("childBirthDate").value=data.dateNaissance||"";document.getElementById("childCategory").value=data.categorie||"Je ne sais pas";document.getElementById("parentName").value=data.parent||"";document.getElementById("parentPhone").value=data.telephone||"";document.getElementById("parentEmail").value=data.email||""}
-function renderSavedChild(){const raw=localStorage.getItem(STORAGE_KEY);const card=document.getElementById("savedChildCard");const text=document.getElementById("savedChildText");if(!raw){if(card)card.style.display="none";return}try{const data=JSON.parse(raw);if(card)card.style.display="block";if(text)text.textContent=`${data.prenom||""} ${data.nom||""} · ${data.categorie||"catégorie à vérifier"} · ${data.parent||"parent non renseigné"}`;fillChildData(data)}catch(e){localStorage.removeItem(STORAGE_KEY)}}
-async function saveIdentity(){const data=getChildData();if(!data.nom||!data.prenom||!data.dateNaissance){showStatus("identityStatus","Merci de renseigner le nom, le prénom et la date de naissance de l’enfant.","error");return}if(!data.parent||!data.telephone||!data.email){showStatus("identityStatus","Merci de renseigner le nom du parent, le téléphone et le mail.","error");return}localStorage.setItem(STORAGE_KEY,JSON.stringify(data));renderSavedChild();try{showStatus("identityStatus","Enregistrement en cours...","ok");await sendToSheetESBB("saveIdentification",{profil:"Parent / licencié",nom:data.nom,prenom:data.prenom,dateNaissance:data.dateNaissance,categorie:data.categorie,email:data.email,telephone:data.telephone,source:"Portail licencié bêta fin de saison",commentaire:"Parent : "+data.parent});showStatus("identityStatus","Informations enregistrées auprès du club.","ok")}catch(e){console.error(e);showStatus("identityStatus","Enregistrement local OK, mais l’envoi au club a échoué. Réessayez après actualisation.","error")}}
-document.getElementById("saveIdentityBtn").addEventListener("click",saveIdentity);
-document.getElementById("resendBtn").addEventListener("click",saveIdentity);
-document.getElementById("clearLocalBtn").addEventListener("click",()=>{if(confirm("Effacer les informations enregistrées sur ce téléphone ?")){localStorage.removeItem(STORAGE_KEY);location.reload()}});
-document.getElementById("saveFeedbackBtn").addEventListener("click",async()=>{const data=getChildData();const feedback={profil:document.getElementById("feedbackProfile").value,sujet:"Portail licencié bêta",typeRetour:document.getElementById("feedbackType").value,message:document.getElementById("feedbackMessage").value.trim(),nom:data.nom,prenom:data.prenom,categorie:data.categorie,email:data.email,telephone:data.telephone};if(!feedback.message){showStatus("feedbackStatus","Merci d’écrire votre retour avant d’envoyer.","error");return}try{showStatus("feedbackStatus","Envoi du retour en cours...","ok");await sendToSheetESBB("saveRetourUtilisateur",feedback);showStatus("feedbackStatus","Merci, votre retour est envoyé au club.","ok");document.getElementById("feedbackMessage").value=""}catch(e){console.error(e);showStatus("feedbackStatus","Retour impossible à envoyer pour le moment.","error")}});
-const copyEssaisBtn=document.getElementById("copyEssaisBtn");if(copyEssaisBtn){copyEssaisBtn.addEventListener("click",async()=>{const link="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";try{await navigator.clipboard.writeText(link);alert("Lien essais copié.")}catch(e){prompt("Copiez le lien essais :",link)}})}
-renderSavedChild();
+const initialTab = location.hash ? location.hash.replace("#","") : "accueil";
+if(document.getElementById("panel-" + initialTab)) activateTab(initialTab);
+
+document.querySelectorAll(".choice-row button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+    btn.classList.add("selected");
+  });
+});
+
+async function sendToSheetESBB(action, data){
+  await fetch(ESBB_SCRIPT_URL, {
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action, data})
+  });
+  return {ok:true};
+}
+
+function showStatus(id,msg,type){
+  const box=document.getElementById(id);
+  if(!box) return;
+  box.textContent=msg;
+  box.classList.add("visible");
+  box.classList.toggle("error", type==="error");
+}
+
+function getChildren(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch(e){return []}
+}
+
+function saveChildren(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function childData(){
+  return {
+    nom:document.getElementById("childLastName").value.trim(),
+    prenom:document.getElementById("childFirstName").value.trim(),
+    dateNaissance:document.getElementById("childBirthDate").value,
+    categorie:document.getElementById("childCategory").value,
+    parent:document.getElementById("parentName").value.trim(),
+    telephone:document.getElementById("parentPhone").value.trim(),
+    email:document.getElementById("parentEmail").value.trim()
+  };
+}
+
+async function saveChild(){
+  const data = childData();
+  if(!data.nom || !data.prenom || !data.dateNaissance){showStatus("childStatus","Merci de renseigner nom, prénom et date de naissance.","error");return}
+  if(!data.parent || !data.telephone || !data.email){showStatus("childStatus","Merci de renseigner nom du parent, téléphone et mail.","error");return}
+
+  const children=getChildren();
+  children.push(data);
+  activeChildIndex=children.length-1;
+  saveChildren(children);
+  renderChildren();
+
+  try{
+    showStatus("childStatus","Enregistrement en cours...","ok");
+    await sendToSheetESBB("saveIdentification", {
+      profil:"Parent / responsable légal",
+      nom:data.nom,
+      prenom:data.prenom,
+      dateNaissance:data.dateNaissance,
+      categorie:data.categorie,
+      email:data.email,
+      telephone:data.telephone,
+      source:"Portail parent/enfant fin de saison",
+      commentaire:"Parent : " + data.parent
+    });
+    showStatus("childStatus","Enfant enregistré auprès du club.","ok");
+  }catch(e){
+    showStatus("childStatus","Enfant enregistré sur ce téléphone, mais envoi club à retenter.","error");
+  }
+}
+
+function renderChildren(){
+  const list=document.getElementById("childList");
+  const children=getChildren();
+  list.innerHTML="";
+  if(!children.length){
+    list.innerHTML='<p style="margin:0;color:#56695c;font-weight:700">Aucun enfant enregistré sur ce téléphone.</p>';
+  }
+  children.forEach((child,index)=>{
+    const btn=document.createElement("button");
+    btn.type="button";
+    btn.className="child-btn" + (index===activeChildIndex ? " active" : "");
+    btn.innerHTML=`<strong>${child.prenom} ${child.nom}</strong><span>${child.categorie || "catégorie à vérifier"} · ${child.dateNaissance || ""}</span>`;
+    btn.addEventListener("click",()=>{activeChildIndex=index;renderChildren();renderActiveChild();activateTab("enfant");});
+    list.appendChild(btn);
+  });
+  renderActiveChild();
+}
+
+function renderActiveChild(){
+  const children=getChildren();
+  const child=children[activeChildIndex];
+  const title=document.getElementById("activeChildTitle");
+  const text=document.getElementById("activeChildText");
+  if(!child){
+    title.textContent="Aucun enfant sélectionné";
+    text.textContent="Ajoutez ou sélectionnez un enfant depuis l’espace parent.";
+    return;
+  }
+  title.textContent=`${child.prenom} ${child.nom}`;
+  text.textContent=`Catégorie : ${child.categorie || "à vérifier"} · Né(e) le ${child.dateNaissance || "non renseigné"} · Parent : ${child.parent || "non renseigné"}`;
+}
+
+async function savePlayer(){
+  const data={
+    nom:document.getElementById("playerLastName").value.trim(),
+    prenom:document.getElementById("playerFirstName").value.trim(),
+    dateNaissance:document.getElementById("playerBirthDate").value,
+    categorie:document.getElementById("playerCategory").value,
+    email:document.getElementById("playerEmail").value.trim()
+  };
+  if(!data.nom || !data.prenom || !data.dateNaissance){showStatus("playerStatus","Merci de renseigner nom, prénom et date de naissance.","error");return}
+  localStorage.setItem(PLAYER_KEY, JSON.stringify(data));
+  try{
+    showStatus("playerStatus","Enregistrement en cours...","ok");
+    await sendToSheetESBB("saveIdentification", {
+      profil:"Licencié autonome",
+      nom:data.nom,
+      prenom:data.prenom,
+      dateNaissance:data.dateNaissance,
+      categorie:data.categorie,
+      email:data.email,
+      telephone:"",
+      source:"Portail licencié autonome fin de saison",
+      commentaire:"Espace joueur autonome"
+    });
+    showStatus("playerStatus","Espace joueur enregistré auprès du club.","ok");
+  }catch(e){
+    showStatus("playerStatus","Espace enregistré sur ce téléphone, mais envoi club à retenter.","error");
+  }
+}
+
+document.getElementById("saveChildBtn").addEventListener("click",saveChild);
+document.getElementById("savePlayerBtn").addEventListener("click",savePlayer);
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  if(confirm("Effacer les enfants enregistrés sur ce téléphone ?")){
+    localStorage.removeItem(STORAGE_KEY);
+    activeChildIndex=0;
+    renderChildren();
+  }
+});
+
+document.getElementById("copyEssaisBtn").addEventListener("click",async()=>{
+  const link="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";
+  try{await navigator.clipboard.writeText(link);alert("Lien essais copié.")}
+  catch(e){prompt("Copiez le lien essais :",link)}
+});
+
+document.getElementById("saveFeedbackBtn").addEventListener("click",async()=>{
+  const children=getChildren();
+  const child=children[activeChildIndex]||{};
+  const feedback={
+    profil:document.getElementById("feedbackProfile").value,
+    sujet:"Portail fin de saison",
+    typeRetour:document.getElementById("feedbackType").value,
+    message:document.getElementById("feedbackMessage").value.trim(),
+    nom:child.nom||"",
+    prenom:child.prenom||"",
+    categorie:child.categorie||"",
+    email:child.email||"",
+    telephone:child.telephone||""
+  };
+  if(!feedback.message){showStatus("feedbackStatus","Merci d’écrire votre retour avant d’envoyer.","error");return}
+  try{
+    showStatus("feedbackStatus","Envoi en cours...","ok");
+    await sendToSheetESBB("saveRetourUtilisateur", feedback);
+    showStatus("feedbackStatus","Merci, votre retour est envoyé au club.","ok");
+    document.getElementById("feedbackMessage").value="";
+  }catch(e){
+    showStatus("feedbackStatus","Retour impossible à envoyer pour le moment.","error");
+  }
+});
+
+renderChildren();
 </script>
 </body>
 </html>

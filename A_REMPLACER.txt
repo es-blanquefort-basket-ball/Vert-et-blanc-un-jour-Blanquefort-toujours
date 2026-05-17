@@ -1,13 +1,14 @@
-PORTAIL BÊTA FIN DE SAISON V2
+PORTAIL ROLES PARENT / LICENCIE V3
 
 À remplacer dans GitHub :
 - portail-licencie/index.html
 - portail-licencie/manifest.json
 
-Modifs :
-- Sondages devient Présences
-- Saison devient Fin de saison
-- Ajout Tournois dans Fin de saison / Présences
-- Accueil présente les espaces : Parent, Licencié, Fin de saison, Essais, Retour
-- Parent devient Parent / enfant
-- Navigation compacte conservée
+Logique :
+- Parent / responsable légal : plusieurs enfants
+- Espace enfant : accessible depuis parent
+- Licencié autonome : espace joueur dédié
+- Fin de saison : présences + tournois + questionnaire
+- Essais : lien vers formulaire essais
+- Retour : secondaire
+- Tout remonte vers le même Sheet via le routeur Apps Script
