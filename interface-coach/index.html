@@ -608,13 +608,14 @@ function nonResponders(){
 }
 function copyReminder(){
   if(!currentSession){toast("Choisissez un entraînement");return;}
-  copyText(`Bonjour, rappel entraînement ${currentSession.title} : ${currentSession.day} ${currentSession.time} à ${currentSession.place}. Merci d’indiquer présent ou absent.`, "Rappel copié");
+  const dateLabel = currentSessionDateLabel();
+  copyText(`Bonjour, rappel entraînement ${currentSession.title} : ${dateLabel} ${currentSession.time} à ${currentSession.place}. Merci d’indiquer présent ou absent.`, "Rappel copié");
 }
 function copyNonResponders(){
   if(currentSession && currentSession.remoteId){
     const names = connectedNonResponders();
     const msg = names.length
-      ? "Relance réponses " + (currentSession.title || "entraînement") + " :\n" + names.join("\n")
+      ? "Relance réponses " + (currentSession.title || "entraînement") + " — " + currentSessionDateLabel() + " " + (currentSession.time || "") + " :\n" + names.join("\n")
       : "Tout le monde a répondu.";
     copyText(msg,"Relance copiée");
     return;
@@ -734,20 +735,51 @@ function renderFavoriteBar(){
   add.onclick = () => toggleFavoriteTeam(current);
   box.appendChild(add);
 }
+function parseCoachDateValue(value){
+  const raw = String(value || "").trim();
+  if(!raw) return 0;
+
+  let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime();
+
+  m = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if(m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])).getTime();
+
+  const t = Date.parse(raw);
+  return isNaN(t) ? 0 : t;
+}
+function formatCoachDate(value){
+  const raw = String(value || "").trim();
+  if(!raw) return "";
+
+  let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return `${m[3]}/${m[2]}/${m[1]}`;
+
+  m = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if(m) return `${String(m[1]).padStart(2,"0")}/${String(m[2]).padStart(2,"0")}/${m[3]}`;
+
+  return raw;
+}
 function sortCreneauxCoach(list){
   return [...(list || [])].sort((a,b)=>{
+    const dateA = parseCoachDateValue(a.date);
+    const dateB = parseCoachDateValue(b.date);
     const da = DAY_ORDER[a.jour] || 99;
     const db = DAY_ORDER[b.jour] || 99;
     const ta = String(a.debut || "").replace("h",":");
     const tb = String(b.debut || "").replace("h",":");
-    return da - db || ta.localeCompare(tb);
+    return (dateA - dateB) || da - db || ta.localeCompare(tb);
   });
 }
 function compactCreneauLabel(s){
-  const jour = s.jour || "";
+  const jourDate = [s.jour || "", formatCoachDate(s.date)].filter(Boolean).join(" ");
   const horaire = [s.debut, s.fin].filter(Boolean).join("–");
   const lieu = s.lieu || "";
-  return [jour, horaire, lieu].filter(Boolean).join(" · ");
+  return [jourDate, horaire, lieu].filter(Boolean).join(" · ");
+}
+function currentSessionDateLabel(){
+  if(!currentSession) return "";
+  return [currentSession.day || "", currentSession.date || ""].filter(Boolean).join(" ").trim();
 }
 function updatePlayerCounters(){
   const total = document.querySelectorAll("#playerList input[type='checkbox']").length;
@@ -921,7 +953,7 @@ function renderConnectedSessions(){
     const div=document.createElement("div");
     div.className="session-card"+(currentSession && currentSession.remoteId === id ? " active" : "");
     const info = compactCreneauLabel(s);
-    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
+    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${[s.jour || "Créneau", formatCoachDate(s.date)].filter(Boolean).join(" ")}</span></div>
       <span class="compact-time">${info}</span>
       <div class="metrics">
         <span class="pill">${metrics.present} présent(s)</span>
@@ -936,13 +968,14 @@ function renderConnectedSessions(){
         remoteId:id,
         title:s.titre || "Entraînement",
         day:s.jour || "",
+        date:formatCoachDate(s.date),
         time:[s.debut,s.fin].filter(Boolean).join(" – "),
         place:s.lieu || ""
       };
       renderConnectedSessions();
       sessionDetail.style.display="block";
       sessionTitle.textContent=currentSession.title;
-      sessionInfo.textContent=[currentSession.day,currentSession.time,currentSession.place].filter(Boolean).join(" · ");
+      sessionInfo.textContent=[currentSessionDateLabel(),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
       renderConnectedPresenceBoard();
     };
     box.appendChild(div);
