@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<!-- PORTAIL_LICENCIES_VERSION_DEFINITIVE -->
+<!-- PORTAIL_LICENCIES_BETA_REPONSES_ENTRAINEMENTS -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#003914">
@@ -100,6 +100,30 @@ textarea{min-height:84px;resize:vertical}
   background:#eaf4e9;
   color:#003914;
   border-color:rgba(0,57,20,.20);
+}
+.senior-response-summary{
+  margin-top:8px;
+  padding:10px 11px;
+  border-radius:13px;
+  background:#f7fbf6;
+  border:1px solid rgba(0,57,20,.14);
+  display:grid;
+  gap:5px;
+}
+.senior-response-summary strong{
+  color:var(--d);
+  font-size:13px;
+  text-transform:uppercase;
+}
+.senior-response-summary span{
+  color:var(--muted);
+  font-size:12.5px;
+  font-weight:750;
+  line-height:1.35;
+}
+.senior-response-summary .present-names{
+  color:#003914;
+  font-weight:900;
 }
 
 .footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}.ball{display:block;margin-top:6px;font-size:22px}
@@ -208,6 +232,7 @@ textarea{min-height:84px;resize:vertical}
 <div class="field"><label for="childBirthDate">Date de naissance</label><input id="childBirthDate" type="date" required></div>
 <div class="field"><label>Catégorie calculée</label><input id="childCategory" type="text" value="Date de naissance requise" readonly></div>
 <div class="field"><label>Année dans la catégorie</label><input id="childYearLevel" type="text" value="À calculer" readonly></div>
+<div class="field"><label for="childTeamGroup">Groupe bêta</label><select id="childTeamGroup"><option value="">Calcul automatique</option></select></div>
 <div class="field"><label for="parentName">Nom parent</label><input id="parentName" placeholder="Nom parent"></div>
 <div class="field"><label for="parentPhone">Téléphone parent</label><input id="parentPhone" type="tel" placeholder="06..."></div>
 <div class="field full"><label for="parentEmail">Mail parent</label><input id="parentEmail" type="email" placeholder="adresse@mail.fr"></div>
@@ -243,6 +268,7 @@ textarea{min-height:84px;resize:vertical}
 <div class="field"><label for="playerBirthDate">Date naissance</label><input id="playerBirthDate" type="date" required></div>
 <div class="field"><label>Catégorie calculée</label><input id="playerCategory" type="text" value="Date de naissance requise" readonly></div>
 <div class="field"><label>Année dans la catégorie</label><input id="playerYearLevel" type="text" value="À calculer" readonly></div>
+<div class="field"><label for="playerTeamGroup">Groupe bêta</label><select id="playerTeamGroup"><option value="">Calcul automatique</option></select></div>
 <div class="field full"><label for="playerEmail">Mail si tu veux recevoir les infos</label><input id="playerEmail" type="email" placeholder="adresse@mail.fr"></div>
 </div>
 <button class="btn" type="button" id="savePlayerBtn">Enregistrer mon espace</button>
@@ -284,7 +310,7 @@ textarea{min-height:84px;resize:vertical}
 <div class="label">Calendrier fin de saison</div>
 <div class="welcome-card">
 <h2>Entraînements, bascules et tournois</h2>
-<p>Les réponses de présence sont directement sous chaque créneau. Pour la version finale connectée, ces réponses seront envoyées au club.</p>
+<p>Version bêta club : merci de répondre aux présences d’entraînement pour aider le club à tester l’application avant la saison prochaine. Les réponses sont transmises au club et visibles par les coachs / le bureau.</p>
 </div>
 <div class="grid">
 <article class="card">
@@ -444,23 +470,75 @@ function getCategoryInfoFromBirthDate(value){
   return {category, yearLevel, year};
 }
 
+
+function betaGroupsFromCategoryESBB(category){
+  const map = {
+    U13:["U13M","U13F"],
+    U15:["U15M"],
+    U18:["U18M"],
+    U21:["U21"],
+    Seniors:["Seniors"]
+  };
+  return map[category] || [];
+}
+
+function updateBetaGroupSelectESBB(selectId, category, currentValue){
+  const select = document.getElementById(selectId);
+  if(!select) return;
+
+  const groups = betaGroupsFromCategoryESBB(category);
+  select.innerHTML = "";
+
+  if(!groups.length){
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Non ouvert en bêta";
+    select.appendChild(opt);
+    select.value = "";
+    return;
+  }
+
+  groups.forEach(group=>{
+    const opt = document.createElement("option");
+    opt.value = group;
+    opt.textContent = group;
+    select.appendChild(opt);
+  });
+
+  if(currentValue && groups.includes(currentValue)){
+    select.value = currentValue;
+  }else{
+    select.value = groups[0];
+  }
+}
+
+function getSelectedBetaGroupESBB(selectId, category){
+  const select = document.getElementById(selectId);
+  if(select && select.value) return select.value;
+
+  const groups = betaGroupsFromCategoryESBB(category);
+  return groups[0] || category;
+}
+
 function updateChildCategoryFromBirthDate(){
   const info = getCategoryInfoFromBirthDate(document.getElementById("childBirthDate").value);
   document.getElementById("childCategory").value = info.category;
   document.getElementById("childYearLevel").value = info.yearLevel;
-  syncSchedule(info.category, info.yearLevel);
+  updateBetaGroupSelectESBB("childTeamGroup", info.category, document.getElementById("childTeamGroup") ? document.getElementById("childTeamGroup").value : "");
+  syncSchedule(getSelectedBetaGroupESBB("childTeamGroup", info.category), info.yearLevel);
 }
 
 function updatePlayerCategoryFromBirthDate(){
   const info = getCategoryInfoFromBirthDate(document.getElementById("playerBirthDate").value);
   document.getElementById("playerCategory").value = info.category;
   document.getElementById("playerYearLevel").value = info.yearLevel;
-  syncSchedule(info.category, info.yearLevel);
+  updateBetaGroupSelectESBB("playerTeamGroup", info.category, document.getElementById("playerTeamGroup") ? document.getElementById("playerTeamGroup").value : "");
+  syncSchedule(getSelectedBetaGroupESBB("playerTeamGroup", info.category), info.yearLevel);
 }
 
 function syncSchedule(category, yearLevel){
-  if(!category || category.includes("Date") || category === "À vérifier") return;
-  document.getElementById("scheduleCategory").value = category === "U21" ? "Seniors" : category;
+  if(!category || String(category).includes("Date") || category === "À vérifier") return;
+  document.getElementById("scheduleCategory").value = category;
   document.getElementById("scheduleYear").value = yearLevel === "2e année" ? "2" : "1";
   renderSchedule();
 }
@@ -480,11 +558,14 @@ function saveChildren(list){localStorage.setItem(STORAGE_KEY, JSON.stringify(lis
 
 function childData(){
   updateChildCategoryFromBirthDate();
+  const categorieBase = document.getElementById("childCategory").value;
+  const equipe = getSelectedBetaGroupESBB("childTeamGroup", categorieBase);
   return {
     nom:document.getElementById("childLastName").value.trim(),
     prenom:document.getElementById("childFirstName").value.trim(),
     dateNaissance:document.getElementById("childBirthDate").value,
-    categorie:document.getElementById("childCategory").value,
+    categorie:categorieBase,
+    equipe:equipe,
     anneeCategorie:document.getElementById("childYearLevel").value,
     parent:document.getElementById("parentName").value.trim(),
     telephone:document.getElementById("parentPhone").value.trim(),
@@ -500,7 +581,7 @@ async function saveChild(){
   const children=getChildren(); children.push(data); activeChildIndex=children.length-1; saveChildren(children); renderChildren();
   try{
     showStatus("childStatus","Enregistrement en cours...","ok");
-    await sendToSheetESBB("saveIdentification",{profil:"Parent / responsable légal",nom:data.nom,prenom:data.prenom,dateNaissance:data.dateNaissance,categorie:data.categorie,email:data.email,telephone:data.telephone,source:"Portail licenciés définitif V8",commentaire:"Parent : "+data.parent+" · Année catégorie : "+data.anneeCategorie});
+    await sendToSheetESBB("saveIdentification",{profil:"Parent / responsable légal",nom:data.nom,prenom:data.prenom,dateNaissance:data.dateNaissance,categorie:data.equipe || data.categorie,email:data.email,telephone:data.telephone,source:"Portail licenciés définitif V8",commentaire:"Parent : "+data.parent+" · Catégorie calculée : "+data.categorie+" · Groupe bêta : "+(data.equipe || data.categorie)+" · Année catégorie : "+data.anneeCategorie});
     showStatus("childStatus","Enfant enregistré auprès du club.","ok");
   }catch(e){showStatus("childStatus","Enfant enregistré sur ce téléphone, mais envoi club à retenter.","error")}
 }
@@ -510,7 +591,7 @@ function renderChildren(){
   if(!children.length) list.innerHTML='<p style="margin:0;color:#56695c;font-weight:700">Aucun enfant enregistré sur ce téléphone.</p>';
   children.forEach((child,index)=>{
     const btn=document.createElement("button"); btn.type="button"; btn.className="child-btn"+(index===activeChildIndex?" active":"");
-    btn.innerHTML=`<strong>${child.prenom} ${child.nom}</strong><span>${child.categorie||"catégorie à vérifier"} · ${child.anneeCategorie||""} · ${child.dateNaissance||""}</span>`;
+    btn.innerHTML=`<strong>${child.prenom} ${child.nom}</strong><span>${child.equipe || child.categorie || "catégorie à vérifier"} · ${child.anneeCategorie||""} · ${child.dateNaissance||""}</span>`;
     btn.addEventListener("click",()=>{activeChildIndex=index;renderChildren();renderActiveChild();openPanel("enfant");});
     list.appendChild(btn);
   });
@@ -523,20 +604,22 @@ function renderActiveChild(){
   const title=document.getElementById("activeChildTitle"); const text=document.getElementById("activeChildText");
   if(!child){title.textContent="Aucun enfant sélectionné";text.textContent="Ajoutez ou sélectionnez un enfant depuis l’espace parent.";return;}
   title.textContent="Bonjour "+child.prenom;
-  text.textContent=`${child.prenom} ${child.nom} · catégorie : ${child.categorie||"à vérifier"} · ${child.anneeCategorie||""} · né(e) le ${child.dateNaissance||"non renseigné"} · Contact : ${child.parent||"parent non renseigné"} · ${child.telephone||"téléphone non renseigné"} · ${child.email||"mail non renseigné"}`;
-  syncSchedule(child.categorie, child.anneeCategorie);
+  text.textContent=`${child.prenom} ${child.nom} · groupe bêta : ${child.equipe || child.categorie || "à vérifier"} · catégorie calculée : ${child.categorie||"à vérifier"} · ${child.anneeCategorie||""} · né(e) le ${child.dateNaissance||"non renseigné"} · Contact : ${child.parent||"parent non renseigné"} · ${child.telephone||"téléphone non renseigné"} · ${child.email||"mail non renseigné"}`;
+  syncSchedule(child.equipe || child.categorie, child.anneeCategorie);
 }
 
 async function savePlayer(){
   updatePlayerCategoryFromBirthDate();
-  const data={nom:document.getElementById("playerLastName").value.trim(),prenom:document.getElementById("playerFirstName").value.trim(),dateNaissance:document.getElementById("playerBirthDate").value,categorie:document.getElementById("playerCategory").value,anneeCategorie:document.getElementById("playerYearLevel").value,email:document.getElementById("playerEmail").value.trim()};
+  const categorieBase = document.getElementById("playerCategory").value;
+  const equipe = getSelectedBetaGroupESBB("playerTeamGroup", categorieBase);
+  const data={nom:document.getElementById("playerLastName").value.trim(),prenom:document.getElementById("playerFirstName").value.trim(),dateNaissance:document.getElementById("playerBirthDate").value,categorie:categorieBase,equipe:equipe,anneeCategorie:document.getElementById("playerYearLevel").value,email:document.getElementById("playerEmail").value.trim()};
   if(!data.nom||!data.prenom||!data.dateNaissance){showStatus("playerStatus","Date de naissance obligatoire pour calculer la catégorie.","error");return}
   document.getElementById("playerHello").textContent="Bonjour "+data.prenom;
   localStorage.setItem(PLAYER_KEY,JSON.stringify(data));
-  syncSchedule(data.categorie, data.anneeCategorie);
+  syncSchedule(data.equipe || data.categorie, data.anneeCategorie);
   try{
     showStatus("playerStatus","Enregistrement en cours...","ok");
-    await sendToSheetESBB("saveIdentification",{profil:"Licencié",nom:data.nom,prenom:data.prenom,dateNaissance:data.dateNaissance,categorie:data.categorie,email:data.email,telephone:"",source:"Portail licencié définitif V8",commentaire:"Espace joueur · Année catégorie : "+data.anneeCategorie});
+    await sendToSheetESBB("saveIdentification",{profil:"Licencié",nom:data.nom,prenom:data.prenom,dateNaissance:data.dateNaissance,categorie:data.equipe || data.categorie,email:data.email,telephone:"",source:"Portail licencié définitif V8",commentaire:"Espace joueur · Catégorie calculée : "+data.categorie+" · Groupe bêta : "+(data.equipe || data.categorie)+" · Année catégorie : "+data.anneeCategorie});
     showStatus("playerStatus","Espace joueur enregistré auprès du club.","ok");
   }catch(e){showStatus("playerStatus","Espace enregistré sur ce téléphone, mais envoi club à retenter.","error")}
 }
@@ -544,59 +627,242 @@ async function savePlayer(){
 function getCurrentScheduleContext(){
   const children = getChildren();
   const child = children[activeChildIndex];
+
   if(child && child.categorie && !String(child.categorie).includes("Date")){
-    return {category: child.categorie === "U21" ? "Seniors" : child.categorie, year: child.anneeCategorie === "2e année" ? "2" : "1", name: child.prenom || "le licencié"};
+    const category = child.equipe || child.categorie;
+    return {
+      category,
+      year: child.anneeCategorie === "2e année" ? "2" : "1",
+      name: child.prenom || "le licencié",
+      nom: child.nom || "",
+      prenom: child.prenom || "",
+      dateNaissance: child.dateNaissance || "",
+      email: child.email || "",
+      telephone: child.telephone || "",
+      reponduPar: child.parent || child.prenom || "Famille"
+    };
   }
+
   try{
     const player = JSON.parse(localStorage.getItem(PLAYER_KEY)||"null");
-    if(player && player.category){
-      return {category: player.category === "U21" ? "Seniors" : player.category, year: player.yearLevel === "2e année" ? "2" : "1", name: player.prenom || "le licencié"};
+    if(player && player.categorie){
+      const category = player.equipe || player.categorie;
+      return {
+        category,
+        year: player.anneeCategorie === "2e année" ? "2" : "1",
+        name: player.prenom || "le licencié",
+        nom: player.nom || "",
+        prenom: player.prenom || "",
+        dateNaissance: player.dateNaissance || "",
+        email: player.email || "",
+        telephone: "",
+        reponduPar: player.prenom || "Licencié"
+      };
     }
   }catch(e){}
+
   return null;
 }
 
-function renderSchedule(){
+function isBetaTrainingCategoryESBB(category){
+  return ["U13M","U13F","U15M","U18M","U21","Seniors"].includes(category);
+}
+
+async function loadTrainingSessionsFromSheetESBB(context){
+  const url = ESBB_SCRIPT_URL
+    + "?action=getTrainingSessionsLicencieESBB"
+    + "&categorie=" + encodeURIComponent(context.category)
+    + "&v=" + Date.now();
+
+  const res = await fetch(url);
+  return await res.json();
+}
+
+async function saveTrainingResponseFromLicencieESBB(session, response, context){
+  await fetch(ESBB_SCRIPT_URL, {
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({
+      action:"saveTrainingResponseESBB",
+      data:{
+        idCreneau: session.idCreneau,
+        idSondage: "PRES-" + session.idCreneau,
+        nom: context.nom,
+        prenom: context.prenom,
+        dateNaissance: context.dateNaissance,
+        categorie: context.category,
+        reponse: response,
+        reponduPar: context.reponduPar,
+        email: context.email,
+        telephone: context.telephone,
+        commentaire: ""
+      }
+    })
+  });
+
+  return {ok:true};
+}
+
+async function loadTrainingResponsesForSessionESBB(session){
+  const url = ESBB_SCRIPT_URL
+    + "?action=getTrainingResponsesCoachESBB"
+    + "&categorie=" + encodeURIComponent("Seniors")
+    + "&idCreneau=" + encodeURIComponent(session.idCreneau || "")
+    + "&v=" + Date.now();
+
+  const res = await fetch(url);
+  const json = await res.json();
+  return json.responses || [];
+}
+
+function normaliseResponseTextESBB(value){
+  const v = String(value || "").trim().toLowerCase();
+  if(v === "present" || v === "présent") return "Présent";
+  if(v === "absent") return "Absent";
+  if(v === "a confirmer" || v === "à confirmer") return "À confirmer";
+  return String(value || "").trim();
+}
+
+function responsePersonKeyESBB(response){
+  return [response.prenom || "", response.nom || "", response.dateNaissance || ""].join("|").toLowerCase();
+}
+
+function responseDisplayNameESBB(response){
+  return [response.prenom, response.nom].filter(Boolean).join(" ").trim() || response.reponduPar || "Licencié";
+}
+
+function buildSeniorResponseSummaryESBB(responses){
+  const latest = new Map();
+  (responses || []).forEach(r => {
+    const key = responsePersonKeyESBB(r) || responseDisplayNameESBB(r).toLowerCase();
+    latest.set(key, r);
+  });
+
+  const finalResponses = [...latest.values()];
+  const presents = finalResponses.filter(r => normaliseResponseTextESBB(r.reponse) === "Présent").map(responseDisplayNameESBB);
+  const absents = finalResponses.filter(r => normaliseResponseTextESBB(r.reponse) === "Absent").map(responseDisplayNameESBB);
+  const waits = finalResponses.filter(r => normaliseResponseTextESBB(r.reponse) === "À confirmer").map(responseDisplayNameESBB);
+
+  return {presents, absents, waits};
+}
+
+async function refreshSeniorResponseSummaryESBB(session, target){
+  if(!target || !session || !session.idCreneau) return;
+  target.innerHTML = '<strong>Point réponses Seniors</strong><span>Chargement des réponses...</span>';
+
+  try{
+    const responses = await loadTrainingResponsesForSessionESBB(session);
+    const summary = buildSeniorResponseSummaryESBB(responses);
+    const presentNames = summary.presents.length ? summary.presents.join(", ") : "Aucun présent déclaré pour le moment";
+    target.innerHTML = `
+      <strong>Point réponses Seniors</strong>
+      <span class="present-names">Présents déclarés : ${summary.presents.length}${summary.presents.length ? " · " + presentNames : ""}</span>
+      <span>Absents déclarés : ${summary.absents.length} · À confirmer : ${summary.waits.length}</span>
+    `;
+  }catch(e){
+    target.innerHTML = '<strong>Point réponses Seniors</strong><span>Impossible de charger les réponses pour le moment.</span>';
+  }
+}
+
+async function renderSchedule(){
   const context = getCurrentScheduleContext();
   const box=document.getElementById("scheduleList");
   box.innerHTML="";
+
   if(!context){
     box.innerHTML='<div class="training info"><strong>Enregistrez ou sélectionnez d’abord le licencié</strong><span>Les créneaux s’afficheront ensuite automatiquement.</span></div>';
     return;
   }
-  const cat=context.category;
-  const year=context.year;
-  let items=[...(SCHEDULES[cat]||[])];
-  if(year !== "2") items = items.filter(i=>i.type !== "bascule");
-  if(!items.length){
-    box.innerHTML='<div class="training info"><strong>Aucun créneau affiché pour le moment</strong><span>Les informations seront communiquées par le club si nécessaire.</span></div>';
+
+  if(!isBetaTrainingCategoryESBB(context.category)){
+    box.innerHTML='<div class="training info"><strong>Catégorie non ouverte en bêta</strong><span>Pour le test actuel, les réponses entraînements sont ouvertes de U13 à Seniors. Les petites catégories restent suivies côté coach / bureau.</span></div>';
     return;
   }
+
+  box.innerHTML='<div class="training info"><strong>Chargement des entraînements datés...</strong><span>Lecture des créneaux club en cours.</span></div>';
+
+  let items = [];
+
+  try{
+    const json = await loadTrainingSessionsFromSheetESBB(context);
+    items = json.sessions || [];
+  }catch(e){
+    box.innerHTML='<div class="training info"><strong>Connexion impossible</strong><span>Vérifier la connexion internet ou le déploiement Apps Script.</span></div>';
+    return;
+  }
+
+  if(!items.length){
+    box.innerHTML='<div class="training info"><strong>Aucun entraînement daté affiché</strong><span>Le club n’a pas encore ouvert de créneau visible pour ce groupe.</span></div>';
+    return;
+  }
+
+  box.innerHTML="";
+
   items.forEach((i,idx)=>{
     const div=document.createElement("div");
-    div.className="training "+i.type;
-    div.innerHTML=`<strong>${i.title}</strong><span>${i.day} · ${i.time}</span><span>${i.place}</span>
+    div.className="training " + (i.type || "collectif").toLowerCase();
+    const isSeniorSession = context.category === "Seniors";
+    div.innerHTML=`<strong>${i.titre || "Entraînement"}</strong>
+    <span>${i.jour || ""} ${formatDateDisplayESBB(i.date)} · ${i.debut || ""}${i.fin ? " – " + i.fin : ""}</span>
+    <span>${i.lieu || ""}${i.coach ? " · Coach : " + i.coach : ""}</span>
+    ${i.commentaire ? `<span>${i.commentaire}</span>` : ""}
     <span class="action-badge">À répondre</span>
     <div class="response-row" data-response-row="${idx}">
-      <button type="button">Présent</button>
-      <button type="button">Absent</button>
-      <button type="button">À confirmer</button>
-    </div>`;
+      <button type="button" data-value="Présent">Présent</button>
+      <button type="button" data-value="Absent">Absent</button>
+      <button type="button" data-value="À confirmer">À confirmer</button>
+    </div>
+    ${isSeniorSession ? `<div class="senior-response-summary" data-session-summary="${i.idCreneau || idx}"><strong>Point réponses Seniors</strong><span>Chargement des réponses...</span></div>` : ""}`;
+
     box.appendChild(div);
-  });
-  document.querySelectorAll(".response-row button").forEach(btn=>btn.addEventListener("click",()=>{
-    btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
-    btn.classList.add("selected");
-    const badge = btn.closest(".training").querySelector(".action-badge");
-    if(badge){
-      badge.textContent = "Répondu";
-      badge.classList.add("done");
+
+    const seniorSummaryBox = isSeniorSession ? div.querySelector(".senior-response-summary") : null;
+    if(seniorSummaryBox){
+      refreshSeniorResponseSummaryESBB(i, seniorSummaryBox);
     }
-  }));
+
+    div.querySelectorAll(".response-row button").forEach(btn=>btn.addEventListener("click", async ()=>{
+      btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      const badge = div.querySelector(".action-badge");
+      if(badge){
+        badge.textContent = "Envoi...";
+        badge.classList.remove("done");
+      }
+
+      try{
+        await saveTrainingResponseFromLicencieESBB(i, btn.dataset.value, context);
+        if(badge){
+          badge.textContent = "Répondu : " + btn.dataset.value;
+          badge.classList.add("done");
+        }
+        if(seniorSummaryBox){
+          setTimeout(()=>refreshSeniorResponseSummaryESBB(i, seniorSummaryBox), 700);
+        }
+      }catch(e){
+        if(badge){
+          badge.textContent = "Erreur envoi";
+          badge.classList.remove("done");
+        }
+      }
+    }));
+  });
+}
+
+function formatDateDisplayESBB(value){
+  if(!value) return "";
+  const s = String(value);
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m) return m[3] + "/" + m[2] + "/" + m[1];
+  return s;
 }
 
 document.getElementById("childBirthDate").addEventListener("change",updateChildCategoryFromBirthDate);
 document.getElementById("playerBirthDate").addEventListener("change",updatePlayerCategoryFromBirthDate);
+document.getElementById("childTeamGroup").addEventListener("change",()=>syncSchedule(document.getElementById("childTeamGroup").value, document.getElementById("childYearLevel").value));
+document.getElementById("playerTeamGroup").addEventListener("change",()=>syncSchedule(document.getElementById("playerTeamGroup").value, document.getElementById("playerYearLevel").value));
 document.getElementById("saveChildBtn").addEventListener("click",saveChild);
 document.getElementById("savePlayerBtn").addEventListener("click",savePlayer);
 document.getElementById("clearBtn").addEventListener("click",()=>{if(confirm("Effacer les enfants enregistrés sur ce téléphone ?")){localStorage.removeItem(STORAGE_KEY);activeChildIndex=0;renderChildren();}});
@@ -606,7 +872,14 @@ document.getElementById("scheduleYear").addEventListener("change",renderSchedule
 document.getElementById("copyEssaisBtn").addEventListener("click",async()=>{const link="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";try{await navigator.clipboard.writeText(link);alert("Lien essais copié.")}catch(e){prompt("Copiez le lien essais :",link)}});
 
 function restorePlayer(){
-  try{const data=JSON.parse(localStorage.getItem(PLAYER_KEY)||"null"); if(data&&data.prenom){document.getElementById("playerHello").textContent="Bonjour "+data.prenom; syncSchedule(data.categorie, data.anneeCategorie);}}catch(e){}
+  try{
+    const data=JSON.parse(localStorage.getItem(PLAYER_KEY)||"null");
+    if(data&&data.prenom){
+      document.getElementById("playerHello").textContent="Bonjour "+data.prenom;
+      updateBetaGroupSelectESBB("playerTeamGroup", data.categorie, data.equipe || "");
+      syncSchedule(data.equipe || data.categorie, data.anneeCategorie);
+    }
+  }catch(e){}
 }
 renderChildren();
 restorePlayer();
