@@ -1037,7 +1037,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function esbbPad2CoachV2(n){ return String(n).padStart(2,"0"); }
 function esbbDateISOCoachV2(d){ return d.getFullYear()+"-"+esbbPad2CoachV2(d.getMonth()+1)+"-"+esbbPad2CoachV2(d.getDate()); }
 function esbbDateFRCoachV2(d){ return esbbPad2CoachV2(d.getDate())+"/"+esbbPad2CoachV2(d.getMonth()+1)+"/"+d.getFullYear(); }
-function esbbBuildSeniorCoachSessionsV2(weeks){
+function esbbBuildSeniorCoachSessionsV2(cat, weeks){
+  const selectedCat = String(cat || getCoachSelectedCategoryESBB() || "Seniors").trim();
   const today = new Date(); today.setHours(0,0,0,0);
   const end = new Date(today); end.setDate(end.getDate() + (weeks || 8) * 7);
   const dayMap = {"Dimanche":0,"Lundi":1,"Mardi":2,"Mercredi":3,"Jeudi":4,"Vendredi":5,"Samedi":6};
@@ -1052,8 +1053,8 @@ function esbbBuildSeniorCoachSessionsV2(weeks){
     while(d <= end){
       const iso=esbbDateISOCoachV2(d);
       out.push({
-        id:(cat === "U21" ? "U21-" : "SEN-")+iso+"-"+w.jour.toUpperCase(),
-        categorie:cat,
+        id:(selectedCat === "U21" ? "U21-" : "SEN-")+iso+"-"+w.jour.toUpperCase(),
+        categorie:selectedCat,
         titre:w.titre,
         jour:w.jour,
         date:esbbDateFRCoachV2(d),
@@ -1087,7 +1088,7 @@ function esbbAllCoachSessionsV2(){
   let base = Array.isArray(REMOTE.creneaux) ? REMOTE.creneaux.slice() : [];
   if(cat === "Seniors" || cat === "U21"){
     const map = new Map();
-    [...base, ...esbbBuildSeniorCoachSessionsV2(8)].forEach(s=>{
+    [...base, ...esbbBuildSeniorCoachSessionsV2(cat, 8)].forEach(s=>{
       const key = (s.id || "") + "|" + (s.dateISO || esbbCoachSessionDateISO(s)) + "|" + (s.titre || "") + "|" + (s.debut || "");
       map.set(key, s);
     });
