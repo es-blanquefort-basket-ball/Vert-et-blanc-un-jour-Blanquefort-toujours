@@ -392,8 +392,7 @@ const SCHEDULES = {
   ],
   Seniors: [
     {type:"collectif", title:"U21 / Seniors", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy"},
-    {type:"collectif", title:"Seniors M 1 + Seniors M 2", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy"},
-    {type:"collectif", title:"Loisirs", day:"Vendredi", time:"21h00 – 23h00", place:"Lycée agricole"}
+    {type:"collectif", title:"Seniors M 1 + Seniors M 2", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy"}
   ]
 };
 
@@ -766,6 +765,134 @@ function esbbReturnHome(){
 
   window.scrollTo({top:0, behavior:"smooth"});
 }
+
+
+/* ===== V2 — CALENDRIER DATÉ SENIORS + RÉPONSES PAR DATE ===== */
+function esbbPad2V2(n){ return String(n).padStart(2,"0"); }
+function esbbDateISOFromDateV2(d){ return d.getFullYear()+"-"+esbbPad2V2(d.getMonth()+1)+"-"+esbbPad2V2(d.getDate()); }
+function esbbDateFRFromDateV2(d){ return esbbPad2V2(d.getDate())+"/"+esbbPad2V2(d.getMonth()+1)+"/"+d.getFullYear(); }
+function esbbNextDatedTrainingsV2(weekly, weeks){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const end = new Date(today);
+  end.setDate(end.getDate() + (weeks || 8) * 7);
+  const dayMap = {"Dimanche":0,"Lundi":1,"Mardi":2,"Mercredi":3,"Jeudi":4,"Vendredi":5,"Samedi":6};
+  const out = [];
+  for(const w of weekly){
+    const target = dayMap[w.day];
+    if(target === undefined) continue;
+    const d = new Date(today);
+    const diff = (target - d.getDay() + 7) % 7;
+    d.setDate(d.getDate() + diff);
+    while(d <= end){
+      out.push({
+        type: w.type || "collectif",
+        title: w.title,
+        day: w.day,
+        date: esbbDateISOFromDateV2(d),
+        dateFr: esbbDateFRFromDateV2(d),
+        time: w.time,
+        place: w.place,
+        id: "SEN-" + esbbDateISOFromDateV2(d) + "-" + w.day.toUpperCase()
+      });
+      d.setDate(d.getDate() + 7);
+    }
+  }
+  return out.sort((a,b)=>String(a.date).localeCompare(String(b.date)) || String(a.time).localeCompare(String(b.time)));
+}
+function esbbRefreshSeniorScheduleV2(){
+  SCHEDULES.Seniors = esbbNextDatedTrainingsV2([
+    {title:"U21 / Seniors — lundi", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy"},
+    {title:"Seniors M 1 + Seniors M 2 — mercredi", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy"}
+  ], 8);
+}
+esbbRefreshSeniorScheduleV2();
+
+saveTrainingPresenceFromPortalESBB = async function(context, training, response){
+  try{
+    await sendToSheetESBB("saveTrainingResponseESBB", {
+      source: "Portail licenciés",
+      profil: "Licencié",
+      nom: context.nom || "",
+      prenom: context.prenom || context.name || "",
+      email: context.email || "",
+      telephone: context.telephone || "",
+      categorie: context.category || "",
+      entrainementTitre: training.title || "",
+      jour: training.day || "",
+      horaire: training.time || "",
+      lieu: training.place || "",
+      dateEntrainement: training.date || "",
+      reponse: response || "",
+      dateReponse: new Date().toISOString()
+    });
+    return true;
+  }catch(e){
+    return false;
+  }
+};
+
+renderSchedule = function(){
+  esbbRefreshSeniorScheduleV2();
+  const context = getCurrentScheduleContext();
+  const box=document.getElementById("scheduleList");
+  box.innerHTML="";
+
+  if(!context){
+    box.innerHTML='<div class="training info"><strong>Enregistrez ou sélectionnez d’abord le licencié</strong><span>Les créneaux s’afficheront ensuite automatiquement.</span></div>';
+    return;
+  }
+
+  const cat=context.category;
+  const year=context.year;
+  let items=[...(SCHEDULES[cat]||[])];
+
+  if(year !== "2") items = items.filter(i=>i.type !== "bascule");
+
+  if(!items.length){
+    box.innerHTML='<div class="training info"><strong>Aucun créneau affiché pour le moment</strong><span>Les informations seront communiquées par le club si nécessaire.</span></div>';
+    return;
+  }
+
+  items.forEach((i,idx)=>{
+    const div=document.createElement("div");
+    div.className="training "+i.type;
+    const dateLine = i.dateFr ? i.day + " " + i.dateFr : i.day;
+    div.innerHTML=`<strong>${i.title}</strong><span>${dateLine} · ${i.time}</span><span>${i.place}</span>
+    <span class="action-badge">À répondre</span>
+    <div class="response-row" data-response-row="${idx}">
+      <button type="button" data-response="Présent">Présent</button>
+      <button type="button" data-response="Absent">Absent</button>
+      <button type="button" data-response="À confirmer">À confirmer</button>
+    </div>`;
+    box.appendChild(div);
+  });
+
+  document.querySelectorAll(".response-row button").forEach(btn=>btn.addEventListener("click",async()=>{
+    const row = btn.parentElement;
+    const idx = Number(row.dataset.responseRow);
+    const training = items[idx];
+    const response = btn.dataset.response || btn.textContent.trim();
+
+    row.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const badge = btn.closest(".training").querySelector(".action-badge");
+    if(badge){
+      badge.textContent = "Envoi...";
+      badge.classList.remove("done");
+    }
+
+    const ok = await saveTrainingPresenceFromPortalESBB(context, training, response);
+
+    if(badge){
+      badge.textContent = ok ? "Répondu" : "Réponse gardée sur ce téléphone";
+      badge.classList.add("done");
+    }
+  }));
+};
+
+renderSchedule();
 
 </script>
 </body>
