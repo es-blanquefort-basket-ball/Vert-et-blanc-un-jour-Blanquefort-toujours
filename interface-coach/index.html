@@ -1032,6 +1032,136 @@ refreshConnectedCoach();
 document.addEventListener("DOMContentLoaded", () => {
   refreshConnectedCoach();
 });
+
+/* ===== V2 — COACH : SÉANCES DATÉES SENIORS + ARCHIVE + LECTURE RÉPONSES PAR DATE ===== */
+function esbbPad2CoachV2(n){ return String(n).padStart(2,"0"); }
+function esbbDateISOCoachV2(d){ return d.getFullYear()+"-"+esbbPad2CoachV2(d.getMonth()+1)+"-"+esbbPad2CoachV2(d.getDate()); }
+function esbbDateFRCoachV2(d){ return esbbPad2CoachV2(d.getDate())+"/"+esbbPad2CoachV2(d.getMonth()+1)+"/"+d.getFullYear(); }
+function esbbBuildSeniorCoachSessionsV2(weeks){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const end = new Date(today); end.setDate(end.getDate() + (weeks || 8) * 7);
+  const dayMap = {"Dimanche":0,"Lundi":1,"Mardi":2,"Mercredi":3,"Jeudi":4,"Vendredi":5,"Samedi":6};
+  const weekly = [
+    {titre:"U21 / Seniors — lundi", jour:"Lundi", debut:"21h00", fin:"23h00", lieu:"Port du Roy"},
+    {titre:"Seniors M 1 + Seniors M 2 — mercredi", jour:"Mercredi", debut:"20h30", fin:"22h30", lieu:"Port du Roy"}
+  ];
+  const out=[];
+  weekly.forEach(w=>{
+    const d=new Date(today);
+    d.setDate(d.getDate() + ((dayMap[w.jour] - d.getDay() + 7) % 7));
+    while(d <= end){
+      const iso=esbbDateISOCoachV2(d);
+      out.push({
+        id:(cat === "U21" ? "U21-" : "SEN-")+iso+"-"+w.jour.toUpperCase(),
+        categorie:cat,
+        titre:w.titre,
+        jour:w.jour,
+        date:esbbDateFRCoachV2(d),
+        dateISO:iso,
+        debut:w.debut,
+        fin:w.fin,
+        lieu:w.lieu,
+        type:"Entraînement"
+      });
+      d.setDate(d.getDate()+7);
+    }
+  });
+  return out.sort((a,b)=>String(a.dateISO).localeCompare(String(b.dateISO)) || String(a.debut).localeCompare(String(b.debut)));
+}
+function esbbCoachSessionDateISO(session){
+  if(session.dateISO) return session.dateISO;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(String(session.date||""))) return session.date;
+  const m=String(session.date||"").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return m[3]+"-"+esbbPad2CoachV2(m[2])+"-"+esbbPad2CoachV2(m[1]);
+  return "";
+}
+function esbbIsPastCoachSessionV2(session){
+  const iso=esbbCoachSessionDateISO(session);
+  if(!iso) return false;
+  const d=new Date(iso+"T00:00:00");
+  const today=new Date(); today.setHours(0,0,0,0);
+  return d < today;
+}
+function esbbAllCoachSessionsV2(){
+  const cat = getCoachSelectedCategoryESBB();
+  let base = Array.isArray(REMOTE.creneaux) ? REMOTE.creneaux.slice() : [];
+  if(cat === "Seniors" || cat === "U21"){
+    const map = new Map();
+    [...base, ...esbbBuildSeniorCoachSessionsV2(8)].forEach(s=>{
+      const key = (s.id || "") + "|" + (s.dateISO || esbbCoachSessionDateISO(s)) + "|" + (s.titre || "") + "|" + (s.debut || "");
+      map.set(key, s);
+    });
+    base = [...map.values()];
+  }
+  return sortCreneauxCoach(base);
+}
+responseKeyCoachESBB = function(r){
+  return [
+    String(r.categorie || "").toLowerCase().trim(),
+    String(r.entrainementTitre || r.titre || "").toLowerCase().trim(),
+    String(r.jour || "").toLowerCase().trim(),
+    String(r.horaire || "").toLowerCase().trim(),
+    String(r.lieu || "").toLowerCase().trim(),
+    String(r.dateEntrainement || r.date || "").toLowerCase().trim(),
+    String(r.prenom || "").toLowerCase().trim(),
+    String(r.nom || "").toLowerCase().trim()
+  ].join("|");
+};
+sessionResponsePrefixCoachESBB = function(session){
+  return [
+    String(session.cat || session.categorie || "").toLowerCase().trim(),
+    String(session.title || session.titre || "").toLowerCase().trim(),
+    String(session.day || session.jour || "").toLowerCase().trim(),
+    String(session.time || session.horaire || "").toLowerCase().trim(),
+    String(session.place || session.lieu || "").toLowerCase().trim(),
+    String(session.dateEntrainement || session.dateISO || esbbCoachSessionDateISO(session) || "").toLowerCase().trim()
+  ].join("|");
+};
+renderConnectedSessions = function(){
+  const box=document.getElementById("sessionList");
+  if(!box) return;
+  box.innerHTML="";
+  const all = esbbAllCoachSessionsV2();
+  const archived = all.filter(esbbIsPastCoachSessionV2);
+  const list = all.filter(s => !esbbIsPastCoachSessionV2(s));
+  if(!list.length){
+    box.innerHTML = '<div class="notice">Aucun entraînement à venir affiché pour ce groupe.' + (archived.length ? ' ' + archived.length + ' ancien(s) créneau(x) restent archivé(s) dans le Sheet.' : '') + '</div>';
+    return;
+  }
+  if(archived.length){
+    const note=document.createElement("div");
+    note.className="notice";
+    note.textContent=archived.length + " ancien(s) créneau(x) masqué(s) de l’interface coach. Ils restent conservés dans le Google Sheet.";
+    box.appendChild(note);
+  }
+  list.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="session-card";
+    const dateISO = esbbCoachSessionDateISO(s);
+    const horaire = [s.debut,s.fin].filter(Boolean).join(" – ");
+    const titre = s.titre || "Entraînement";
+    const cat = s.categorie || (calendarCategory && calendarCategory.value) || "";
+    const responseCount = (REMOTE.reponses || []).filter(r =>
+      String(r.categorie || "") === String(cat || "") &&
+      String(r.entrainementTitre || "") === String(titre || "") &&
+      String(r.dateEntrainement || "") === String(dateISO || "")
+    ).length;
+    div.innerHTML=`<div class="top"><strong>${titre}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
+      <span class="compact-time">${[s.jour, s.date || "", horaire, s.lieu || ""].filter(Boolean).join(" · ")}</span>
+      <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span><span class="pill blue">${responseCount} réponse(s)</span></div>`;
+    div.onclick=()=>{
+      currentSession={cat:cat, id:s.id, title:titre, day:s.jour || "", time:horaire, place:s.lieu || "", dateEntrainement:dateISO};
+      sessionDetail.style.display="block";
+      sessionTitle.textContent=currentSession.title;
+      sessionInfo.textContent=[currentSession.day, s.date || "", currentSession.time, currentSession.place].filter(Boolean).join(" · ");
+      renderConnectedPresenceBoard();
+    };
+    box.appendChild(div);
+  });
+};
+
+refreshConnectedCoach();
+
 </script>
 </body>
 </html>
