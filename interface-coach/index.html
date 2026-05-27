@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -166,19 +165,6 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
   text-decoration:underline;
   text-underline-offset:3px;
 }
-
-
-.coach-response-badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  border-radius:999px;padding:7px 9px;font-size:11px;font-weight:1000;
-  border:1px solid rgba(0,57,20,.18);white-space:nowrap;
-}
-.coach-response-badge.present{background:var(--ok);color:#003914;border-color:#8bbf8c}
-.coach-response-badge.absent{background:var(--ko);color:#8a1f11;border-color:#e19b91}
-.coach-response-badge.wait{background:var(--warn);color:#8a5a05;border-color:#dfbd76}
-.coach-response-badge.none{background:#fff;color:var(--muted)}
-.response-meta{display:block;color:var(--muted);font-size:12px;font-weight:750;margin-top:3px}
-.session-card.active{border-color:#003914;box-shadow:0 0 0 3px rgba(0,57,20,.08)}
 
 </style>
 </head>
@@ -608,18 +594,9 @@ function nonResponders(){
 }
 function copyReminder(){
   if(!currentSession){toast("Choisissez un entraînement");return;}
-  const dateLabel = currentSessionDateLabel();
-  copyText(`Bonjour, rappel entraînement ${currentSession.title} : ${dateLabel} ${currentSession.time} à ${currentSession.place}. Merci d’indiquer présent ou absent.`, "Rappel copié");
+  copyText(`Bonjour, rappel entraînement ${currentSession.title} : ${currentSession.day} ${currentSession.time} à ${currentSession.place}. Merci d’indiquer présent ou absent.`, "Rappel copié");
 }
 function copyNonResponders(){
-  if(currentSession && currentSession.remoteId){
-    const names = connectedNonResponders();
-    const msg = names.length
-      ? "Relance réponses " + (currentSession.title || "entraînement") + " — " + currentSessionDateLabel() + " " + (currentSession.time || "") + " :\n" + names.join("\n")
-      : "Tout le monde a répondu.";
-    copyText(msg,"Relance copiée");
-    return;
-  }
   const names=nonResponders();
   const msg=names.length ? "Relance réponses :\n"+names.join("\n") : "Tout le monde a répondu.";
   copyText(msg,"Relance copiée");
@@ -735,51 +712,20 @@ function renderFavoriteBar(){
   add.onclick = () => toggleFavoriteTeam(current);
   box.appendChild(add);
 }
-function parseCoachDateValue(value){
-  const raw = String(value || "").trim();
-  if(!raw) return 0;
-
-  let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime();
-
-  m = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
-  if(m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])).getTime();
-
-  const t = Date.parse(raw);
-  return isNaN(t) ? 0 : t;
-}
-function formatCoachDate(value){
-  const raw = String(value || "").trim();
-  if(!raw) return "";
-
-  let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(m) return `${m[3]}/${m[2]}/${m[1]}`;
-
-  m = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
-  if(m) return `${String(m[1]).padStart(2,"0")}/${String(m[2]).padStart(2,"0")}/${m[3]}`;
-
-  return raw;
-}
 function sortCreneauxCoach(list){
   return [...(list || [])].sort((a,b)=>{
-    const dateA = parseCoachDateValue(a.date);
-    const dateB = parseCoachDateValue(b.date);
     const da = DAY_ORDER[a.jour] || 99;
     const db = DAY_ORDER[b.jour] || 99;
     const ta = String(a.debut || "").replace("h",":");
     const tb = String(b.debut || "").replace("h",":");
-    return (dateA - dateB) || da - db || ta.localeCompare(tb);
+    return da - db || ta.localeCompare(tb);
   });
 }
 function compactCreneauLabel(s){
-  const jourDate = [s.jour || "", formatCoachDate(s.date)].filter(Boolean).join(" ");
+  const jour = s.jour || "";
   const horaire = [s.debut, s.fin].filter(Boolean).join("–");
   const lieu = s.lieu || "";
-  return [jourDate, horaire, lieu].filter(Boolean).join(" · ");
-}
-function currentSessionDateLabel(){
-  if(!currentSession) return "";
-  return [currentSession.day || "", currentSession.date || ""].filter(Boolean).join(" ").trim();
+  return [jour, horaire, lieu].filter(Boolean).join(" · ");
 }
 function updatePlayerCounters(){
   const total = document.querySelectorAll("#playerList input[type='checkbox']").length;
@@ -793,44 +739,102 @@ document.addEventListener("change", e=>{
 
 /* ===== CONNEXION GOOGLE SHEET — LECTURE SEULE ===== */
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
-let REMOTE = {licencies:[], essais:[], creneaux:[]};
-let TRAINING_RESPONSES = [];
+let REMOTE = {licencies:[], essais:[], creneaux:[], reponses:[]};
+
+
+function parseCoachDateESBB(value){
+  if(!value) return null;
+  if(Object.prototype.toString.call(value) === "[object Date]") return value;
+  const str = String(value || "").trim();
+  const fr = str.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if(fr) return new Date(Number(fr[3]), Number(fr[2])-1, Number(fr[1]));
+  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(iso) return new Date(Number(iso[1]), Number(iso[2])-1, Number(iso[3]));
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+function isPastCoachSessionESBB(s){
+  const d = parseCoachDateESBB(s.date || s.dateEntrainement || s.dateSession || "");
+  if(!d) return false;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return d < today;
+}
+function responseKeyCoachESBB(r){
+  return [
+    String(r.categorie || "").toLowerCase().trim(),
+    String(r.entrainementTitre || r.titre || "").toLowerCase().trim(),
+    String(r.jour || "").toLowerCase().trim(),
+    String(r.horaire || "").toLowerCase().trim(),
+    String(r.lieu || "").toLowerCase().trim(),
+    String(r.prenom || "").toLowerCase().trim(),
+    String(r.nom || "").toLowerCase().trim()
+  ].join("|");
+}
+function sessionResponsePrefixCoachESBB(session){
+  return [
+    String(session.cat || session.categorie || "").toLowerCase().trim(),
+    String(session.title || session.titre || "").toLowerCase().trim(),
+    String(session.day || session.jour || "").toLowerCase().trim(),
+    String(session.time || session.horaire || "").toLowerCase().trim(),
+    String(session.place || session.lieu || "").toLowerCase().trim()
+  ].join("|");
+}
+function normalizeResponseCoachESBB(value){
+  const v = String(value || "").toLowerCase();
+  if(v.includes("présent") || v.includes("present")) return "present";
+  if(v.includes("absent")) return "absent";
+  if(v.includes("confirmer") || v.includes("attente") || v.includes("wait")) return "wait";
+  return "";
+}
+function getRemotePresenceForPlayerESBB(playerName){
+  if(!currentSession || !Array.isArray(REMOTE.reponses)) return "";
+  const prefix = sessionResponsePrefixCoachESBB(currentSession);
+  const name = String(playerName || "").toLowerCase().trim();
+  const r = REMOTE.reponses.slice().reverse().find(x => {
+    const full = [x.prenom, x.nom].filter(Boolean).join(" ").toLowerCase().trim();
+    return responseKeyCoachESBB(x).startsWith(prefix) && full === name;
+  });
+  return r ? normalizeResponseCoachESBB(r.reponse || r.presence || r.statut) : "";
+}
+function getCoachSelectedCategoryESBB(){
+  const essaisPanelActive = document.getElementById("panel-essais") && document.getElementById("panel-essais").classList.contains("active");
+  if (essaisPanelActive && document.getElementById("essaisCategory")) return essaisCategory.value || "U9";
+  if (document.getElementById("calendarCategory") && calendarCategory.value) return calendarCategory.value;
+  if (document.getElementById("coachCategory") && coachCategory.value) return coachCategory.value;
+  return "U13M";
+}
 
 async function loadCoachRemoteData(){
-  let cat = "U13M";
-
-  const essaisPanelActive = document.getElementById("panel-essais") && document.getElementById("panel-essais").classList.contains("active");
-
-  if (essaisPanelActive && document.getElementById("essaisCategory")) {
-    cat = essaisCategory.value || "U9";
-  } else if (document.getElementById("calendarCategory") && calendarCategory.value) {
-    cat = calendarCategory.value;
-  } else if (document.getElementById("coachCategory") && coachCategory.value) {
-    cat = coachCategory.value;
-  }
+  const cat = getCoachSelectedCategoryESBB();
 
   const status = document.getElementById("remoteStatus");
   if(status) status.textContent = "Chargement des données " + cat + "...";
 
   try{
-    const [coachRes, responsesRes] = await Promise.all([
-      fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now()),
-      fetch(WEB_APP_URL + "?action=getTrainingResponsesCoachESBB&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now())
-    ]);
+    const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
+    const json = await res.json();
 
-    const json = await coachRes.json();
-    const responseJson = await responsesRes.json();
+    let reponses = [];
+    try{
+      const resRep = await fetch(WEB_APP_URL + "?action=getTrainingResponsesCoachESBB&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
+      const jsonRep = await resRep.json();
+      if(jsonRep && jsonRep.ok){
+        reponses = Array.isArray(jsonRep.reponses) ? jsonRep.reponses : (Array.isArray(jsonRep.data) ? jsonRep.data : []);
+      }
+    }catch(e){}
 
     if(json && json.ok){
       REMOTE = {
         licencies: Array.isArray(json.licencies) ? json.licencies : [],
         essais: Array.isArray(json.essais) ? json.essais : [],
-        creneaux: Array.isArray(json.creneaux) ? json.creneaux : []
+        creneaux: Array.isArray(json.creneaux) ? json.creneaux : [],
+        reponses: reponses
       };
-      TRAINING_RESPONSES = responseJson && Array.isArray(responseJson.responses) ? responseJson.responses : [];
 
       if(status) {
-        status.textContent = "Données chargées " + cat + " : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x), " + TRAINING_RESPONSES.length + " réponse(s).";
+        status.textContent = "Données chargées " + cat + " : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x), " + REMOTE.reponses.length + " réponse(s).";
       }
 
       return true;
@@ -841,81 +845,13 @@ async function loadCoachRemoteData(){
     if(status) status.textContent = "Impossible de charger les données. Vérifier le déploiement Apps Script.";
   }
 
-  REMOTE = {licencies:[], essais:[], creneaux:[]};
-  TRAINING_RESPONSES = [];
+  REMOTE = {licencies:[], essais:[], creneaux:[], reponses:[]};
   return false;
 }
 
 function coachPlayerName(p){
   return [p.prenom, p.nom].filter(Boolean).join(" ").trim() || p.name || "Licencié";
 }
-
-function normalizeCoachText(value){
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-function sessionIdCoach(s){
-  return String(s.id || s.idCreneau || s.ID_CRENEAU || "").trim();
-}
-function responseValueCoach(r){
-  const v = String(r && r.reponse || "").trim().toLowerCase();
-  if(v === "présent" || v === "present") return "present";
-  if(v === "absent") return "absent";
-  if(v === "à confirmer" || v === "a confirmer") return "wait";
-  return "";
-}
-function responseLabelCoach(v){
-  if(v === "present") return "Présent";
-  if(v === "absent") return "Absent";
-  if(v === "wait") return "À confirmer";
-  return "Pas répondu";
-}
-function responseClassCoach(v){
-  if(v === "present") return "present";
-  if(v === "absent") return "absent";
-  if(v === "wait") return "wait";
-  return "none";
-}
-function responsePlayerKeyCoach(r){
-  return normalizeCoachText([r.prenom, r.nom].filter(Boolean).join(" "));
-}
-function playerKeyCoach(p){
-  return normalizeCoachText(coachPlayerName(p));
-}
-function latestResponsesByPlayerForSession(sessionId){
-  const map = new Map();
-  TRAINING_RESPONSES
-    .filter(r => String(r.idCreneau || "").trim() === String(sessionId || "").trim())
-    .forEach(r => {
-      const key = responsePlayerKeyCoach(r);
-      if(key) map.set(key, r);
-    });
-  return map;
-}
-function metricsForSessionCoach(sessionId){
-  const responses = latestResponsesByPlayerForSession(sessionId);
-  let present = 0, absent = 0, wait = 0;
-  responses.forEach(r => {
-    const v = responseValueCoach(r);
-    if(v === "present") present++;
-    if(v === "absent") absent++;
-    if(v === "wait") wait++;
-  });
-  const none = Math.max((REMOTE.licencies || []).length - present - absent - wait, 0);
-  return {present, absent, wait, none, totalResponses: responses.size};
-}
-function connectedNonResponders(){
-  if(!currentSession || !currentSession.remoteId) return [];
-  const responses = latestResponsesByPlayerForSession(currentSession.remoteId);
-  return (REMOTE.licencies || [])
-    .filter(p => !responses.has(playerKeyCoach(p)))
-    .map(p => coachPlayerName(p));
-}
-
 
 function renderConnectedPlayers(){
   const box = document.getElementById("playerList");
@@ -942,40 +878,32 @@ function renderConnectedSessions(){
   const box=document.getElementById("sessionList");
   if(!box) return;
   box.innerHTML="";
-  const list = sortCreneauxCoach(REMOTE.creneaux);
+  const all = sortCreneauxCoach(REMOTE.creneaux);
+  const archived = all.filter(isPastCoachSessionESBB);
+  const list = all.filter(s => !isPastCoachSessionESBB(s));
   if(!list.length){
-    box.innerHTML = '<div class="notice">Aucun entraînement affiché pour ce groupe.</div>';
+    box.innerHTML = '<div class="notice">Aucun entraînement à venir affiché pour ce groupe.' + (archived.length ? ' ' + archived.length + ' ancien(s) créneau(x) restent archivé(s) dans le Sheet.' : '') + '</div>';
     return;
   }
+  if(archived.length){
+    const note=document.createElement("div");
+    note.className="notice";
+    note.textContent=archived.length + " ancien(s) créneau(x) masqué(s) de l’interface coach. Ils restent conservés dans le Google Sheet.";
+    box.appendChild(note);
+  }
   list.forEach(s=>{
-    const id = sessionIdCoach(s);
-    const metrics = metricsForSessionCoach(id);
     const div=document.createElement("div");
-    div.className="session-card"+(currentSession && currentSession.remoteId === id ? " active" : "");
+    div.className="session-card";
     const info = compactCreneauLabel(s);
-    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${[s.jour || "Créneau", formatCoachDate(s.date)].filter(Boolean).join(" ")}</span></div>
+    const responseCount = (REMOTE.reponses || []).filter(r => String(r.categorie || "") === String(s.categorie || calendarCategory.value || "") && String(r.entrainementTitre || "") === String(s.titre || "")).length;
+    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
       <span class="compact-time">${info}</span>
-      <div class="metrics">
-        <span class="pill">${metrics.present} présent(s)</span>
-        <span class="pill ko">${metrics.absent} absent(s)</span>
-        <span class="pill warn">${metrics.wait} à confirmer</span>
-        <span class="pill blue">${metrics.none} sans réponse</span>
-      </div>`;
+      <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span><span class="pill blue">${responseCount} réponse(s)</span></div>`;
     div.onclick=()=>{
-      currentSession={
-        cat:s.categorie || (calendarCategory && calendarCategory.value),
-        id:id,
-        remoteId:id,
-        title:s.titre || "Entraînement",
-        day:s.jour || "",
-        date:formatCoachDate(s.date),
-        time:[s.debut,s.fin].filter(Boolean).join(" – "),
-        place:s.lieu || ""
-      };
-      renderConnectedSessions();
+      currentSession={cat:s.categorie || (calendarCategory && calendarCategory.value), id:s.id, title:s.titre || "Entraînement", day:s.jour || "", time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu || ""};
       sessionDetail.style.display="block";
       sessionTitle.textContent=currentSession.title;
-      sessionInfo.textContent=[currentSessionDateLabel(),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
+      sessionInfo.textContent=[currentSession.day,currentSession.time,currentSession.place].filter(Boolean).join(" · ");
       renderConnectedPresenceBoard();
     };
     box.appendChild(div);
@@ -983,58 +911,39 @@ function renderConnectedSessions(){
 }
 
 function renderConnectedPresenceBoard(){
-  if(!currentSession || !currentSession.remoteId) return;
-  const players = REMOTE.licencies || [];
-  const responses = latestResponsesByPlayerForSession(currentSession.remoteId);
+  const players = REMOTE.licencies;
   presencePlayers.innerHTML="";
-
   if(!players.length){
     presencePlayers.innerHTML='<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
   }
-
   players.forEach(p=>{
     const name = coachPlayerName(p);
-    const response = responses.get(playerKeyCoach(p));
-    const value = responseValueCoach(response);
+    const v = getPresence(name) || getRemotePresenceForPlayerESBB(name);
     const row=document.createElement("div");
     row.className="player-row";
-    row.innerHTML=`<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""}</span>${response && response.dateReponse ? `<span class="response-meta">Réponse envoyée : ${response.dateReponse}</span>` : ""}</div>
+    row.innerHTML=`<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""}</span></div>
       <div class="actions">
-        <span class="coach-response-badge ${responseClassCoach(value)}">${responseLabelCoach(value)}</span>
+        <button class="${v==='present'?'selected ok':''}" onclick="setPresence('${name}','present')">Présent</button>
+        <button class="${v==='absent'?'selected ko':''}" onclick="setPresence('${name}','absent')">Absent</button>
+        <button class="${v==='wait'?'selected wait':''}" onclick="setPresence('${name}','wait')">À confirmer</button>
       </div>`;
     presencePlayers.appendChild(row);
   });
-
-  const m = metricsForSessionCoach(currentSession.remoteId);
-  countPresent.textContent=m.present;
-  countAbsent.textContent=m.absent;
-  countWait.textContent=m.wait;
-  countNone.textContent=m.none;
-
-  const presentNames = [];
-  const absentNames = [];
-  const waitNames = [];
-  responses.forEach(r => {
-    const name = [r.prenom, r.nom].filter(Boolean).join(" ").trim();
-    const v = responseValueCoach(r);
-    if(v === "present") presentNames.push(name);
-    if(v === "absent") absentNames.push(name);
-    if(v === "wait") waitNames.push(name);
+  let present=0, absent=0, wait=0;
+  players.forEach(p=>{
+    const name = coachPlayerName(p);
+    const v=getPresence(name) || getRemotePresenceForPlayerESBB(name);
+    if(v==="present") present++;
+    if(v==="absent") absent++;
+    if(v==="wait") wait++;
   });
-
-  const lines = [];
-  lines.push(`<strong>Réponses reçues</strong>`);
-  lines.push(`Présents : ${m.present}${presentNames.length ? " — " + presentNames.join(", ") : ""}`);
-  lines.push(`Absents : ${m.absent}${absentNames.length ? " — " + absentNames.join(", ") : ""}`);
-  lines.push(`À confirmer : ${m.wait}${waitNames.length ? " — " + waitNames.join(", ") : ""}`);
-  lines.push(`Sans réponse : ${m.none}`);
-
-  if(REMOTE.essais.length){
-    lines.push("<br><strong>Essais du groupe</strong>");
-    lines.push(REMOTE.essais.map(e => [e.prenom, e.nom].filter(Boolean).join(" ") + " · " + (e.creneau || "")).join("<br>"));
-  }
-
-  essaisForSession.innerHTML = lines.join("<br>");
+  countPresent.textContent=present;
+  countAbsent.textContent=absent;
+  countWait.textContent=wait;
+  countNone.textContent=Math.max(players.length-present-absent-wait,0);
+  essaisForSession.innerHTML = REMOTE.essais.length
+    ? "<strong>Essais du groupe</strong><br>" + REMOTE.essais.map(e => [e.prenom, e.nom].filter(Boolean).join(" ") + " · " + (e.creneau || "")).join("<br>")
+    : "Aucun essai affiché sur ce groupe.";
 }
 
 function trialKey(e){
