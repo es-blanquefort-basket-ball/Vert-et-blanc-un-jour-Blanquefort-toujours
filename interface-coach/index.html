@@ -95,6 +95,14 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 .tournament-link strong{display:block;color:var(--d);font-weight:1000}
 .tournament-link span{display:block;color:var(--muted);font-size:13px;font-weight:700}
 .notice{padding:12px;border-radius:14px;background:#fff7e6;border-left:5px solid #f0a500;color:#4d3510;font-weight:800;line-height:1.4;margin:10px 0}
+
+.esbb-month-card{border:1px solid rgba(0,57,20,.16);border-radius:16px;background:#fff;padding:13px;margin:10px 0;box-shadow:0 8px 18px rgba(0,31,12,.05)}
+.esbb-month-card h4{margin:0 0 6px;color:var(--d);font-size:17px;text-transform:uppercase;font-weight:1000}.esbb-month-card p{margin:0;color:var(--muted);font-weight:750;line-height:1.35}
+.esbb-usual-list{display:grid;gap:7px;margin:10px 0}.esbb-usual-line{padding:10px 11px;border-radius:12px;background:#f7fbf6;border:1px solid rgba(0,57,20,.12);font-weight:900;color:var(--d)}
+.esbb-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:10px}.esbb-day-head{text-align:center;font-size:11px;font-weight:1000;color:var(--muted);text-transform:uppercase}.esbb-day{min-height:42px;border:1px solid rgba(0,57,20,.16);border-radius:12px;background:#fff;color:var(--d);font-weight:1000;cursor:pointer}.esbb-day.empty{border:0;background:transparent;cursor:default}.esbb-day.has-session{background:#eaf4e9}.esbb-day.has-trial{box-shadow:0 0 0 2px rgba(0,57,20,.12) inset}.esbb-day.selected{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}
+.esbb-detail{margin-top:10px;padding:12px;border-radius:14px;background:#f7fbf6;border:1px solid rgba(0,57,20,.14)}.esbb-detail strong{display:block;color:var(--d);font-size:16px}.esbb-detail span{display:block;color:var(--muted);font-weight:800;margin-top:3px}.esbb-trial-badge{display:inline-flex;width:max-content;margin-top:8px;padding:6px 9px;border-radius:999px;background:#fff7e6;color:#8a5a05;border:1px solid rgba(138,90,5,.22);font-size:11px;font-weight:1000;text-transform:uppercase}.esbb-counts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.esbb-counts .pill{font-size:11px}
+@media(max-width:520px){.esbb-calendar-grid{gap:4px}.esbb-day{min-height:38px;font-size:12px}}
+
 .footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}
 
 @media(max-width:860px){
@@ -406,66 +414,58 @@ const PLAYERS = {
 };
 
 const SESSIONS = {
-  
-  U13M:[
-    {id:"ENT-U13M-MER", day:"Mercredi", time:"15h00 – 16h30", place:"Fongravey", title:"Entraînement U13M"},
-    {id:"ENT-U13M-VEN", day:"Vendredi", time:"18h00 – 19h30", place:"Lycée agricole", title:"Entraînement U13M"}
-  ],
-  U13F:[
-    {id:"ENT-U13F-MAR", day:"Mardi", time:"18h30 – 20h00", place:"Lycée agricole", title:"Collectif U13F"},
-    {id:"ENT-U13F-JEU", day:"Jeudi", time:"18h30 – 20h00", place:"Lycée agricole", title:"Entraînement U13F"}
-  ],
-  U15M:[
-    {id:"ENT-U15M-LUN", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey", title:"U15 / U18"},
-    {id:"ENT-U15M-MER", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy", title:"U15 / U18"},
-    {id:"ENT-U15M-VEN", day:"Vendredi", time:"19h30 – 21h00", place:"Lycée agricole", title:"Entraînement U15M"}
-  ],
-  U18M:[
-    {id:"ENT-U18M-LUN", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey", title:"U15 / U18"},
-    {id:"ENT-U18M-MER", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy", title:"U15 / U18"},
-    {id:"ENT-U18M-JEU", day:"Jeudi", time:"20h00 – 21h30", place:"Lycée agricole", title:"Entraînement U18M"}
-  ],
-  U21:[
-    {id:"ENT-U21-LUN", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy", title:"U21 / Seniors"}
-  ],
-  Seniors:[
-    {id:"ENT-SEN-LUN", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy", title:"U21 / Seniors"},
-    {id:"ENT-SEN-MER", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy", title:"Seniors M 1 + Seniors M 2"}
-  ],
-  Loisirs:[
-    {id:"ENT-LOISIRS-VEN", day:"Vendredi", time:"21h00 – 23h00", place:"Lycée agricole", title:"Loisirs"}
-  ]
+  U11:[{id:"ENT-U11-SAM-0606", day:"Samedi", time:"09h30 – 11h00", place:"Fongravey", title:"U11"}],
+  U13M:[{id:"ENT-U13M-SAM-0606", day:"Samedi", time:"11h00 – 13h00", place:"Fongravey", title:"U13M"},{id:"ENT-U13M-MER", day:"Mercredi", time:"15h00 – 16h30", place:"Fongravey", title:"U13M"},{id:"ENT-U13M-VEN", day:"Vendredi", time:"18h00 – 19h30", place:"Lycée agricole", title:"U13M"}],
+  U13F:[{id:"ENT-U13F-SAM-0606", day:"Samedi", time:"11h00 – 13h00", place:"Fongravey", title:"U13F"},{id:"ENT-U13F-MAR", day:"Mardi", time:"18h30 – 20h00", place:"Lycée agricole", title:"U13F"},{id:"ENT-U13F-JEU", day:"Jeudi", time:"18h30 – 20h00", place:"Lycée agricole", title:"U13F"}],
+  U15M:[{id:"ENT-U15M-SAM-0606", day:"Samedi", time:"13h00 – 14h30", place:"Fongravey", title:"U15M"},{id:"ENT-U15M-LUN", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey", title:"U15M"},{id:"ENT-U15M-MER", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy", title:"U15M"},{id:"ENT-U15M-VEN", day:"Vendredi", time:"19h30 – 21h00", place:"Lycée agricole", title:"U15M"}],
+  U18M:[{id:"ENT-U18M-LUN", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey", title:"U18M"},{id:"ENT-U18M-MER", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy", title:"U18M"},{id:"ENT-U18M-JEU", day:"Jeudi", time:"20h00 – 21h30", place:"Lycée agricole", title:"U18M"}],
+  U21:[{id:"ENT-U21-LUN", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy", title:"Seniors / U21"},{id:"ENT-U21-MER", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy", title:"Seniors / U21"}],
+  Seniors:[{id:"ENT-SEN-LUN", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy", title:"Seniors / U21"},{id:"ENT-SEN-MER", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy", title:"Seniors / U21"}],
+  Loisirs:[{id:"ENT-LOISIRS-VEN", day:"Vendredi", time:"21h00 – 23h00", place:"Lycée agricole", title:"Loisirs"}]
 };
 
-const ESSAIS = {
-  U5:[
-    {name:"Essai U5", info:"Mercredi · Fongravey"},
-    {name:"Essai U5 samedi", info:"Samedi 06/06 · Fongravey"}
-  ],
-  U7:[
-    {name:"Essai U7", info:"Mercredi · Fongravey"},
-    {name:"Essai U7 samedi", info:"Samedi 06/06 · Fongravey"}
-  ],
-  U9:[
-    {name:"Essai U9", info:"Mercredi · Fongravey"},
-    {name:"Essai U9 samedi", info:"Samedi 06/06 · Fongravey"}
-  ],
-  U11:[
-    {name:"Essai U11", info:"Mercredi · Fongravey"},
-    {name:"Essai U11 samedi", info:"Samedi 06/06 · Fongravey"}
-  ],
-  U13M:[
-    {name:"Essai U13M 1", info:"Samedi 06/06 · 10h00 · Port du Roy"},
-    {name:"Essai U13M 2", info:"Vendredi · 18h00 · Lycée agricole"}
-  ],
-  U13F:[
-    {name:"Essai U13F 1", info:"Samedi 06/06 · 10h00 · Port du Roy"}
-  ],
-  U15M:[
-    {name:"Essai U15M 1", info:"Samedi 06/06 · 10h00 · Port du Roy"}
-  ],
-  U18M:[], U21:[], Seniors:[], Loisirs:[]
+const ESBB_TRIAL_DATES = {
+  U11: {"2026-06-06":"Séance ouverte aux joueurs extérieurs"},
+  U13F: {"2026-06-06":"Séance ouverte aux joueurs extérieurs","2026-06-09":"Séance ouverte aux joueurs extérieurs"},
+  U13M: {"2026-06-06":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs"},
+  U15M: {"2026-06-06":"Séance ouverte aux joueurs extérieurs","2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs"},
+  U18M: {"2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs","2026-06-17":"Séance ouverte aux joueurs extérieurs"},
+  Seniors: {"2026-06-01":"Séance ouverte aux joueurs extérieurs","2026-06-03":"Séance ouverte aux joueurs extérieurs","2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs","2026-06-15":"Séance ouverte aux joueurs extérieurs","2026-06-17":"Séance ouverte aux joueurs extérieurs","2026-06-22":"Séance ouverte aux joueurs extérieurs","2026-06-24":"Séance ouverte aux joueurs extérieurs","2026-06-29":"Séance ouverte aux joueurs extérieurs","2026-07-01":"Séance ouverte aux joueurs extérieurs"},
+  U21: {"2026-06-01":"Séance ouverte aux joueurs extérieurs","2026-06-03":"Séance ouverte aux joueurs extérieurs","2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs","2026-06-15":"Séance ouverte aux joueurs extérieurs","2026-06-17":"Séance ouverte aux joueurs extérieurs","2026-06-22":"Séance ouverte aux joueurs extérieurs","2026-06-24":"Séance ouverte aux joueurs extérieurs","2026-06-29":"Séance ouverte aux joueurs extérieurs","2026-07-01":"Séance ouverte aux joueurs extérieurs"}
 };
+const ESBB_DAY_INDEX = {"Dimanche":0,"Lundi":1,"Mardi":2,"Mercredi":3,"Jeudi":4,"Vendredi":5,"Samedi":6};
+const ESBB_DAY_LABELS = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+function esbbIso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function esbbFr(d){return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");}
+function esbbLongFr(d){return ESBB_DAY_LABELS[d.getDay()]+" "+String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");}
+function esbbDatesForDay(day){
+  const res=[]; const wanted=ESBB_DAY_INDEX[day]; if(wanted===undefined) return res;
+  const start=new Date(2026,5,1), end=new Date(2026,6,1);
+  for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) if(d.getDay()===wanted) res.push(new Date(d));
+  return res;
+}
+function esbbDisplayGroup(cat){return cat==="Seniors"||cat==="U21"?"Seniors / U21":cat;}
+function esbbTrialOpen(cat, iso){
+  if(cat==="Seniors") return (ESBB_TRIAL_DATES.Seniors||{})[iso];
+  if(cat==="U21") return (ESBB_TRIAL_DATES.U21||{})[iso];
+  return (ESBB_TRIAL_DATES[cat]||{})[iso];
+}
+
+
+const ESSAIS = {
+  U5:[{name:"Essai U5", info:"Samedi 06/06 · 14h30–16h00 · Fongravey"}],
+  U7:[{name:"Essai U7", info:"Samedi 06/06 · 14h30–16h00 · Fongravey"}],
+  U9:[{name:"Essai U9", info:"Samedi 06/06 · 14h30–16h00 · Fongravey"}],
+  U11:[{name:"Essai U11", info:"Samedi 06/06 · 09h30–11h00 · Fongravey"}],
+  U13M:[{name:"Essai U13M", info:"Samedi 06/06 · 11h00–13h00 · Fongravey"},{name:"Essai U13M", info:"Mercredi 10/06 · Fongravey"}],
+  U13F:[{name:"Essai U13F", info:"Samedi 06/06 · 11h00–13h00 · Fongravey"},{name:"Essai U13F / U15F", info:"Mardi 09/06 · Lycée agricole"}],
+  U15M:[{name:"Essai U15M", info:"Samedi 06/06 · 13h00–14h30 · Fongravey"},{name:"Essai U15M", info:"Lundi 08/06 · Fongravey"},{name:"Essai U15M", info:"Mercredi 10/06 · Port du Roy"}],
+  U18M:[{name:"Essai U18M", info:"Lundi 08/06 · Fongravey"},{name:"Essai U18M", info:"Mercredi 10/06 · Port du Roy"},{name:"Essai U18M", info:"Mercredi 17/06 · Port du Roy"}],
+  U21:[{name:"Essai Seniors / U21", info:"Tous les lundis et mercredis · Port du Roy"}],
+  Seniors:[{name:"Essai Seniors / U21", info:"Tous les lundis et mercredis · Port du Roy"}],
+  Loisirs:[]
+};
+
 
 const TOURNOIS = [
   {title:"Tournoi U13 — lien à ajouter", info:"Catégories concernées : U13M / U13F", url:"#"},
@@ -511,21 +511,22 @@ function renderSessions(){
   const cat=calendarCategory.value;
   const box=sessionList;
   box.innerHTML="";
-  (SESSIONS[cat]||[]).forEach(s=>{
-    const metrics=getSessionMetrics(cat, s.id);
-    const div=document.createElement("div");
-    div.className="session-card"+(currentSession&&currentSession.id===s.id?" active":"");
-    div.innerHTML=`<div class="top"><strong>${s.title}</strong><span class="pill blue">${s.day}</span></div>
-      <span>${s.time} · ${s.place}</span>
-      <div class="metrics">
-        <span class="pill">${metrics.present} présents</span>
-        <span class="pill ko">${metrics.absent} absents</span>
-        <span class="pill warn">${metrics.none} sans réponse</span>
-      </div>`;
-    div.onclick=()=>selectSession(cat,s);
-    box.appendChild(div);
-  });
+  const items=SESSIONS[cat]||[];
+  if(!items.length){box.innerHTML='<div class="notice">Aucun entraînement affiché pour ce groupe.</div>';return;}
+  const card=document.createElement("div");card.className="esbb-month-card";
+  card.innerHTML=`<h4>${esbbDisplayGroup(cat)}</h4><p>Entraînements habituels</p><div class="esbb-usual-list">${items.map(i=>`<div class="esbb-usual-line">${i.day} ${i.time} — ${i.place}</div>`).join("")}</div><p><strong>Juin 2026</strong> · cliquez sur une date pour voir les réponses.</p>`;
+  const grid=document.createElement("div");grid.className="esbb-calendar-grid";["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d=>{const h=document.createElement("div");h.className="esbb-day-head";h.textContent=d;grid.appendChild(h);});
+  const first=new Date(2026,5,1), last=new Date(2026,6,1);for(let i=0;i<(first.getDay()+6)%7;i++){const e=document.createElement("button");e.type="button";e.className="esbb-day empty";e.disabled=true;grid.appendChild(e);}
+  for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){const iso=esbbIso(d);const sessions=items.filter(i=>ESBB_DAY_INDEX[i.day]===d.getDay());const trial=sessions.some(i=>esbbTrialOpen(cat,iso));const btn=document.createElement("button");btn.type="button";btn.className="esbb-day"+(sessions.length?" has-session":"")+(trial?" has-trial":"");btn.textContent=d.getDate();if(!sessions.length){btn.disabled=true;btn.style.opacity=.35;}else btn.onclick=()=>showCoachDayDetail(card,btn,cat,iso,new Date(d),sessions,trial);grid.appendChild(btn);}
+  card.appendChild(grid);const detail=document.createElement("div");detail.className="esbb-detail";detail.innerHTML="<span>Cliquez sur une date d’entraînement.</span>";card.appendChild(detail);box.appendChild(card);
 }
+function showCoachDayDetail(card, btn, cat, iso, date, sessions, hasTrial){
+  card.querySelectorAll(".esbb-day").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");
+  const s=sessions[0]; currentSession={cat,id:(s.id+"-"+iso),title:s.title,day:s.day,time:s.time,place:s.place,iso};
+  sessionDetail.style.display="block";sessionTitle.textContent=s.title;sessionInfo.textContent=`${esbbLongFr(date)} · ${s.time} · ${s.place}`;renderPresenceBoard();
+  card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(date)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${hasTrial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}`;
+}
+
 calendarCategory.addEventListener("change",()=>{currentSession=null;sessionDetail.style.display="none";renderSessions();});
 
 function selectSession(cat, session){
@@ -739,75 +740,20 @@ document.addEventListener("change", e=>{
 
 /* ===== CONNEXION GOOGLE SHEET — LECTURE SEULE ===== */
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2isdaOnCpljcE8I1RaBSp8Jflp8-LJjgUgHp8N0l57cV7wpkQvXV4GX01anp-6wJ6CA/exec";
-let REMOTE = {licencies:[], essais:[], creneaux:[], reponses:[]};
-
-
-function parseCoachDateESBB(value){
-  if(!value) return null;
-  if(Object.prototype.toString.call(value) === "[object Date]") return value;
-  const str = String(value || "").trim();
-  const fr = str.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
-  if(fr) return new Date(Number(fr[3]), Number(fr[2])-1, Number(fr[1]));
-  const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(iso) return new Date(Number(iso[1]), Number(iso[2])-1, Number(iso[3]));
-  const d = new Date(str);
-  return isNaN(d.getTime()) ? null : d;
-}
-function isPastCoachSessionESBB(s){
-  const d = parseCoachDateESBB(s.date || s.dateEntrainement || s.dateSession || "");
-  if(!d) return false;
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  d.setHours(0,0,0,0);
-  return d < today;
-}
-function responseKeyCoachESBB(r){
-  return [
-    String(r.categorie || "").toLowerCase().trim(),
-    String(r.entrainementTitre || r.titre || "").toLowerCase().trim(),
-    String(r.jour || "").toLowerCase().trim(),
-    String(r.horaire || "").toLowerCase().trim(),
-    String(r.lieu || "").toLowerCase().trim(),
-    String(r.prenom || "").toLowerCase().trim(),
-    String(r.nom || "").toLowerCase().trim()
-  ].join("|");
-}
-function sessionResponsePrefixCoachESBB(session){
-  return [
-    String(session.cat || session.categorie || "").toLowerCase().trim(),
-    String(session.title || session.titre || "").toLowerCase().trim(),
-    String(session.day || session.jour || "").toLowerCase().trim(),
-    String(session.time || session.horaire || "").toLowerCase().trim(),
-    String(session.place || session.lieu || "").toLowerCase().trim()
-  ].join("|");
-}
-function normalizeResponseCoachESBB(value){
-  const v = String(value || "").toLowerCase();
-  if(v.includes("présent") || v.includes("present")) return "present";
-  if(v.includes("absent")) return "absent";
-  if(v.includes("confirmer") || v.includes("attente") || v.includes("wait")) return "wait";
-  return "";
-}
-function getRemotePresenceForPlayerESBB(playerName){
-  if(!currentSession || !Array.isArray(REMOTE.reponses)) return "";
-  const prefix = sessionResponsePrefixCoachESBB(currentSession);
-  const name = String(playerName || "").toLowerCase().trim();
-  const r = REMOTE.reponses.slice().reverse().find(x => {
-    const full = [x.prenom, x.nom].filter(Boolean).join(" ").toLowerCase().trim();
-    return responseKeyCoachESBB(x).startsWith(prefix) && full === name;
-  });
-  return r ? normalizeResponseCoachESBB(r.reponse || r.presence || r.statut) : "";
-}
-function getCoachSelectedCategoryESBB(){
-  const essaisPanelActive = document.getElementById("panel-essais") && document.getElementById("panel-essais").classList.contains("active");
-  if (essaisPanelActive && document.getElementById("essaisCategory")) return essaisCategory.value || "U9";
-  if (document.getElementById("calendarCategory") && calendarCategory.value) return calendarCategory.value;
-  if (document.getElementById("coachCategory") && coachCategory.value) return coachCategory.value;
-  return "U13M";
-}
+let REMOTE = {licencies:[], essais:[], creneaux:[]};
 
 async function loadCoachRemoteData(){
-  const cat = getCoachSelectedCategoryESBB();
+  let cat = "U13M";
+
+  const essaisPanelActive = document.getElementById("panel-essais") && document.getElementById("panel-essais").classList.contains("active");
+
+  if (essaisPanelActive && document.getElementById("essaisCategory")) {
+    cat = essaisCategory.value || "U9";
+  } else if (document.getElementById("calendarCategory") && calendarCategory.value) {
+    cat = calendarCategory.value;
+  } else if (document.getElementById("coachCategory") && coachCategory.value) {
+    cat = coachCategory.value;
+  }
 
   const status = document.getElementById("remoteStatus");
   if(status) status.textContent = "Chargement des données " + cat + "...";
@@ -816,25 +762,15 @@ async function loadCoachRemoteData(){
     const res = await fetch(WEB_APP_URL + "?action=getCoachData&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
     const json = await res.json();
 
-    let reponses = [];
-    try{
-      const resRep = await fetch(WEB_APP_URL + "?action=getTrainingResponsesCoachESBB&categorie=" + encodeURIComponent(cat) + "&v=" + Date.now());
-      const jsonRep = await resRep.json();
-      if(jsonRep && jsonRep.ok){
-        reponses = Array.isArray(jsonRep.reponses) ? jsonRep.reponses : (Array.isArray(jsonRep.data) ? jsonRep.data : []);
-      }
-    }catch(e){}
-
     if(json && json.ok){
       REMOTE = {
         licencies: Array.isArray(json.licencies) ? json.licencies : [],
         essais: Array.isArray(json.essais) ? json.essais : [],
-        creneaux: Array.isArray(json.creneaux) ? json.creneaux : [],
-        reponses: reponses
+        creneaux: Array.isArray(json.creneaux) ? json.creneaux : []
       };
 
       if(status) {
-        status.textContent = "Données chargées " + cat + " : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x), " + REMOTE.reponses.length + " réponse(s).";
+        status.textContent = "Données chargées " + cat + " : " + REMOTE.licencies.length + " licencié(s), " + REMOTE.essais.length + " essai(s), " + REMOTE.creneaux.length + " créneau(x).";
       }
 
       return true;
@@ -845,7 +781,7 @@ async function loadCoachRemoteData(){
     if(status) status.textContent = "Impossible de charger les données. Vérifier le déploiement Apps Script.";
   }
 
-  REMOTE = {licencies:[], essais:[], creneaux:[], reponses:[]};
+  REMOTE = {licencies:[], essais:[], creneaux:[]};
   return false;
 }
 
@@ -878,36 +814,16 @@ function renderConnectedSessions(){
   const box=document.getElementById("sessionList");
   if(!box) return;
   box.innerHTML="";
-  const all = sortCreneauxCoach(REMOTE.creneaux);
-  const archived = all.filter(isPastCoachSessionESBB);
-  const list = all.filter(s => !isPastCoachSessionESBB(s));
-  if(!list.length){
-    box.innerHTML = '<div class="notice">Aucun entraînement à venir affiché pour ce groupe.' + (archived.length ? ' ' + archived.length + ' ancien(s) créneau(x) restent archivé(s) dans le Sheet.' : '') + '</div>';
-    return;
-  }
-  if(archived.length){
-    const note=document.createElement("div");
-    note.className="notice";
-    note.textContent=archived.length + " ancien(s) créneau(x) masqué(s) de l’interface coach. Ils restent conservés dans le Google Sheet.";
-    box.appendChild(note);
-  }
-  list.forEach(s=>{
-    const div=document.createElement("div");
-    div.className="session-card";
-    const info = compactCreneauLabel(s);
-    const responseCount = (REMOTE.reponses || []).filter(r => String(r.categorie || "") === String(s.categorie || calendarCategory.value || "") && String(r.entrainementTitre || "") === String(s.titre || "")).length;
-    div.innerHTML=`<div class="top"><strong>${s.titre || "Entraînement"}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
-      <span class="compact-time">${info}</span>
-      <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span><span class="pill blue">${responseCount} réponse(s)</span></div>`;
-    div.onclick=()=>{
-      currentSession={cat:s.categorie || (calendarCategory && calendarCategory.value), id:s.id, title:s.titre || "Entraînement", day:s.jour || "", time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu || ""};
-      sessionDetail.style.display="block";
-      sessionTitle.textContent=currentSession.title;
-      sessionInfo.textContent=[currentSession.day,currentSession.time,currentSession.place].filter(Boolean).join(" · ");
-      renderConnectedPresenceBoard();
-    };
-    box.appendChild(div);
-  });
+  const cat=(calendarCategory&&calendarCategory.value)||"";
+  const remoteList = sortCreneauxCoach(REMOTE.creneaux).map(s=>({id:s.id||[s.jour,s.debut,s.lieu].join("-"), title:s.titre||cat, day:s.jour||"", time:[s.debut,s.fin].filter(Boolean).join(" – "), place:s.lieu||"", raw:s}));
+  const list = remoteList.length ? remoteList : (SESSIONS[cat]||[]);
+  if(!list.length){box.innerHTML = '<div class="notice">Aucun entraînement affiché pour ce groupe.</div>';return;}
+  const card=document.createElement("div");card.className="esbb-month-card";
+  card.innerHTML=`<h4>${esbbDisplayGroup(cat)}</h4><p>Entraînements habituels</p><div class="esbb-usual-list">${list.map(i=>`<div class="esbb-usual-line">${i.day} ${i.time} — ${i.place}</div>`).join("")}</div><p><strong>Juin 2026</strong> · données licenciés : ${REMOTE.licencies.length} · essais : ${REMOTE.essais.length}</p>`;
+  const grid=document.createElement("div");grid.className="esbb-calendar-grid";["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d=>{const h=document.createElement("div");h.className="esbb-day-head";h.textContent=d;grid.appendChild(h);});
+  const first=new Date(2026,5,1), last=new Date(2026,6,1);for(let i=0;i<(first.getDay()+6)%7;i++){const e=document.createElement("button");e.type="button";e.className="esbb-day empty";e.disabled=true;grid.appendChild(e);}
+  for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){const iso=esbbIso(d);const sessions=list.filter(i=>ESBB_DAY_INDEX[i.day]===d.getDay());const trial=sessions.some(i=>esbbTrialOpen(cat,iso));const btn=document.createElement("button");btn.type="button";btn.className="esbb-day"+(sessions.length?" has-session":"")+(trial?" has-trial":"");btn.textContent=d.getDate();if(!sessions.length){btn.disabled=true;btn.style.opacity=.35;}else btn.onclick=()=>{card.querySelectorAll(".esbb-day").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");const ss=sessions[0];currentSession={cat,id:(ss.id+"-"+iso),title:ss.title,day:ss.day,time:ss.time,place:ss.place,iso};sessionDetail.style.display="block";sessionTitle.textContent=currentSession.title;sessionInfo.textContent=[esbbLongFr(d),currentSession.time,currentSession.place].filter(Boolean).join(" · ");renderConnectedPresenceBoard();card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(d)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${trial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="esbb-counts"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span></div>`;};grid.appendChild(btn);}
+  card.appendChild(grid);const detail=document.createElement("div");detail.className="esbb-detail";detail.innerHTML="<span>Cliquez sur une date d’entraînement.</span>";card.appendChild(detail);box.appendChild(card);
 }
 
 function renderConnectedPresenceBoard(){
@@ -918,7 +834,7 @@ function renderConnectedPresenceBoard(){
   }
   players.forEach(p=>{
     const name = coachPlayerName(p);
-    const v = getPresence(name) || getRemotePresenceForPlayerESBB(name);
+    const v = getPresence(name);
     const row=document.createElement("div");
     row.className="player-row";
     row.innerHTML=`<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""}</span></div>
@@ -931,8 +847,7 @@ function renderConnectedPresenceBoard(){
   });
   let present=0, absent=0, wait=0;
   players.forEach(p=>{
-    const name = coachPlayerName(p);
-    const v=getPresence(name) || getRemotePresenceForPlayerESBB(name);
+    const v=getPresence(coachPlayerName(p));
     if(v==="present") present++;
     if(v==="absent") absent++;
     if(v==="wait") wait++;
@@ -1032,137 +947,6 @@ refreshConnectedCoach();
 document.addEventListener("DOMContentLoaded", () => {
   refreshConnectedCoach();
 });
-
-/* ===== V2 — COACH : SÉANCES DATÉES SENIORS + ARCHIVE + LECTURE RÉPONSES PAR DATE ===== */
-function esbbPad2CoachV2(n){ return String(n).padStart(2,"0"); }
-function esbbDateISOCoachV2(d){ return d.getFullYear()+"-"+esbbPad2CoachV2(d.getMonth()+1)+"-"+esbbPad2CoachV2(d.getDate()); }
-function esbbDateFRCoachV2(d){ return esbbPad2CoachV2(d.getDate())+"/"+esbbPad2CoachV2(d.getMonth()+1)+"/"+d.getFullYear(); }
-function esbbBuildSeniorCoachSessionsV2(cat, weeks){
-  const selectedCat = String(cat || getCoachSelectedCategoryESBB() || "Seniors").trim();
-  const today = new Date(); today.setHours(0,0,0,0);
-  const end = new Date(today); end.setDate(end.getDate() + (weeks || 8) * 7);
-  const dayMap = {"Dimanche":0,"Lundi":1,"Mardi":2,"Mercredi":3,"Jeudi":4,"Vendredi":5,"Samedi":6};
-  const weekly = [
-    {titre:"U21 / Seniors — lundi", jour:"Lundi", debut:"21h00", fin:"23h00", lieu:"Port du Roy"},
-    {titre:"Seniors M 1 + Seniors M 2 — mercredi", jour:"Mercredi", debut:"20h30", fin:"22h30", lieu:"Port du Roy"}
-  ];
-  const out=[];
-  weekly.forEach(w=>{
-    const d=new Date(today);
-    d.setDate(d.getDate() + ((dayMap[w.jour] - d.getDay() + 7) % 7));
-    while(d <= end){
-      const iso=esbbDateISOCoachV2(d);
-      out.push({
-        id:(selectedCat === "U21" ? "U21-" : "SEN-")+iso+"-"+w.jour.toUpperCase(),
-        categorie:selectedCat,
-        titre:w.titre,
-        jour:w.jour,
-        date:esbbDateFRCoachV2(d),
-        dateISO:iso,
-        debut:w.debut,
-        fin:w.fin,
-        lieu:w.lieu,
-        type:"Entraînement"
-      });
-      d.setDate(d.getDate()+7);
-    }
-  });
-  return out.sort((a,b)=>String(a.dateISO).localeCompare(String(b.dateISO)) || String(a.debut).localeCompare(String(b.debut)));
-}
-function esbbCoachSessionDateISO(session){
-  if(session.dateISO) return session.dateISO;
-  if(/^\d{4}-\d{2}-\d{2}$/.test(String(session.date||""))) return session.date;
-  const m=String(session.date||"").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(m) return m[3]+"-"+esbbPad2CoachV2(m[2])+"-"+esbbPad2CoachV2(m[1]);
-  return "";
-}
-function esbbIsPastCoachSessionV2(session){
-  const iso=esbbCoachSessionDateISO(session);
-  if(!iso) return false;
-  const d=new Date(iso+"T00:00:00");
-  const today=new Date(); today.setHours(0,0,0,0);
-  return d < today;
-}
-function esbbAllCoachSessionsV2(){
-  const cat = getCoachSelectedCategoryESBB();
-  let base = Array.isArray(REMOTE.creneaux) ? REMOTE.creneaux.slice() : [];
-  if(cat === "Seniors" || cat === "U21"){
-    const map = new Map();
-    [...base, ...esbbBuildSeniorCoachSessionsV2(cat, 8)].forEach(s=>{
-      const key = (s.id || "") + "|" + (s.dateISO || esbbCoachSessionDateISO(s)) + "|" + (s.titre || "") + "|" + (s.debut || "");
-      map.set(key, s);
-    });
-    base = [...map.values()];
-  }
-  return sortCreneauxCoach(base);
-}
-responseKeyCoachESBB = function(r){
-  return [
-    String(r.categorie || "").toLowerCase().trim(),
-    String(r.entrainementTitre || r.titre || "").toLowerCase().trim(),
-    String(r.jour || "").toLowerCase().trim(),
-    String(r.horaire || "").toLowerCase().trim(),
-    String(r.lieu || "").toLowerCase().trim(),
-    String(r.dateEntrainement || r.date || "").toLowerCase().trim(),
-    String(r.prenom || "").toLowerCase().trim(),
-    String(r.nom || "").toLowerCase().trim()
-  ].join("|");
-};
-sessionResponsePrefixCoachESBB = function(session){
-  return [
-    String(session.cat || session.categorie || "").toLowerCase().trim(),
-    String(session.title || session.titre || "").toLowerCase().trim(),
-    String(session.day || session.jour || "").toLowerCase().trim(),
-    String(session.time || session.horaire || "").toLowerCase().trim(),
-    String(session.place || session.lieu || "").toLowerCase().trim(),
-    String(session.dateEntrainement || session.dateISO || esbbCoachSessionDateISO(session) || "").toLowerCase().trim()
-  ].join("|");
-};
-renderConnectedSessions = function(){
-  const box=document.getElementById("sessionList");
-  if(!box) return;
-  box.innerHTML="";
-  const all = esbbAllCoachSessionsV2();
-  const archived = all.filter(esbbIsPastCoachSessionV2);
-  const list = all.filter(s => !esbbIsPastCoachSessionV2(s));
-  if(!list.length){
-    box.innerHTML = '<div class="notice">Aucun entraînement à venir affiché pour ce groupe.' + (archived.length ? ' ' + archived.length + ' ancien(s) créneau(x) restent archivé(s) dans le Sheet.' : '') + '</div>';
-    return;
-  }
-  if(archived.length){
-    const note=document.createElement("div");
-    note.className="notice";
-    note.textContent=archived.length + " ancien(s) créneau(x) masqué(s) de l’interface coach. Ils restent conservés dans le Google Sheet.";
-    box.appendChild(note);
-  }
-  list.forEach(s=>{
-    const div=document.createElement("div");
-    div.className="session-card";
-    const dateISO = esbbCoachSessionDateISO(s);
-    const horaire = [s.debut,s.fin].filter(Boolean).join(" – ");
-    const titre = s.titre || "Entraînement";
-    const cat = s.categorie || (calendarCategory && calendarCategory.value) || "";
-    const responseCount = (REMOTE.reponses || []).filter(r =>
-      String(r.categorie || "") === String(cat || "") &&
-      String(r.entrainementTitre || "") === String(titre || "") &&
-      String(r.dateEntrainement || "") === String(dateISO || "")
-    ).length;
-    div.innerHTML=`<div class="top"><strong>${titre}</strong><span class="pill blue">${s.jour || "Créneau"}</span></div>
-      <span class="compact-time">${[s.jour, s.date || "", horaire, s.lieu || ""].filter(Boolean).join(" · ")}</span>
-      <div class="metrics"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s)</span><span class="pill blue">${responseCount} réponse(s)</span></div>`;
-    div.onclick=()=>{
-      currentSession={cat:cat, id:s.id, title:titre, day:s.jour || "", time:horaire, place:s.lieu || "", dateEntrainement:dateISO};
-      sessionDetail.style.display="block";
-      sessionTitle.textContent=currentSession.title;
-      sessionInfo.textContent=[currentSession.day, s.date || "", currentSession.time, currentSession.place].filter(Boolean).join(" · ");
-      renderConnectedPresenceBoard();
-    };
-    box.appendChild(div);
-  });
-};
-
-refreshConnectedCoach();
-
 </script>
 </body>
 </html>
