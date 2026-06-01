@@ -902,6 +902,37 @@ async function loadCoachRemoteData(){
   return false;
 }
 
+
+function esbbNormalizeKeyValue_(value){
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function esbbIsHiddenFromTraining(p){
+  if(!p) return false;
+  const candidates = [
+    p.nePasAfficherEntrainements,
+    p.nePasAfficherEntraînements,
+    p.ne_pas_afficher_entrainements,
+    p.ne_pas_afficher_entraînements,
+    p["Ne pas afficher entrainements"],
+    p["Ne pas afficher entraînements"],
+    p["ne pas afficher entrainements"],
+    p["ne pas afficher entraînements"]
+  ];
+  return candidates.some(v => {
+    const value = esbbNormalizeKeyValue_(v);
+    return value === "oui" || value === "yes" || value === "true" || value === "1";
+  });
+}
+
+function esbbTrainingPlayers(){
+  return (REMOTE.licencies || []).filter(p => !esbbIsHiddenFromTraining(p));
+}
+
 function coachPlayerName(p){
   return [p.prenom, p.nom].filter(Boolean).join(" ").trim() || p.name || "Licencié";
 }
@@ -911,7 +942,7 @@ function renderConnectedPlayers(){
   if(!box) return;
   box.innerHTML = "";
   const search = ((document.getElementById("playerSearch") && playerSearch.value) || "").toLowerCase();
-  const list = REMOTE.licencies.filter(p => coachPlayerName(p).toLowerCase().includes(search));
+  const list = esbbTrainingPlayers().filter(p => coachPlayerName(p).toLowerCase().includes(search));
   if(!list.length){
     box.innerHTML = '<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
     updatePlayerCounters();
@@ -942,7 +973,7 @@ function renderConnectedSessions(){
 
   const card=document.createElement("div");
   card.className="esbb-month-card";
-  card.innerHTML=`<h4>${esbbDisplayGroup(cat)}</h4><p>Entraînements habituels</p><div class="esbb-usual-list">${list.map(i=>`<div class="esbb-usual-line">${esbbUsualLabel(i)}</div>`).join("")}</div><p><strong>Juin 2026</strong> · données licenciés : ${REMOTE.licencies.length} · cliquez sur une date.</p>`;
+  card.innerHTML=`<h4>${esbbDisplayGroup(cat)}</h4><p>Entraînements habituels</p><div class="esbb-usual-list">${list.map(i=>`<div class="esbb-usual-line">${esbbUsualLabel(i)}</div>`).join("")}</div><p><strong>Juin 2026</strong> · données licenciés : ${esbbTrainingPlayers().length} · cliquez sur une date.</p>`;
 
   const grid=document.createElement("div");
   grid.className="esbb-calendar-grid";
@@ -972,7 +1003,7 @@ function renderConnectedSessions(){
         sessionTitle.textContent=currentSession.title;
         sessionInfo.textContent=[esbbLongFr(d),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
         renderConnectedPresenceBoard();
-        card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(d)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${trial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="esbb-counts"><span class="pill">${REMOTE.licencies.length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s) inscrit(s)</span></div>`;
+        card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(d)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${trial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="esbb-counts"><span class="pill">${esbbTrainingPlayers().length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s) inscrit(s)</span></div>`;
       };
     }
     grid.appendChild(btn);
@@ -986,7 +1017,7 @@ function renderConnectedSessions(){
 }
 
 function renderConnectedPresenceBoard(){
-  const players = REMOTE.licencies;
+  const players = esbbTrainingPlayers();
   presencePlayers.innerHTML="";
   if(!players.length){
     presencePlayers.innerHTML='<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
