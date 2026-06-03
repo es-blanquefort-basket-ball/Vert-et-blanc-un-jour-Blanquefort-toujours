@@ -537,36 +537,15 @@ function selectSession(cat, session){
   renderPresenceBoard();
 }
 function createPresenceRequest(){
-  if(!currentSession){
-    toast("Choisissez un entraînement");
-    return;
-  }
-
-  // Si les vrais licenciés sont chargés depuis Google Sheet,
-  // on ouvre les présences sans revenir aux joueurs génériques.
-  if (REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
-    renderConnectedPresenceBoard();
-  } else {
-    // Affichage de secours si aucune donnée Sheet n'est disponible.
-    renderPresenceBoard();
-  }
-
+  if(!currentSession){toast("Choisissez un entraînement");return;}
+  renderPresenceBoard();
   toast("Présences ouvertes");
 }
 function playerKey(sessionId, name){return sessionId+"::"+name;}
 function setPresence(name, value){
   if(!currentSession) return;
-
-  presence[playerKey(currentSession.id, name)] = value;
-
-  // Si les vrais licenciés sont chargés depuis Google Sheet,
-  // on reste sur l'affichage connecté.
-  if (REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
-    renderConnectedPresenceBoard();
-  } else {
-    // Sinon, on garde l'ancien affichage de secours.
-    renderPresenceBoard();
-  }
+  presence[playerKey(currentSession.id,name)]=value;
+  renderPresenceBoard();
 }
 function getPresence(name){
   if(!currentSession) return "";
