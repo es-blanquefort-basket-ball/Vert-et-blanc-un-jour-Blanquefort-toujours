@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -798,15 +797,33 @@ function selectSession(cat, session){
   renderPresenceBoard();
 }
 function createPresenceRequest(){
-  if(!currentSession){toast("Choisissez un entraînement");return;}
-  renderPresenceBoard();
+  if(!currentSession){
+    toast("Choisissez un entraînement");
+    return;
+  }
+
+  // Version connectée : on garde les vrais licenciés chargés depuis Google Sheet.
+  if (typeof renderConnectedPresenceBoard === "function" && REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
+    renderConnectedPresenceBoard();
+  } else {
+    // Secours uniquement si aucune donnée Sheet n'est chargée.
+    renderPresenceBoard();
+  }
+
   toast("Présences ouvertes");
 }
 function playerKey(sessionId, name){return sessionId+"::"+name;}
 function setPresence(name, value){
   if(!currentSession) return;
-  presence[playerKey(currentSession.id,name)]=value;
-  renderPresenceBoard();
+
+  presence[playerKey(currentSession.id, name)] = value;
+
+  // Ne pas revenir aux joueurs génériques après un clic Présent / Absent.
+  if (typeof renderConnectedPresenceBoard === "function" && REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
+    renderConnectedPresenceBoard();
+  } else {
+    renderPresenceBoard();
+  }
 }
 function getPresence(name){
   if(!currentSession) return "";
