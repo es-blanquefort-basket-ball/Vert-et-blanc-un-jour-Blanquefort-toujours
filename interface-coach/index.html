@@ -813,10 +813,52 @@ function createPresenceRequest(){
   toast("Présences ouvertes");
 }
 function playerKey(sessionId, name){return sessionId+"::"+name;}
+function esbbFindPresencePlayerByName(name){
+  try{
+    return esbbTrainingPlayers().find(p => coachPlayerName(p) === name) || {};
+  }catch(e){ return {}; }
+}
+function esbbPresenceLibelle(value){
+  if(value === "present") return "Présent";
+  if(value === "absent") return "Absent";
+  if(value === "wait") return "À confirmer";
+  return value || "";
+}
+async function esbbSavePresenceEntrainement(name, value){
+  if(!currentSession || !WEB_APP_URL) return;
+  const p = esbbFindPresencePlayerByName(name);
+  const data = {
+    typePresence:"Entraînement",
+    statut: esbbPresenceLibelle(value),
+    statutCode: value,
+    nom: p.nom || "",
+    prenom: p.prenom || "",
+    joueur: name,
+    licence: p.licence || p.numeroLicence || p["N° licence"] || "",
+    categorie: currentSession.cat || p.categorie || "",
+    idCreneau: currentSession.id || "",
+    titreCreneau: currentSession.title || "",
+    dateSeance: currentSession.iso || "",
+    jour: currentSession.day || "",
+    horaire: currentSession.time || "",
+    lieu: currentSession.place || "",
+    source:"Portail coachs",
+    horodatage:new Date().toISOString()
+  };
+  await fetch(WEB_APP_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action:"savePresenceEntrainement", data})
+  });
+}
 function setPresence(name, value){
   if(!currentSession) return;
 
   presence[playerKey(currentSession.id, name)] = value;
+  esbbSavePresenceEntrainement(name, value)
+    .then(()=>toast("Présence envoyée"))
+    .catch(()=>toast("Présence cochée, envoi à vérifier"));
 
   // Ne pas revenir aux joueurs génériques après un clic Présent / Absent.
   if (typeof renderConnectedPresenceBoard === "function" && REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
@@ -1374,8 +1416,54 @@ async function esbbSaveCoachQuickAdd(){
 function trialKey(e){
   return "TRIAL::" + [e.id || e.idEssai || "", e.prenom || e["Prénom"] || "", e.nom || e["Nom"] || "", esbbTrialLabel(e)].filter(Boolean).join("|");
 }
+function esbbTrialPresenceLibelle(value){
+  if(value === "present") return "Présent";
+  if(value === "absent") return "Absent";
+  if(value === "follow") return "À rappeler";
+  return value || "";
+}
+function esbbFindTrialByKey(key){
+  try{
+    return (REMOTE.essais || []).find(e => trialKey(e) === key) || {};
+  }catch(e){ return {}; }
+}
+async function esbbSaveTrialPresence(key, value){
+  if(!WEB_APP_URL) return;
+  const e = esbbFindTrialByKey(key);
+  const name = esbbTrialDisplayName(e);
+  const data = {
+    typePresence:"Essai",
+    statut: esbbTrialPresenceLibelle(value),
+    statutCode: value,
+    nom: e.nom || e["Nom"] || "",
+    prenom: e.prenom || e["Prénom"] || e["Prenom"] || "",
+    joueur: name,
+    licence:"",
+    categorie: esbbTrialCategory(e) || (currentSession && currentSession.cat) || "",
+    idCreneau: currentSession ? (currentSession.id || "") : "",
+    titreCreneau: currentSession ? (currentSession.title || "") : "",
+    dateSeance: currentSession ? (currentSession.iso || "") : esbbTrialDateIso(e),
+    jour: currentSession ? (currentSession.day || "") : "",
+    horaire: currentSession ? (currentSession.time || "") : "",
+    lieu: currentSession ? (currentSession.place || "") : (e.lieu || ""),
+    telephone: e.telephone || e.téléphone || "",
+    email: e.email || e.mail || "",
+    commentaire: localStorage.getItem(key + "::note") || "",
+    source:"Portail coachs · essais",
+    horodatage:new Date().toISOString()
+  };
+  await fetch(WEB_APP_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action:"savePresenceEntrainement", data})
+  });
+}
 function setTrialStatus(key, value, btn){
   localStorage.setItem(key + "::status", value);
+  esbbSaveTrialPresence(key, value)
+    .then(()=>toast("Présence essai envoyée"))
+    .catch(()=>toast("Essai coché, envoi à vérifier"));
   const wrap = btn.closest(".player-row");
   wrap.querySelectorAll(".trial-actions button").forEach(b=>b.classList.remove("selected","ok","ko","wait"));
   btn.classList.add("selected", value==="present"?"ok":value==="absent"?"ko":"wait");
