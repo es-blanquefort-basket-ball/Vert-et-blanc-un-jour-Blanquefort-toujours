@@ -262,6 +262,12 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
   .coach-form-grid .full{grid-column:auto}
 }
 
+
+.esbb-inline-trials{display:grid;gap:8px;margin-top:10px}
+.esbb-inline-trials .player-row{grid-template-columns:1fr auto}
+.esbb-inline-trials-title{display:block;margin-top:10px;color:var(--d);font-weight:1000;text-transform:uppercase;font-size:13px}
+.esbb-session-counts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
 </style>
 </head>
 <body>
@@ -1110,13 +1116,15 @@ function renderConnectedSessions(){
   for(let i=0;i<(first.getDay()+6)%7;i++){const e=document.createElement("button");e.type="button";e.className="esbb-day empty";e.disabled=true;grid.appendChild(e);}
 
   for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){
-    const iso=esbbIso(d);
-    const sessions=list.filter(i=>esbbSessionMatchesDate(i,d,iso));
-    const trial=esbbSessionHasTrial(cat, iso, sessions);
+    const dateCopy = new Date(d.getTime());
+    const iso=esbbIso(dateCopy);
+    const sessions=list.filter(i=>esbbSessionMatchesDate(i,dateCopy,iso));
+    const trialsForDate=esbbTrialsForSession(cat, iso);
+    const trial=esbbSessionHasTrial(cat, iso, sessions) || trialsForDate.length > 0;
     const btn=document.createElement("button");
     btn.type="button";
     btn.className="esbb-day"+(sessions.length?" has-session":"")+(trial?" has-trial":"");
-    btn.textContent=d.getDate();
+    btn.textContent=dateCopy.getDate();
     if(!sessions.length){
       btn.disabled=true;
       btn.style.opacity=.35;
@@ -1128,9 +1136,10 @@ function renderConnectedSessions(){
         currentSession={cat,id:(ss.id+"-"+iso),title:ss.title,day:ss.day,time:ss.time,place:ss.place,iso};
         sessionDetail.style.display="block";
         sessionTitle.textContent=currentSession.title;
-        sessionInfo.textContent=[esbbLongFr(d),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
+        sessionInfo.textContent=[esbbLongFr(dateCopy),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
         renderConnectedPresenceBoard();
-        card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(d)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${trial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="esbb-counts"><span class="pill">${esbbTrainingPlayers().length} licencié(s)</span><span class="pill warn">${REMOTE.essais.length} essai(s) inscrit(s)</span></div>`;
+        const filteredTrials = esbbTrialsForSession(cat, iso);
+        card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(dateCopy)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${trial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="esbb-session-counts"><span class="pill">${esbbTrainingPlayers().length} licencié(s)</span><span class="pill warn">${filteredTrials.length} essai(s) inscrit(s)</span></div>`;
       };
     }
     grid.appendChild(btn);
@@ -1142,7 +1151,6 @@ function renderConnectedSessions(){
   card.appendChild(detail);
   box.appendChild(card);
 }
-
 function renderConnectedPresenceBoard(){
   const players = esbbTrainingPlayers();
   presencePlayers.innerHTML="";
@@ -1173,17 +1181,64 @@ function renderConnectedPresenceBoard(){
   countAbsent.textContent=absent;
   countWait.textContent=wait;
   countNone.textContent=Math.max(players.length-present-absent-wait,0);
-  const essaisDuJour = (REMOTE.essais || []).filter(e => {
-    if(!currentSession || !currentSession.iso) return true;
-    const label = String(e.creneau || e.creneauLabel || "");
-    const fr = currentSession.iso.split("-").reverse().join("/");
-    return label.includes(fr.slice(0,5)) || label.includes(fr) || !label;
-  });
-  essaisForSession.innerHTML = essaisDuJour.length
-    ? "<strong>Essais du créneau</strong><br>" + essaisDuJour.map(e => [e.prenom, e.nom].filter(Boolean).join(" ") + " · " + (e.creneau || e.creneauLabel || "")).join("<br>")
-    : "Aucun essai affiché sur ce créneau.";
+
+  const essaisDuJour = currentSession ? esbbTrialsForSession(currentSession.cat, currentSession.iso) : [];
+  if(essaisDuJour.length){
+    essaisForSession.innerHTML = '<strong>Essais du créneau</strong>' + esbbRenderTrialsInline(essaisDuJour);
+  }else{
+    essaisForSession.innerHTML = "Aucun essai affiché sur ce créneau.";
+  }
 }
 
+function esbbTrialCategory(e){
+  return esbbCleanCat(e.categorie || e.categorieAffichee || e.groupeEssai || e["Catégorie"] || e["Categorie"] || "");
+}
+function esbbTrialLabel(e){
+  return String(e.creneau || e.creneauLabel || e.dateEssai || e.date || e["Date essai choisie"] || e["Créneau"] || "");
+}
+function esbbTrialDateIso(e){
+  const direct = esbbDateValueToIso(e.dateEssai || e.dateSeance || e.date || e["Date"] || "");
+  if(direct) return direct;
+  const label = esbbTrialLabel(e);
+  const m = label.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/);
+  if(m){
+    const y = m[3] || "2026";
+    return y + "-" + m[2].padStart(2,"0") + "-" + m[1].padStart(2,"0");
+  }
+  return "";
+}
+function esbbSameTrialGroup(a,b){
+  const ca = esbbCleanCat(a);
+  const cb = esbbCleanCat(b);
+  if(!ca || !cb) return true;
+  if((ca === "Seniors" || ca === "U21") && (cb === "Seniors" || cb === "U21")) return true;
+  return ca === cb;
+}
+function esbbTrialsForSession(cat, iso){
+  return (REMOTE.essais || []).filter(e=>{
+    const dateIso = esbbTrialDateIso(e);
+    if(iso && dateIso && dateIso !== iso) return false;
+    if(iso && !dateIso){
+      const label = esbbTrialLabel(e);
+      const fr = iso.split("-").reverse().join("/");
+      const short = fr.slice(0,5);
+      if(label && !label.includes(fr) && !label.includes(short)) return false;
+    }
+    return esbbSameTrialGroup(cat, esbbTrialCategory(e));
+  });
+}
+function esbbEscapeAttr(v){return String(v || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function esbbTrialDisplayName(e){return [e.prenom || e["Prénom"] || e["Prenom"], e.nom || e["Nom"]].filter(Boolean).join(" ").trim() || "Joueur à l’essai";}
+function esbbRenderTrialsInline(trials){
+  return '<div class="esbb-inline-trials">' + trials.map(e=>{
+    const key = trialKey(e);
+    const status = localStorage.getItem(key + "::status") || "";
+    const note = localStorage.getItem(key + "::note") || "";
+    const name = esbbTrialDisplayName(e);
+    const info = [esbbTrialCategory(e), esbbTrialLabel(e), e.telephone || e.email].filter(Boolean).join(" · ");
+    return `<div class="player-row"><div><strong>${name}</strong><span>${info}</span><input class="trial-note" placeholder="Retour essai : niveau, attitude, à rappeler..." value="${esbbEscapeAttr(note)}" oninput="saveTrialNote('${key}', this.value)"></div><div class="trial-actions"><button class="${status==='present'?'selected ok':''}" onclick="setTrialStatus('${key}','present',this)">Présent</button><button class="${status==='absent'?'selected ko':''}" onclick="setTrialStatus('${key}','absent',this)">Absent</button><button class="${status==='follow'?'selected wait':''}" onclick="setTrialStatus('${key}','follow',this)">À rappeler</button></div></div>`;
+  }).join("") + '</div>';
+}
 
 /* ===== AJOUT COACH : ESSAI DIRECT / LICENCE À VÉRIFIER ===== */
 let esbbCoachAddMode = "";
@@ -1290,7 +1345,7 @@ async function esbbSaveCoachQuickAdd(){
 }
 
 function trialKey(e){
-  return "TRIAL::" + [e.id, e.prenom, e.nom, e.creneau].filter(Boolean).join("|");
+  return "TRIAL::" + [e.id || e.idEssai || "", e.prenom || e["Prénom"] || "", e.nom || e["Nom"] || "", esbbTrialLabel(e)].filter(Boolean).join("|");
 }
 function setTrialStatus(key, value, btn){
   localStorage.setItem(key + "::status", value);
@@ -1305,28 +1360,14 @@ function renderConnectedEssais(){
   const box=document.getElementById("essaisList");
   if(!box) return;
   box.innerHTML="";
-  if(document.getElementById("essaisTotal")) essaisTotal.textContent = REMOTE.essais.length + " essai" + (REMOTE.essais.length > 1 ? "s" : "");
-  if(!REMOTE.essais.length){
+  const cat = (document.getElementById("essaisCategory") && essaisCategory.value) || (calendarCategory && calendarCategory.value) || "";
+  const rows = (REMOTE.essais || []).filter(e => esbbSameTrialGroup(cat, esbbTrialCategory(e)));
+  if(document.getElementById("essaisTotal")) essaisTotal.textContent = rows.length + " essai" + (rows.length > 1 ? "s" : "");
+  if(!rows.length){
     box.innerHTML='<div class="notice">Aucun inscrit aux essais affiché pour ce groupe.</div>';
     return;
   }
-  REMOTE.essais.forEach(e=>{
-    const key = trialKey(e);
-    const status = localStorage.getItem(key + "::status") || "";
-    const note = localStorage.getItem(key + "::note") || "";
-    const row=document.createElement("div");
-    row.className="player-row";
-    const name=[e.prenom,e.nom].filter(Boolean).join(" ");
-    row.innerHTML=`<div><strong>${name}</strong><span>${e.categorie || ""} · ${e.creneau || ""}</span>
-      <input class="trial-note" placeholder="Retour essai : niveau, attitude, à rappeler..." value="${note.replace(/"/g,'&quot;')}" oninput="saveTrialNote('${key}', this.value)">
-      </div>
-      <div class="trial-actions">
-        <button class="${status==='present'?'selected ok':''}" onclick="setTrialStatus('${key}','present',this)">Présent</button>
-        <button class="${status==='absent'?'selected ko':''}" onclick="setTrialStatus('${key}','absent',this)">Absent</button>
-        <button class="${status==='follow'?'selected wait':''}" onclick="setTrialStatus('${key}','follow',this)">À rappeler</button>
-      </div>`;
-    box.appendChild(row);
-  });
+  box.innerHTML = esbbRenderTrialsInline(rows);
 }
 
 async function refreshConnectedCoach(){
