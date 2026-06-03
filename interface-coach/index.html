@@ -268,6 +268,11 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 .esbb-inline-trials-title{display:block;margin-top:10px;color:var(--d);font-weight:1000;text-transform:uppercase;font-size:13px}
 .esbb-session-counts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 
+
+.coach-add-actions.single{grid-template-columns:1fr}
+.coach-add-box-summary{margin-top:10px}
+.coach-add-box-essais{margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -332,9 +337,24 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <h3>Présences du groupe</h3>
 <p>Marquez les réponses connues ou préparez une relance.</p>
 <div id="presencePlayers" class="player-list"></div>
-<div class="coach-add-box">
-  <div class="coach-add-actions">
+</div>
+
+<div class="card">
+<h3>Résumé</h3>
+<div class="summary-box">
+<div class="summary-row"><span>Présents</span><strong id="countPresent">0</strong></div>
+<div class="summary-row"><span>Absents</span><strong id="countAbsent">0</strong></div>
+<div class="summary-row"><span>À confirmer</span><strong id="countWait">0</strong></div>
+<div class="summary-row"><span>Pas répondu</span><strong id="countNone">0</strong></div>
+</div>
+<div class="coach-add-box coach-add-box-summary">
+  <div class="coach-add-actions single">
     <button type="button" id="btnAddMissingPlayer" onclick="esbbOpenCoachAddForm('licence')">Ajouter un joueur présent non listé</button>
+  </div>
+</div>
+<div class="notice" id="essaisForSession">Aucun essai affiché sur ce créneau.</div>
+<div class="coach-add-box coach-add-box-essais">
+  <div class="coach-add-actions single">
     <button type="button" id="btnAddTrialPlayer" onclick="esbbOpenCoachAddForm('essai')">Ajouter un joueur à l’essai</button>
   </div>
 
@@ -370,17 +390,6 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
     <div id="coachAddStatus" class="coach-add-status"></div>
   </div>
 </div>
-
-</div>
-<div class="card">
-<h3>Résumé</h3>
-<div class="summary-box">
-<div class="summary-row"><span>Présents</span><strong id="countPresent">0</strong></div>
-<div class="summary-row"><span>Absents</span><strong id="countAbsent">0</strong></div>
-<div class="summary-row"><span>À confirmer</span><strong id="countWait">0</strong></div>
-<div class="summary-row"><span>Pas répondu</span><strong id="countNone">0</strong></div>
-</div>
-<div class="notice" id="essaisForSession">Aucun essai affiché sur ce créneau.</div>
 </div>
 </div>
 </div>
