@@ -174,6 +174,94 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
   text-underline-offset:3px;
 }
 
+
+
+/* ===== AJOUT COACH : JOUEUR NON LISTÉ / ESSAI DIRECT ===== */
+.coach-add-box{
+  margin-top:14px;
+  padding:13px;
+  border-radius:16px;
+  background:#f7fbf6;
+  border:1px solid rgba(0,57,20,.16);
+}
+.coach-add-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.coach-add-actions button{
+  min-height:42px;
+  border:1px solid rgba(0,57,20,.20);
+  border-radius:12px;
+  background:#fff;
+  color:#003914;
+  font-weight:1000;
+  cursor:pointer;
+}
+.coach-add-actions button.active{
+  background:linear-gradient(135deg,#003914,#001f0c);
+  color:#fff;
+  border-color:transparent;
+}
+.coach-quick-form{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid rgba(0,57,20,.14);
+}
+.coach-quick-form.visible{display:block}
+.coach-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.coach-form-grid .full{grid-column:1/-1}
+.coach-form-grid label{
+  display:block;
+  margin:0 0 5px;
+  color:#001f0c;
+  font-size:11px;
+  font-weight:1000;
+  text-transform:uppercase;
+}
+.coach-form-grid input,.coach-form-grid textarea{
+  width:100%;
+  min-height:40px;
+  padding:9px 10px;
+  border:1px solid rgba(0,57,20,.22);
+  border-radius:10px;
+  background:#fff;
+  color:#082313;
+  font-weight:750;
+}
+.coach-form-grid textarea{min-height:74px;resize:vertical}
+.coach-add-note{
+  margin:8px 0 0;
+  color:#56695c;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.35;
+}
+.coach-add-status{
+  display:none;
+  margin-top:10px;
+  padding:10px 11px;
+  border-radius:12px;
+  font-weight:900;
+  font-size:12px;
+  background:#eaf4e9;
+  color:#003914;
+  border:1px solid rgba(0,57,20,.16);
+}
+.coach-add-status.visible{display:block}
+.coach-add-status.error{background:#fff0ed;color:#8a1f11;border-color:rgba(180,35,24,.22)}
+@media(max-width:760px){
+  .coach-add-actions,.coach-form-grid{grid-template-columns:1fr}
+  .coach-form-grid .full{grid-column:auto}
+}
+
 </style>
 </head>
 <body>
@@ -238,6 +326,45 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <h3>Présences du groupe</h3>
 <p>Marquez les réponses connues ou préparez une relance.</p>
 <div id="presencePlayers" class="player-list"></div>
+<div class="coach-add-box">
+  <div class="coach-add-actions">
+    <button type="button" id="btnAddMissingPlayer" onclick="esbbOpenCoachAddForm('licence')">Ajouter un joueur présent non listé</button>
+    <button type="button" id="btnAddTrialPlayer" onclick="esbbOpenCoachAddForm('essai')">Ajouter un joueur à l’essai</button>
+  </div>
+
+  <div id="coachQuickAddForm" class="coach-quick-form">
+    <div class="coach-form-grid">
+      <div>
+        <label for="coachAddNom">Nom *</label>
+        <input id="coachAddNom" autocomplete="family-name">
+      </div>
+      <div>
+        <label for="coachAddPrenom">Prénom *</label>
+        <input id="coachAddPrenom" autocomplete="given-name">
+      </div>
+      <div>
+        <label for="coachAddNaissance">Date naissance</label>
+        <input id="coachAddNaissance" type="date">
+      </div>
+      <div>
+        <label for="coachAddTelephone">Téléphone</label>
+        <input id="coachAddTelephone" type="tel" autocomplete="tel">
+      </div>
+      <div class="full">
+        <label for="coachAddEmail">Email</label>
+        <input id="coachAddEmail" type="email" autocomplete="email">
+      </div>
+      <div class="full">
+        <label for="coachAddCommentaire">Commentaire coach</label>
+        <textarea id="coachAddCommentaire" placeholder="Ex. venu sans inscription, absent de la liste, licence à vérifier..."></textarea>
+      </div>
+    </div>
+    <p id="coachAddHelp" class="coach-add-note">Sélectionnez d’abord le type d’ajout.</p>
+    <button class="btn full" type="button" onclick="esbbSaveCoachQuickAdd()">Enregistrer</button>
+    <div id="coachAddStatus" class="coach-add-status"></div>
+  </div>
+</div>
+
 </div>
 <div class="card">
 <h3>Résumé</h3>
@@ -1055,6 +1182,111 @@ function renderConnectedPresenceBoard(){
   essaisForSession.innerHTML = essaisDuJour.length
     ? "<strong>Essais du créneau</strong><br>" + essaisDuJour.map(e => [e.prenom, e.nom].filter(Boolean).join(" ") + " · " + (e.creneau || e.creneauLabel || "")).join("<br>")
     : "Aucun essai affiché sur ce créneau.";
+}
+
+
+/* ===== AJOUT COACH : ESSAI DIRECT / LICENCE À VÉRIFIER ===== */
+let esbbCoachAddMode = "";
+
+function esbbOpenCoachAddForm(mode){
+  esbbCoachAddMode = mode;
+  const form = document.getElementById("coachQuickAddForm");
+  const help = document.getElementById("coachAddHelp");
+  const status = document.getElementById("coachAddStatus");
+  const b1 = document.getElementById("btnAddMissingPlayer");
+  const b2 = document.getElementById("btnAddTrialPlayer");
+  if(form) form.classList.add("visible");
+  if(status){ status.className="coach-add-status"; status.textContent=""; }
+  if(b1) b1.classList.toggle("active", mode === "licence");
+  if(b2) b2.classList.toggle("active", mode === "essai");
+  if(help){
+    help.textContent = mode === "essai"
+      ? "Ajout dans le suivi essais avec Source = Coach direct. Téléphone ou email conseillé pour pouvoir recontacter la famille."
+      : "Signalement pour vérification licence. Le joueur reste à contrôler par le bureau avant correction de la base.";
+  }
+}
+
+function esbbCoachAddStatus(message, isError){
+  const box = document.getElementById("coachAddStatus");
+  if(!box) return;
+  box.textContent = message;
+  box.className = "coach-add-status visible" + (isError ? " error" : "");
+}
+
+function esbbCoachCurrentSessionLabel(){
+  if(!currentSession) return "";
+  const parts = [currentSession.day || "", currentSession.iso || "", currentSession.time || "", currentSession.place || ""].filter(Boolean);
+  return parts.join(" · ");
+}
+
+function esbbCoachCategory(){
+  return (currentSession && currentSession.cat) || (document.getElementById("calendarCategory") && calendarCategory.value) || "";
+}
+
+function esbbResetCoachAddForm(){
+  ["coachAddNom","coachAddPrenom","coachAddNaissance","coachAddTelephone","coachAddEmail","coachAddCommentaire"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value="";
+  });
+}
+
+async function esbbPostCoachAdd_(payload){
+  await fetch(WEB_APP_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)
+  });
+}
+
+async function esbbSaveCoachQuickAdd(){
+  const nom = (document.getElementById("coachAddNom")?.value || "").trim();
+  const prenom = (document.getElementById("coachAddPrenom")?.value || "").trim();
+  const dateNaissance = (document.getElementById("coachAddNaissance")?.value || "").trim();
+  const telephone = (document.getElementById("coachAddTelephone")?.value || "").trim();
+  const email = (document.getElementById("coachAddEmail")?.value || "").trim();
+  const commentaire = (document.getElementById("coachAddCommentaire")?.value || "").trim();
+
+  if(!esbbCoachAddMode){ esbbCoachAddStatus("Choisissez d’abord le type d’ajout.", true); return; }
+  if(!nom || !prenom){ esbbCoachAddStatus("Nom et prénom obligatoires.", true); return; }
+  if(esbbCoachAddMode === "essai" && !telephone && !email){
+    esbbCoachAddStatus("Pour un essai non inscrit, indiquez au moins un téléphone ou un email.", true);
+    return;
+  }
+
+  const categorie = esbbCoachCategory();
+  const creneauLabel = esbbCoachCurrentSessionLabel();
+  const base = {
+    nom, prenom, dateNaissance, telephone, email, commentaire,
+    categorie,
+    idCreneau: currentSession ? currentSession.id : "",
+    creneauLabel,
+    lieu: currentSession ? currentSession.place : "",
+    dateSeance: currentSession ? (currentSession.iso || "") : "",
+    source:"Coach direct",
+    sourceDetail:"Portail coachs · ajout en direct",
+    horodatage:new Date().toISOString()
+  };
+
+  try{
+    esbbCoachAddStatus("Enregistrement en cours...", false);
+    if(esbbCoachAddMode === "essai"){
+      await esbbPostCoachAdd_({
+        action:"saveEssaiBasket",
+        data:{...base, statut:"À recontacter", statutSuivi:"Présent essai / coach direct", parentNom:"", source:"Coach direct"}
+      });
+      esbbCoachAddStatus("Essai ajouté dans le suivi avec Source = Coach direct.", false);
+    }else{
+      await esbbPostCoachAdd_({
+        action:"saveCoachLicenceCheck",
+        data:{...base, statut:"À vérifier licence"}
+      });
+      esbbCoachAddStatus("Joueur signalé pour vérification licence.", false);
+    }
+    esbbResetCoachAddForm();
+  }catch(e){
+    esbbCoachAddStatus("L’envoi n’a pas abouti. À retenter ou noter manuellement.", true);
+  }
 }
 
 function trialKey(e){
