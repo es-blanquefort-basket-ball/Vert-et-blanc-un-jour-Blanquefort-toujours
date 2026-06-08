@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#003914">
-<title>Portail licenciés V9 | ES Blanquefort Basket Ball</title>
+<title>Portail licenciés V10 | ES Blanquefort Basket Ball</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
 <style>
@@ -232,7 +232,7 @@ textarea{min-height:84px;resize:vertical}
 <button data-open="accueil">Accueil</button>
 <button data-open="communication">Communication <span class="comm-dot"></span></button></div>
 <div class="label">Espace licencié</div>
-<div class="welcome-card"><h2 id="playerHello">Bonjour</h2><p>Si tu es, cet espace te permet de gérer ton calendrier, tes présences et tes informations de fin de saison.</p></div>
+<div class="welcome-card"><h2 id="playerHello">Bonjour</h2><p>Cet espace te permet de gérer ton calendrier, tes présences et tes informations de fin de saison.</p></div>
 <div class="grid">
 <article class="card">
 <h3>Mon identité joueur</h3>
@@ -548,8 +548,10 @@ function getCurrentScheduleContext(){
   }
   try{
     const player = JSON.parse(localStorage.getItem(PLAYER_KEY)||"null");
-    if(player && player.category){
-      return {category: player.category === "U21" ? "Seniors" : player.category, year: player.yearLevel === "2e année" ? "2" : "1", name: player.prenom || "le licencié"};
+    if(player && (player.categorie || player.category)){
+      const cat = player.categorie || player.category;
+      const yearLevel = player.anneeCategorie || player.yearLevel;
+      return {category: cat === "U21" ? "Seniors" : cat, year: yearLevel === "2e année" ? "2" : "1", name: player.prenom || "le licencié"};
     }
   }catch(e){}
   return null;
@@ -739,7 +741,30 @@ document.getElementById("scheduleYear").addEventListener("change",renderSchedule
 document.getElementById("copyEssaisBtn").addEventListener("click",async()=>{const link="https://es-blanquefort-basket-ball.github.io/essais-2026-2027/";try{await navigator.clipboard.writeText(link);alert("Lien essais copié.")}catch(e){prompt("Copiez le lien essais :",link)}});
 
 function restorePlayer(){
-  try{const data=JSON.parse(localStorage.getItem(PLAYER_KEY)||"null"); if(data&&data.prenom){document.getElementById("playerHello").textContent="Bonjour "+data.prenom; syncSchedule(data.categorie, data.anneeCategorie);}}catch(e){}
+  try{
+    const data = JSON.parse(localStorage.getItem(PLAYER_KEY)||"null");
+    if(!data) return;
+
+    const nom = data.nom || "";
+    const prenom = data.prenom || "";
+    const dateNaissance = data.dateNaissance || "";
+    const categorie = data.categorie || data.category || "";
+    const anneeCategorie = data.anneeCategorie || data.yearLevel || "";
+    const email = data.email || "";
+
+    if(document.getElementById("playerLastName")) playerLastName.value = nom;
+    if(document.getElementById("playerFirstName")) playerFirstName.value = prenom;
+    if(document.getElementById("playerBirthDate")) playerBirthDate.value = dateNaissance;
+    if(document.getElementById("playerCategory")) playerCategory.value = categorie || "Date de naissance requise";
+    if(document.getElementById("playerYearLevel")) playerYearLevel.value = anneeCategorie || "À calculer";
+    if(document.getElementById("playerEmail")) playerEmail.value = email;
+
+    if(prenom && document.getElementById("playerHello")) {
+      playerHello.textContent = "Bonjour " + prenom;
+    }
+
+    if(categorie) syncSchedule(categorie, anneeCategorie);
+  }catch(e){}
 }
 renderChildren();
 restorePlayer();
