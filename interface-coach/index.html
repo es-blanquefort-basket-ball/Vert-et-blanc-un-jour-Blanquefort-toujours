@@ -273,6 +273,10 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 .coach-add-box-summary{margin-top:10px}
 .coach-add-box-essais{margin-top:10px}
 
+
+.presence-sync-status{margin-top:8px;padding:9px 10px;border-radius:12px;background:#edf4ff;border:1px solid rgba(18,59,120,.18);color:#123b78;font-size:12px;font-weight:900;line-height:1.35}
+.presence-sync-status.warn{background:#fff7e6;color:#8a5a05;border-color:rgba(138,90,5,.20)}
+
 </style>
 </head>
 <body>
@@ -327,9 +331,9 @@ h1{margin:10px 0 8px;color:var(--d);text-transform:uppercase;font-size:clamp(32p
 <h3 id="sessionTitle">Entraînement</h3>
 <p id="sessionInfo"></p>
 <div class="tools">
-<button class="btn" type="button" onclick="createPresenceRequest()">Créer / ouvrir les présences</button>
+<button class="btn" type="button" onclick="createPresenceRequest()">Ouvrir le pointage de la séance</button>
 <button class="btn light" type="button" onclick="copyReminder()">Copier rappel</button>
-<button class="btn light" type="button" onclick="copyNonResponders()">Relancer non-répondants</button>
+<button class="btn light" type="button" onclick="copyNonResponders()">Copier relance sans réponse</button>
 </div>
 
 <div class="presence-board">
@@ -761,51 +765,9 @@ function toast(msg){
   t.classList.add("visible");
   setTimeout(()=>t.classList.remove("visible"),1800);
 }
-function copyTextFallbackESBB(text){
-  const area = document.createElement("textarea");
-  area.value = String(text || "");
-  area.setAttribute("readonly", "");
-  area.style.position = "fixed";
-  area.style.left = "-9999px";
-  area.style.top = "0";
-  document.body.appendChild(area);
-  area.focus();
-  area.select();
-
-  let ok = false;
-  try {
-    ok = document.execCommand("copy");
-  } catch(e) {
-    ok = false;
-  }
-
-  document.body.removeChild(area);
-  return ok;
-}
-
 async function copyText(text, label){
-  const value = String(text || "").trim();
-
-  if(!value){
-    toast("Aucun lien à copier");
-    return;
-  }
-
-  try{
-    if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(value);
-      toast(label || "Copié");
-      return;
-    }
-  }catch(e){}
-
-  const copied = copyTextFallbackESBB(value);
-
-  if(copied){
-    toast(label || "Copié");
-  }else{
-    window.prompt("Copiez le lien :", value);
-  }
+  try{await navigator.clipboard.writeText(text);toast(label||"Copié");}
+  catch(e){prompt("Copiez le texte :", text);}
 }
 
 function renderSessions(){
@@ -824,7 +786,7 @@ function renderSessions(){
 function showCoachDayDetail(card, btn, cat, iso, date, sessions, hasTrial){
   card.querySelectorAll(".esbb-day").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");
   const s=sessions[0]; currentSession={cat,id:(s.id+"-"+iso),title:s.title,day:s.day,time:s.time,place:s.place,iso};
-  sessionDetail.style.display="block";sessionTitle.textContent=s.title;sessionInfo.textContent=`${esbbLongFr(date)} · ${s.time} · ${s.place}`;renderPresenceBoard();
+  sessionDetail.style.display="block";sessionTitle.textContent=s.title;sessionInfo.textContent=`${esbbLongFr(date)} · ${s.time} · ${s.place}`;esbbPreparePresenceBoard();
   card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(date)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${hasTrial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}`;
 }
 
@@ -839,33 +801,15 @@ function selectSession(cat, session){
   renderPresenceBoard();
 }
 function createPresenceRequest(){
-  if(!currentSession){
-    toast("Choisissez un entraînement");
-    return;
-  }
-
-  // Version connectée : on garde les vrais licenciés chargés depuis Google Sheet.
-  if (typeof renderConnectedPresenceBoard === "function" && REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
-    renderConnectedPresenceBoard();
-  } else {
-    // Secours uniquement si aucune donnée Sheet n'est chargée.
-    renderPresenceBoard();
-  }
-
+  if(!currentSession){toast("Choisissez un entraînement");return;}
+  renderPresenceBoard();
   toast("Présences ouvertes");
 }
 function playerKey(sessionId, name){return sessionId+"::"+name;}
 function setPresence(name, value){
   if(!currentSession) return;
-
-  presence[playerKey(currentSession.id, name)] = value;
-
-  // Ne pas revenir aux joueurs génériques après un clic Présent / Absent.
-  if (typeof renderConnectedPresenceBoard === "function" && REMOTE && Array.isArray(REMOTE.licencies) && REMOTE.licencies.length) {
-    renderConnectedPresenceBoard();
-  } else {
-    renderPresenceBoard();
-  }
+  presence[playerKey(currentSession.id,name)]=value;
+  renderPresenceBoard();
 }
 function getPresence(name){
   if(!currentSession) return "";
@@ -1206,7 +1150,7 @@ function renderConnectedSessions(){
         sessionDetail.style.display="block";
         sessionTitle.textContent=currentSession.title;
         sessionInfo.textContent=[esbbLongFr(dateCopy),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
-        renderConnectedPresenceBoard();
+        esbbPreparePresenceBoard();
         const filteredTrials = esbbTrialsForSession(cat, iso);
         card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(dateCopy)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${trial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="esbb-session-counts"><span class="pill">${esbbTrainingPlayers().length} licencié(s)</span><span class="pill warn">${filteredTrials.length} essai(s) inscrit(s)</span></div>`;
       };
@@ -1439,6 +1383,174 @@ function renderConnectedEssais(){
   box.innerHTML = esbbRenderTrialsInline(rows);
 }
 
+
+/* ===== PRÉSENCES ENTRAÎNEMENTS CONNECTÉES SHEET — V10 ===== */
+let ESBB_CURRENT_TRAINING_PLAYERS = [];
+let ESBB_LAST_PRESENCE_LOAD_KEY = "";
+let ESBB_PRESENCE_LOADING = false;
+
+function esbbPresenceStatusLabel(value){
+  if(value === "present") return "Présent";
+  if(value === "absent") return "Absent";
+  if(value === "wait") return "À confirmer";
+  return value || "";
+}
+function esbbPresenceStatusCode(value){
+  const v = String(value || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if(v === "present" || v === "présent") return "present";
+  if(v === "absent") return "absent";
+  if(v === "wait" || v === "a confirmer" || v === "à confirmer") return "wait";
+  return "";
+}
+function esbbPresenceLocalKey(name){
+  if(!currentSession) return "";
+  return "PRESENCE::" + [currentSession.iso || "", currentSession.id || "", currentSession.cat || "", name || ""].join("|");
+}
+function getPresence(name){
+  const key = esbbPresenceLocalKey(name);
+  return key ? (localStorage.getItem(key) || "") : "";
+}
+function esbbSetPresenceLocal(name, value){
+  const key = esbbPresenceLocalKey(name);
+  if(key) localStorage.setItem(key, value || "");
+}
+function esbbPlayerByName(name){
+  return (ESBB_CURRENT_TRAINING_PLAYERS || []).find(p => coachPlayerName(p) === name) || {};
+}
+function esbbCurrentSessionCreneauLabel(){
+  if(!currentSession) return "";
+  return [currentSession.day || "", currentSession.iso || "", currentSession.time || "", currentSession.place || ""].filter(Boolean).join(" · ");
+}
+async function esbbSavePresenceToSheet(name, value){
+  if(!currentSession) return;
+  const p = esbbPlayerByName(name);
+  const payload = {
+    action:"savePresenceEntrainement",
+    data:{
+      dateSeance: currentSession.iso || "",
+      categorie: currentSession.cat || "",
+      idCreneau: currentSession.id || "",
+      creneau: esbbCurrentSessionCreneauLabel(),
+      lieu: currentSession.place || "",
+      nom: p.nom || String(name).split(" ").slice(1).join(" ") || name,
+      prenom: p.prenom || String(name).split(" ")[0] || "",
+      licence: p.licence || "",
+      statut: esbbPresenceStatusLabel(value),
+      source:"Coach",
+      commentaire:"Pointage portail coach"
+    }
+  };
+  try{
+    await fetch(WEB_APP_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+    toast("Présence enregistrée");
+  }catch(e){
+    toast("Présence gardée sur ce téléphone, envoi à retenter");
+  }
+}
+async function setPresence(name, value){
+  if(!currentSession) return;
+  esbbSetPresenceLocal(name, value);
+  renderConnectedPresenceBoard();
+  await esbbSavePresenceToSheet(name, value);
+}
+function setPresenceByIndex(index, value){
+  const p = ESBB_CURRENT_TRAINING_PLAYERS[index];
+  if(!p) return;
+  setPresence(coachPlayerName(p), value);
+}
+async function esbbLoadPresencesForCurrentSession(){
+  if(!currentSession || !currentSession.iso || !currentSession.id) return;
+  const key = [currentSession.iso,currentSession.id,currentSession.cat].join("|");
+  if(ESBB_PRESENCE_LOADING || ESBB_LAST_PRESENCE_LOAD_KEY === key) return;
+  ESBB_PRESENCE_LOADING = true;
+  try{
+    const url = WEB_APP_URL
+      + "?action=getPresencesEntrainement"
+      + "&dateSeance=" + encodeURIComponent(currentSession.iso || "")
+      + "&idCreneau=" + encodeURIComponent(currentSession.id || "")
+      + "&categorie=" + encodeURIComponent(currentSession.cat || "")
+      + "&v=" + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if(json && json.ok && Array.isArray(json.rows)){
+      json.rows.forEach(r=>{
+        const name = [r.prenom, r.nom].filter(Boolean).join(" ").trim();
+        const code = esbbPresenceStatusCode(r.statut);
+        if(name && code) esbbSetPresenceLocal(name, code);
+      });
+      ESBB_LAST_PRESENCE_LOAD_KEY = key;
+    }
+  }catch(e){
+    // Si la route Apps Script n'est pas encore posée, on garde le mode local.
+  }finally{
+    ESBB_PRESENCE_LOADING = false;
+  }
+}
+async function esbbPreparePresenceBoard(){
+  if(!currentSession) return;
+  const key = [currentSession.iso,currentSession.id,currentSession.cat].join("|");
+  if(ESBB_LAST_PRESENCE_LOAD_KEY !== key){
+    await esbbLoadPresencesForCurrentSession();
+  }
+  renderConnectedPresenceBoard();
+}
+function renderConnectedPresenceBoard(){
+  if(!currentSession) return;
+  const players = esbbTrainingPlayers();
+  ESBB_CURRENT_TRAINING_PLAYERS = players;
+  presencePlayers.innerHTML="";
+  if(!players.length){
+    presencePlayers.innerHTML='<div class="notice">Aucun licencié affiché pour ce groupe.</div>';
+  }
+  players.forEach((p,index)=>{
+    const name = coachPlayerName(p);
+    const v = getPresence(name);
+    const row=document.createElement("div");
+    row.className="player-row";
+    row.innerHTML=`<div><strong>${name}</strong><span>${p.categorie || ""} · ${p.licence || ""}</span></div>
+      <div class="actions">
+        <button class="${v==='present'?'selected ok':''}" onclick="setPresenceByIndex(${index},'present')">Présent</button>
+        <button class="${v==='absent'?'selected ko':''}" onclick="setPresenceByIndex(${index},'absent')">Absent</button>
+        <button class="${v==='wait'?'selected wait':''}" onclick="setPresenceByIndex(${index},'wait')">À confirmer</button>
+      </div>`;
+    presencePlayers.appendChild(row);
+  });
+  let present=0, absent=0, wait=0;
+  players.forEach(p=>{
+    const v=getPresence(coachPlayerName(p));
+    if(v==="present") present++;
+    if(v==="absent") absent++;
+    if(v==="wait") wait++;
+  });
+  countPresent.textContent=present;
+  countAbsent.textContent=absent;
+  countWait.textContent=wait;
+  countNone.textContent=Math.max(players.length-present-absent-wait,0);
+
+  const essaisDuJour = currentSession ? esbbTrialsForSession(currentSession.cat, currentSession.iso) : [];
+  if(essaisDuJour.length){
+    essaisForSession.innerHTML = '<strong>Essais du créneau</strong>' + esbbRenderTrialsInline(essaisDuJour);
+  }else{
+    essaisForSession.innerHTML = "Aucun essai affiché sur ce créneau.";
+  }
+}
+function nonResponders(){
+  if(!currentSession) return [];
+  return esbbTrainingPlayers().filter(p=>!getPresence(coachPlayerName(p))).map(p=>coachPlayerName(p));
+}
+function copyNonResponders(){
+  if(!currentSession){toast("Choisissez un entraînement");return;}
+  const names=nonResponders();
+  const msg=names.length
+    ? "Bonjour, merci d’indiquer votre présence pour l’entraînement " + (currentSession.title || "") + " du " + (currentSession.iso || "") + " (" + (currentSession.time || "") + ").\n\nSans réponse pour le moment :\n" + names.join("\n")
+    : "Tout le monde a répondu pour cette séance.";
+  copyText(msg,"Relance copiée");
+}
+function createPresenceRequest(){
+  if(!currentSession){toast("Choisissez un entraînement");return;}
+  esbbPreparePresenceBoard();
+  toast("Pointage ouvert");
+}
 async function refreshConnectedCoach(){
   await loadCoachRemoteData();
   renderConnectedSessions();
