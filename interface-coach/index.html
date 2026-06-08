@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#003914">
-<title>Portail coachs V11 | ES Blanquefort Basket Ball</title>
+<title>Portail coachs V12 | ES Blanquefort Basket Ball</title>
 <style>
 :root{
   --g:#003914;--d:#001f0c;--l:#0b6b2b;--muted:#56695c;--line:rgba(0,57,20,.20);
@@ -785,7 +785,7 @@ function renderSessions(){
 }
 function showCoachDayDetail(card, btn, cat, iso, date, sessions, hasTrial){
   card.querySelectorAll(".esbb-day").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");
-  const s=sessions[0]; currentSession={cat,id:(s.id+"-"+iso),title:s.title,day:s.day,time:s.time,place:s.place,iso};
+  const s=sessions[0]; currentSession={cat,id:s.id,title:s.title,day:s.day,time:s.time,place:s.place,iso};
   sessionDetail.style.display="block";sessionTitle.textContent=s.title;sessionInfo.textContent=`${esbbLongFr(date)} · ${s.time} · ${s.place}`;esbbPreparePresenceBoard();
   card.querySelector(".esbb-detail").innerHTML=`<strong>${esbbLongFr(date)}</strong><span>${sessions.map(x=>`${x.time} — ${x.place}`).join("<br>")}</span>${hasTrial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}`;
 }
@@ -1146,7 +1146,7 @@ function renderConnectedSessions(){
         card.querySelectorAll(".esbb-day").forEach(b=>b.classList.remove("selected"));
         btn.classList.add("selected");
         const ss=sessions[0];
-        currentSession={cat,id:(ss.id+"-"+iso),title:ss.title,day:ss.day,time:ss.time,place:ss.place,iso};
+        currentSession={cat,id:ss.id,title:ss.title,day:ss.day,time:ss.time,place:ss.place,iso};
         sessionDetail.style.display="block";
         sessionTitle.textContent=currentSession.title;
         sessionInfo.textContent=[esbbLongFr(dateCopy),currentSession.time,currentSession.place].filter(Boolean).join(" · ");
@@ -1384,7 +1384,7 @@ function renderConnectedEssais(){
 }
 
 
-/* ===== PRÉSENCES ENTRAÎNEMENTS CONNECTÉES SHEET — V10 ===== */
+/* ===== PRÉSENCES ENTRAÎNEMENTS CONNECTÉES SHEET — V12 : ID_CRENEAU identique licencié/coach ===== */
 let ESBB_CURRENT_TRAINING_PLAYERS = [];
 let ESBB_LAST_PRESENCE_LOAD_KEY = "";
 let ESBB_PRESENCE_LOADING = false;
