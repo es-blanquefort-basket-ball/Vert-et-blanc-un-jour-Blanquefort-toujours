@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#003914">
-<title>Portail coachs | ES Blanquefort Basket Ball</title>
+<title>Portail coachs V11 | ES Blanquefort Basket Ball</title>
 <style>
 :root{
   --g:#003914;--d:#001f0c;--l:#0b6b2b;--muted:#56695c;--line:rgba(0,57,20,.20);
@@ -1425,17 +1425,23 @@ async function esbbSavePresenceToSheet(name, value){
   if(!currentSession) return;
   const p = esbbPlayerByName(name);
   const payload = {
-    action:"savePresenceEntrainement",
+    action:"saveTrainingResponseESBB",
     data:{
-      dateSeance: currentSession.iso || "",
-      categorie: currentSession.cat || "",
+      idSondage: "PRES-" + (currentSession.id || ""),
       idCreneau: currentSession.id || "",
-      creneau: esbbCurrentSessionCreneauLabel(),
+      dateEntrainement: currentSession.iso || "",
+      categorie: currentSession.cat || "",
+      entrainementTitre: currentSession.title || "",
+      jour: currentSession.day || "",
+      horaire: currentSession.time || "",
       lieu: currentSession.place || "",
       nom: p.nom || String(name).split(" ").slice(1).join(" ") || name,
       prenom: p.prenom || String(name).split(" ")[0] || "",
-      licence: p.licence || "",
-      statut: esbbPresenceStatusLabel(value),
+      dateNaissance: p.dateNaissance || "",
+      email: p.email || "",
+      telephone: p.telephone || "",
+      reponse: esbbPresenceStatusLabel(value),
+      reponduPar:"Coach",
       source:"Coach",
       commentaire:"Pointage portail coach"
     }
@@ -1465,17 +1471,18 @@ async function esbbLoadPresencesForCurrentSession(){
   ESBB_PRESENCE_LOADING = true;
   try{
     const url = WEB_APP_URL
-      + "?action=getPresencesEntrainement"
+      + "?action=getTrainingResponsesCoachESBB"
       + "&dateSeance=" + encodeURIComponent(currentSession.iso || "")
       + "&idCreneau=" + encodeURIComponent(currentSession.id || "")
       + "&categorie=" + encodeURIComponent(currentSession.cat || "")
       + "&v=" + Date.now();
     const res = await fetch(url);
     const json = await res.json();
-    if(json && json.ok && Array.isArray(json.rows)){
-      json.rows.forEach(r=>{
+    const rows = json && json.ok ? (json.responses || json.reponses || json.rows || []) : [];
+    if(Array.isArray(rows)){
+      rows.forEach(r=>{
         const name = [r.prenom, r.nom].filter(Boolean).join(" ").trim();
-        const code = esbbPresenceStatusCode(r.statut);
+        const code = esbbPresenceStatusCode(r.reponse || r.statut);
         if(name && code) esbbSetPresenceLocal(name, code);
       });
       ESBB_LAST_PRESENCE_LOAD_KEY = key;
