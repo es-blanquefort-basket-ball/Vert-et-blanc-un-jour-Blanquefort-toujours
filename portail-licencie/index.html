@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#003914">
-<title>Portail licenciés | ES Blanquefort Basket Ball</title>
+<title>Portail licenciés V9 | ES Blanquefort Basket Ball</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="../assets/icon-192.png">
 <style>
@@ -100,14 +100,6 @@ textarea{min-height:84px;resize:vertical}
   color:#003914;
   border-color:rgba(0,57,20,.20);
 }
-
-
-.esbb-month-card{border:1px solid rgba(0,57,20,.16);border-radius:16px;background:#fff;padding:13px;margin:10px 0;box-shadow:0 8px 18px rgba(0,31,12,.05)}
-.esbb-month-card h4{margin:0 0 6px;color:var(--d);font-size:17px;text-transform:uppercase;font-weight:1000}.esbb-month-card p{margin:0;color:var(--muted);font-weight:750;line-height:1.35}
-.esbb-usual-list{display:grid;gap:7px;margin:10px 0}.esbb-usual-line{padding:10px 11px;border-radius:12px;background:#f7fbf6;border:1px solid rgba(0,57,20,.12);font-weight:900;color:var(--d)}
-.esbb-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:10px}.esbb-day-head{text-align:center;font-size:11px;font-weight:1000;color:var(--muted);text-transform:uppercase}.esbb-day{min-height:42px;border:1px solid rgba(0,57,20,.16);border-radius:12px;background:#fff;color:var(--d);font-weight:1000;cursor:pointer}.esbb-day.empty{border:0;background:transparent;cursor:default}.esbb-day.has-session{background:#eaf4e9}.esbb-day.has-trial{box-shadow:0 0 0 2px rgba(0,57,20,.12) inset}.esbb-day.selected{background:linear-gradient(135deg,var(--g),var(--d));color:#fff}
-.esbb-detail{margin-top:10px;padding:12px;border-radius:14px;background:#f7fbf6;border:1px solid rgba(0,57,20,.14)}.esbb-detail strong{display:block;color:var(--d);font-size:16px}.esbb-detail span{display:block;color:var(--muted);font-weight:800;margin-top:3px}.esbb-trial-badge{display:inline-flex;width:max-content;margin-top:8px;padding:6px 9px;border-radius:999px;background:#fff7e6;color:#8a5a05;border:1px solid rgba(138,90,5,.22);font-size:11px;font-weight:1000;text-transform:uppercase}.esbb-counts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.esbb-counts .pill{font-size:11px}
-@media(max-width:520px){.esbb-calendar-grid{gap:4px}.esbb-day{min-height:38px;font-size:12px}}
 
 .footer{margin:17px 0 0;text-align:center;color:rgba(8,35,19,.75);font-size:14px;font-weight:900;line-height:1.35}.ball{display:block;margin-top:6px;font-size:22px}
 @media(max-width:760px){.grid,.form{grid-template-columns:1fr}.full{grid-column:auto}.role-menu{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -389,48 +381,21 @@ const SCHEDULES = {
     {type:"bascule", title:"U13 2e année → U15M", day:"Vendredi", time:"19h30 – 21h00", place:"Lycée agricole"}
   ],
   U15: [
-    {type:"collectif", title:"U15M", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey"},
-    {type:"collectif", title:"U15M", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy"},
+    {type:"collectif", title:"U15 / U18", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey"},
+    {type:"collectif", title:"U15 / U18", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy"},
     {type:"collectif", title:"U15M", day:"Vendredi", time:"19h30 – 21h00", place:"Lycée agricole"}
   ],
   U18: [
-    {type:"collectif", title:"U18M", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey"},
-    {type:"collectif", title:"U18M", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy"},
+    {type:"collectif", title:"U15 / U18", day:"Lundi", time:"19h00 – 20h30", place:"Fongravey"},
+    {type:"collectif", title:"U15 / U18", day:"Mercredi", time:"18h00 – 20h30", place:"Port du Roy"},
     {type:"collectif", title:"U18M", day:"Jeudi", time:"20h00 – 21h30", place:"Lycée agricole"}
   ],
   Seniors: [
-    {type:"collectif", title:"Seniors / U21", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy"},
-    {type:"collectif", title:"Seniors / U21", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy"}
+    {type:"collectif", title:"U21 / Seniors", day:"Lundi", time:"21h00 – 23h00", place:"Port du Roy"},
+    {type:"collectif", title:"Seniors M 1 + Seniors M 2", day:"Mercredi", time:"20h30 – 22h30", place:"Port du Roy"},
+    {type:"collectif", title:"Loisirs", day:"Vendredi", time:"21h00 – 23h00", place:"Lycée agricole"}
   ]
 };
-
-const ESBB_TRIAL_DATES = {
-  U11: {"2026-06-06":"Séance ouverte aux joueurs extérieurs"},
-  U13F: {"2026-06-06":"Séance ouverte aux joueurs extérieurs","2026-06-09":"Séance ouverte aux joueurs extérieurs"},
-  U13M: {"2026-06-06":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs"},
-  U15M: {"2026-06-06":"Séance ouverte aux joueurs extérieurs","2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs"},
-  U18M: {"2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs","2026-06-17":"Séance ouverte aux joueurs extérieurs"},
-  Seniors: {"2026-06-01":"Séance ouverte aux joueurs extérieurs","2026-06-03":"Séance ouverte aux joueurs extérieurs","2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs","2026-06-15":"Séance ouverte aux joueurs extérieurs","2026-06-17":"Séance ouverte aux joueurs extérieurs","2026-06-22":"Séance ouverte aux joueurs extérieurs","2026-06-24":"Séance ouverte aux joueurs extérieurs","2026-06-29":"Séance ouverte aux joueurs extérieurs","2026-07-01":"Séance ouverte aux joueurs extérieurs"},
-  U21: {"2026-06-01":"Séance ouverte aux joueurs extérieurs","2026-06-03":"Séance ouverte aux joueurs extérieurs","2026-06-08":"Séance ouverte aux joueurs extérieurs","2026-06-10":"Séance ouverte aux joueurs extérieurs","2026-06-15":"Séance ouverte aux joueurs extérieurs","2026-06-17":"Séance ouverte aux joueurs extérieurs","2026-06-22":"Séance ouverte aux joueurs extérieurs","2026-06-24":"Séance ouverte aux joueurs extérieurs","2026-06-29":"Séance ouverte aux joueurs extérieurs","2026-07-01":"Séance ouverte aux joueurs extérieurs"}
-};
-const ESBB_DAY_INDEX = {"Dimanche":0,"Lundi":1,"Mardi":2,"Mercredi":3,"Jeudi":4,"Vendredi":5,"Samedi":6};
-const ESBB_DAY_LABELS = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
-function esbbIso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-function esbbFr(d){return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");}
-function esbbLongFr(d){return ESBB_DAY_LABELS[d.getDay()]+" "+String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");}
-function esbbDatesForDay(day){
-  const res=[]; const wanted=ESBB_DAY_INDEX[day]; if(wanted===undefined) return res;
-  const start=new Date(2026,5,1), end=new Date(2026,6,1);
-  for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) if(d.getDay()===wanted) res.push(new Date(d));
-  return res;
-}
-function esbbDisplayGroup(cat){return cat==="Seniors"||cat==="U21"?"Seniors / U21":cat;}
-function esbbTrialOpen(cat, iso){
-  if(cat==="Seniors") return (ESBB_TRIAL_DATES.Seniors||{})[iso];
-  if(cat==="U21") return (ESBB_TRIAL_DATES.U21||{})[iso];
-  return (ESBB_TRIAL_DATES[cat]||{})[iso];
-}
-
 
 function openPanel(tab){
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active", p.id==="panel-"+tab));
@@ -583,62 +548,185 @@ function getCurrentScheduleContext(){
   }
   try{
     const player = JSON.parse(localStorage.getItem(PLAYER_KEY)||"null");
-    if(player && (player.categorie || player.category)){
-      const pc = player.categorie || player.category;
-      const yl = player.anneeCategorie || player.yearLevel;
-      return {category: pc === "U21" ? "Seniors" : pc, year: yl === "2e année" ? "2" : "1", name: player.prenom || "le licencié"};
+    if(player && player.category){
+      return {category: player.category === "U21" ? "Seniors" : player.category, year: player.yearLevel === "2e année" ? "2" : "1", name: player.prenom || "le licencié"};
     }
   }catch(e){}
   return null;
 }
 
-function renderSchedule(){
-  const context = getCurrentScheduleContext();
+
+function esbbCurrentPersonForTraining(){
+  const children = getChildren();
+  const child = children[activeChildIndex];
+  if(child && child.categorie && !String(child.categorie).includes("Date")){
+    return {
+      nom: child.nom || "",
+      prenom: child.prenom || "",
+      dateNaissance: child.dateNaissance || "",
+      categorie: child.categorie === "U21" ? "Seniors" : child.categorie,
+      email: child.email || "",
+      telephone: child.telephone || "",
+      reponduPar: "Famille"
+    };
+  }
+  try{
+    const player = JSON.parse(localStorage.getItem(PLAYER_KEY)||"null");
+    if(player && player.prenom){
+      return {
+        nom: player.nom || "",
+        prenom: player.prenom || "",
+        dateNaissance: player.dateNaissance || "",
+        categorie: player.categorie === "U21" ? "Seniors" : player.categorie,
+        email: player.email || "",
+        telephone: "",
+        reponduPar: "Licencié"
+      };
+    }
+  }catch(e){}
+  return null;
+}
+
+function esbbTrainingResponseLocalKey(session, person){
+  return "ESBB_TRAINING_RESPONSE::" + [
+    session.idCreneau || "",
+    person.nom || "",
+    person.prenom || "",
+    person.dateNaissance || ""
+  ].join("|");
+}
+
+async function esbbSendTrainingResponse(session, person, reponse, btn){
+  const payload = {
+    action: "saveTrainingResponseESBB",
+    data: {
+      idSondage: "PRES-" + (session.idCreneau || ""),
+      idCreneau: session.idCreneau || "",
+      nom: person.nom || "",
+      prenom: person.prenom || "",
+      dateNaissance: person.dateNaissance || "",
+      categorie: session.categorie || person.categorie || "",
+      reponse: reponse,
+      reponduPar: person.reponduPar || "Licencié",
+      email: person.email || "",
+      telephone: person.telephone || "",
+      commentaire: "",
+      entrainementTitre: session.titre || "",
+      jour: session.jour || "",
+      horaire: [session.debut, session.fin].filter(Boolean).join(" – "),
+      lieu: session.lieu || "",
+      dateEntrainement: session.date || ""
+    }
+  };
+
+  localStorage.setItem(esbbTrainingResponseLocalKey(session, person), reponse);
+
+  const training = btn.closest(".training");
+  const badge = training ? training.querySelector(".action-badge") : null;
+  if(badge){
+    badge.textContent = "Envoi...";
+    badge.classList.remove("done");
+  }
+
+  try{
+    await fetch(ESBB_SCRIPT_URL, {
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    if(badge){
+      badge.textContent = "Répondu";
+      badge.classList.add("done");
+    }
+  }catch(e){
+    if(badge){
+      badge.textContent = "Réponse gardée sur ce téléphone";
+      badge.classList.remove("done");
+    }
+  }
+}
+
+function esbbRenderTrainingSessions(sessions, person){
   const box=document.getElementById("scheduleList");
   box.innerHTML="";
-  if(!context){
-    box.innerHTML='<div class="training info"><strong>Enregistrez ou sélectionnez d’abord le licencié</strong><span>Les créneaux s’afficheront ensuite automatiquement.</span></div>';
-    return;
-  }
-  const cat=context.category;
-  const year=context.year;
-  let items=[...(SCHEDULES[cat]||[])];
-  if(year !== "2") items = items.filter(i=>i.type !== "bascule");
-  if(!items.length){
+
+  if(!sessions.length){
     box.innerHTML='<div class="training info"><strong>Aucun créneau affiché pour le moment</strong><span>Les informations seront communiquées par le club si nécessaire.</span></div>';
     return;
   }
-  const card=document.createElement("div");
-  card.className="esbb-month-card";
-  card.innerHTML=`<h4>${esbbDisplayGroup(cat)}</h4><p>Entraînements habituels</p><div class="esbb-usual-list">${items.map(i=>`<div class="esbb-usual-line">${i.day} ${i.time} — ${i.place}</div>`).join("")}</div><p><strong>Juin 2026</strong> · fin de saison : premier mercredi de juillet</p>`;
-  const grid=document.createElement("div");
-  grid.className="esbb-calendar-grid";
-  ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d=>{const h=document.createElement("div");h.className="esbb-day-head";h.textContent=d;grid.appendChild(h);});
-  const first=new Date(2026,5,1), last=new Date(2026,6,1);
-  const mondayOffset=(first.getDay()+6)%7;
-  for(let i=0;i<mondayOffset;i++){const e=document.createElement("button");e.type="button";e.className="esbb-day empty";e.disabled=true;grid.appendChild(e);}
-  for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)){
-    const iso=esbbIso(d);
-    const sessions=items.filter(i=>ESBB_DAY_INDEX[i.day]===d.getDay());
-    const trial=sessions.some(i=>esbbTrialOpen(cat, iso) || esbbTrialOpen(i.title, iso));
-    const btn=document.createElement("button");btn.type="button";btn.className="esbb-day"+(sessions.length?" has-session":"")+(trial?" has-trial":"");btn.textContent=d.getDate();
-    if(!sessions.length){btn.disabled=true;btn.style.opacity=.35;} else btn.onclick=()=>showLicencieDayDetail(card, btn, cat, iso, new Date(d), sessions, trial);
-    grid.appendChild(btn);
-  }
-  card.appendChild(grid);
-  const detail=document.createElement("div");detail.className="esbb-detail";detail.innerHTML="<span>Cliquez sur une date d’entraînement pour indiquer votre présence.</span>";card.appendChild(detail);
-  box.appendChild(card);
-}
-function showLicencieDayDetail(card, btn, cat, iso, date, sessions, hasTrial){
-  card.querySelectorAll(".esbb-day").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected");
-  const detail=card.querySelector(".esbb-detail");
-  const key="ESBB_PRESENCE_"+cat+"_"+iso;
-  const saved=localStorage.getItem(key)||"";
-  const sessionText=sessions.map(s=>`${s.time} — ${s.place}`).join("<br>");
-  detail.innerHTML=`<strong>${esbbLongFr(date)}</strong><span>${sessionText}</span>${hasTrial?'<span class="esbb-trial-badge">Séance ouverte aux joueurs extérieurs</span>':''}<div class="response-row" style="margin-top:10px"><button type="button" data-v="Présent">Présent</button><button type="button" data-v="Absent">Absent</button><button type="button" data-v="À confirmer">À confirmer</button></div><div class="esbb-counts"><span class="pill">Réponse enregistrée : ${saved||"non renseignée"}</span><span class="pill warn">Essais prévus : ${hasTrial?"oui":"non"}</span></div>`;
-  detail.querySelectorAll("button[data-v]").forEach(b=>{ if(b.dataset.v===saved)b.classList.add("selected"); b.onclick=()=>{localStorage.setItem(key,b.dataset.v);showLicencieDayDetail(card,btn,cat,iso,date,sessions,hasTrial);};});
+
+  sessions.forEach((session,idx)=>{
+    const div=document.createElement("div");
+    div.className="training " + (session.type || "collectif");
+    const horaire = [session.debut, session.fin].filter(Boolean).join(" – ");
+    const stored = localStorage.getItem(esbbTrainingResponseLocalKey(session, person)) || "";
+    div.innerHTML=`<strong>${session.titre || "Entraînement"}</strong>
+      <span>${session.date || ""} · ${session.jour || ""} · ${horaire}</span>
+      <span>${session.lieu || ""}</span>
+      <span class="action-badge ${stored ? "done" : ""}">${stored ? "Répondu" : "À répondre"}</span>
+      <div class="response-row" data-response-row="${idx}">
+        <button type="button" data-reponse="Présent" class="${stored==="Présent" ? "selected" : ""}">Présent</button>
+        <button type="button" data-reponse="Absent" class="${stored==="Absent" ? "selected" : ""}">Absent</button>
+        <button type="button" data-reponse="À confirmer" class="${stored==="À confirmer" ? "selected" : ""}">À confirmer</button>
+      </div>`;
+    box.appendChild(div);
+
+    div.querySelectorAll(".response-row button").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));
+        btn.classList.add("selected");
+        esbbSendTrainingResponse(session, person, btn.dataset.reponse, btn);
+      });
+    });
+  });
 }
 
+async function renderSchedule(){
+  const context = getCurrentScheduleContext();
+  const person = esbbCurrentPersonForTraining();
+  const box=document.getElementById("scheduleList");
+  box.innerHTML="";
+
+  if(!context || !person){
+    box.innerHTML='<div class="training info"><strong>Enregistrez ou sélectionnez d’abord le licencié</strong><span>Les créneaux s’afficheront ensuite automatiquement.</span></div>';
+    return;
+  }
+
+  box.innerHTML='<div class="training info"><strong>Chargement des créneaux...</strong><span>Lecture des séances depuis la base club.</span></div>';
+
+  try{
+    const url = ESBB_SCRIPT_URL
+      + "?action=getTrainingSessionsLicencieESBB"
+      + "&categorie=" + encodeURIComponent(context.category || person.categorie || "")
+      + "&v=" + Date.now();
+
+    const res = await fetch(url);
+    const json = await res.json();
+
+    if(json && json.ok && Array.isArray(json.sessions) && json.sessions.length){
+      esbbRenderTrainingSessions(json.sessions, person);
+      return;
+    }
+  }catch(e){}
+
+  const cat=context.category;
+  const year=context.year;
+  let fallback=[...(SCHEDULES[cat]||[])];
+  if(year !== "2") fallback = fallback.filter(i=>i.type !== "bascule");
+  const fallbackSessions = fallback.map((i,idx)=>({
+    idCreneau: "LOCAL-" + cat + "-" + idx + "-" + String(i.day||"").replace(/\s+/g,"-"),
+    type: i.type,
+    titre: i.title,
+    categorie: cat,
+    date: "",
+    jour: i.day,
+    debut: i.time,
+    fin: "",
+    lieu: i.place
+  }));
+  esbbRenderTrainingSessions(fallbackSessions, person);
+}
 
 document.getElementById("childBirthDate").addEventListener("change",updateChildCategoryFromBirthDate);
 document.getElementById("playerBirthDate").addEventListener("change",updatePlayerCategoryFromBirthDate);
